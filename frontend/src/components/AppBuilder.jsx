@@ -235,6 +235,7 @@ export default function AppBuilder({ initialPrompt, onReset }) {
             <ChatPanel
               messages={messages}
               isTyping={isTyping}
+              isGenerating={isGenerating}
               onSendMessage={handleSendMessage}
               projectPrompt={pendingPrompt}
               onReset={handleReset}
