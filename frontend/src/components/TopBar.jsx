@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Rocket, Share2, LayoutGrid, Zap, Eye, Code2 } from "lucide-react";
 
 export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projectName, isDark = false, user, showPreview, onTogglePreview, onOpenCode }) {
@@ -20,14 +20,14 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
     borderRadius: "8px",
     border: active
       ? (dk ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(255,255,255,0.6)")
-      : (dk ? "1px solid transparent" : "1px solid transparent"),
+      : (dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.15)"),
     background: active
       ? (dk ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.6)")
-      : "transparent",
+      : (dk ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.35)"),
     boxShadow: active && !dk ? "0 1px 4px rgba(20,80,160,0.06)" : "none",
     color: active
       ? (dk ? "#e2e8f0" : "#0a1a3e")
-      : (dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.45)"),
+      : (dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.5)"),
     fontSize: "12px",
     fontFamily: "'Manrope', sans-serif",
     fontWeight: 500,
@@ -58,30 +58,6 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
         <LayoutGrid style={{ width: 14, height: 14 }} />
         <span style={{ fontSize: "13px", fontFamily: "'Manrope', sans-serif", fontWeight: 500 }}>Home</span>
       </button>
-
-      {/* Preview & Code tabs */}
-      <div className="flex items-center gap-1 px-3 relative z-10">
-        <button
-          data-testid="topbar-preview-btn"
-          onClick={onTogglePreview}
-          style={tabStyle(showPreview)}
-          onMouseEnter={e => { if (!showPreview) { e.currentTarget.style.background = dk ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.4)"; e.currentTarget.style.color = dk ? "#c8d5e4" : "#1e3264"; }}}
-          onMouseLeave={e => { if (!showPreview) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.45)"; }}}
-        >
-          <Eye style={{ width: 12, height: 12 }} />
-          Preview
-        </button>
-        <button
-          data-testid="topbar-code-btn"
-          onClick={onOpenCode}
-          style={tabStyle(false)}
-          onMouseEnter={e => { e.currentTarget.style.background = dk ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.4)"; e.currentTarget.style.color = dk ? "#c8d5e4" : "#1e3264"; }}
-          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.45)"; }}
-        >
-          <Code2 style={{ width: 12, height: 12 }} />
-          Code
-        </button>
-      </div>
 
       {/* Center — absolute positioned for true centering */}
       {projectName && projectName !== "untitled-app" && (
@@ -116,8 +92,42 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Right — Share + Deploy + Avatar */}
+      {/* Right — Preview/Code (only when panel visible) + Share + Deploy + Avatar */}
       <div className="flex items-center gap-2 px-3 flex-shrink-0 relative z-10" style={{ borderLeft: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.12)" }}>
+
+        {/* Preview & Code tabs — only visible when side panel is open */}
+        <AnimatePresence>
+          {showPreview && (
+            <motion.div
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: "auto" }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center gap-1 overflow-hidden"
+              style={{ marginRight: 6 }}
+            >
+              <button
+                data-testid="topbar-preview-btn"
+                onClick={onTogglePreview}
+                style={tabStyle(true)}
+              >
+                <Eye style={{ width: 12, height: 12 }} />
+                Preview
+              </button>
+              <button
+                data-testid="topbar-code-btn"
+                onClick={onOpenCode}
+                style={tabStyle(false)}
+                onMouseEnter={e => { e.currentTarget.style.background = dk ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.5)"; e.currentTarget.style.color = dk ? "#c8d5e4" : "#1e3264"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = dk ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.35)"; e.currentTarget.style.color = dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.5)"; }}
+              >
+                <Code2 style={{ width: 12, height: 12 }} />
+                Code
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <motion.button
           data-testid="share-button"
           onClick={onShare}
