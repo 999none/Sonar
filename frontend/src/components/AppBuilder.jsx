@@ -292,12 +292,14 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
         prompt={pendingPrompt}
         selectedModel={selectedModel}
         mode={mode}
+        isDark={isDark}
       />
 
       <ShareModal
         isOpen={showShare}
         onClose={() => setShowShare(false)}
         projectName={projectName}
+        isDark={isDark}
       />
     </div>
   );

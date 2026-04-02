@@ -20,7 +20,17 @@ function SonarApp() {
   const [initialPrompt, setInitialPrompt] = useState("");
   const [initialTask, setInitialTask] = useState(null);
   const [user, setUser] = useState(null);
-  const [isDark, setIsDark] = useState(false); // Light mode (sky/water) by default
+  const [isDark, setIsDark] = useState(() => {
+    try { return localStorage.getItem("sonar-theme") === "dark"; } catch { return false; }
+  });
+
+  const handleToggleTheme = () => {
+    setIsDark(prev => {
+      const next = !prev;
+      try { localStorage.setItem("sonar-theme", next ? "dark" : "light"); } catch {}
+      return next;
+    });
+  };
   const [tasks, setTasks] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("sonar-tasks") || "null");
@@ -92,7 +102,7 @@ function SonarApp() {
       onLogin={handleLogin}
       onLogout={handleLogout}
       isDark={isDark}
-      onToggleTheme={() => setIsDark(d => !d)}
+      onToggleTheme={handleToggleTheme}
     />
   );
 }
