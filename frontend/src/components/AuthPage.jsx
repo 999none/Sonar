@@ -64,7 +64,7 @@ const T = {
     rightScanOpacity: 0.012,
   },
   light: {
-    pageBg: "linear-gradient(135deg, #b8d0f4 0%, #dde9ff 100%)",
+    pageBg: "linear-gradient(135deg, #7cc0e6 0%, #a8d4ef 100%)",
     leftBg: "linear-gradient(160deg, rgba(240,247,255,0.99) 0%, rgba(255,255,255,1) 100%)",
     leftBorder: "1px solid rgba(80,120,200,0.15)",
     logoColor: "#080f28",
@@ -95,13 +95,13 @@ const T = {
     switchLink: "#7c3aed",
     termsText: "rgba(30,50,100,0.35)",
     termsLink: "rgba(30,50,100,0.55)",
-    // Right panel
-    rightBg: "linear-gradient(160deg, #c8d8f8 0%, #dae7ff 40%, #e8f2ff 100%)",
-    rightGlow: "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(40,80,200,0.2) 0%, rgba(30,60,150,0.08) 50%, transparent 100%)",
-    rightTitle: "#080f28",
-    rightSubtitle: "#1a2a5e",
-    rightDesc: "rgba(40,60,120,0.5)",
-    rightScanOpacity: 0.008,
+    // Right panel — sky & water atmosphere
+    rightBg: "linear-gradient(to bottom, #4a9fd8 0%, #7cbce6 30%, #a8d5ef 50%, #d0e8f6 60%, #bcdcf0 70%, #8cc5e5 100%)",
+    rightGlow: "radial-gradient(ellipse 60% 50% at 70% 10%, rgba(255,235,140,0.3) 0%, rgba(255,210,80,0.1) 40%, transparent 65%)",
+    rightTitle: "#ffffff",
+    rightSubtitle: "#ffffff",
+    rightDesc: "rgba(255,255,255,0.7)",
+    rightScanOpacity: 0,
   },
 };
 

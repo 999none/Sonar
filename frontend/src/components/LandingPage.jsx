@@ -5,15 +5,17 @@ import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
 import LoginModal from "./LoginModal";
 import SettingsModal from "./SettingsModal";
+import SkyWaterOverlay from "./SkyWaterOverlay";
 
 // ── Profile dropdown ──────────────────────────────────────────────────────────
-function ProfileMenu({ user, onLogout, onClose, onOpenSettings }) {
+function ProfileMenu({ user, onLogout, onClose, onOpenSettings, isDark = true }) {
   const items = [
     { icon: Settings, label: "Paramètres de compte",  color: null },
     { icon: Globe,    label: "Langues",                color: null, suffix: "FR" },
     { icon: Github,   label: "Se connecter à GitHub",  color: null },
   ];
 
+  const dk = isDark;
   return (
     <motion.div
       data-testid="profile-menu"
@@ -26,18 +28,22 @@ function ProfileMenu({ user, onLogout, onClose, onOpenSettings }) {
         top: "calc(100% + 10px)",
         right: 0,
         width: 230,
-        background: "linear-gradient(160deg, rgba(16,26,65,0.97) 0%, rgba(6,8,22,0.99) 100%)",
+        background: dk
+          ? "linear-gradient(160deg, rgba(16,26,65,0.97) 0%, rgba(6,8,22,0.99) 100%)"
+          : "linear-gradient(160deg, rgba(255,255,255,0.95) 0%, rgba(240,248,255,0.98) 100%)",
         backdropFilter: "blur(40px)",
         WebkitBackdropFilter: "blur(40px)",
-        border: "1px solid rgba(255,255,255,0.11)",
+        border: dk ? "1px solid rgba(255,255,255,0.11)" : "1px solid rgba(255,255,255,0.5)",
         borderRadius: "18px",
-        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 24px 60px rgba(0,0,0,0.75)",
+        boxShadow: dk
+          ? "inset 0 1px 0 rgba(255,255,255,0.08), 0 24px 60px rgba(0,0,0,0.75)"
+          : "inset 0 1px 0 rgba(255,255,255,0.9), 0 24px 60px rgba(30,80,160,0.15)",
         overflow: "hidden",
         zIndex: 200,
       }}
     >
       {/* User info header */}
-      <div style={{ padding: "15px 16px 13px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+      <div style={{ padding: "15px 16px 13px", borderBottom: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,120,200,0.12)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{
             width: 34, height: 34, borderRadius: "50%",
@@ -49,10 +55,10 @@ function ProfileMenu({ user, onLogout, onClose, onOpenSettings }) {
             </span>
           </div>
           <div style={{ minWidth: 0 }}>
-            <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: "13px", color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: "13px", color: dk ? "#fff" : "#0a1a3e", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {user.name || "Utilisateur"}
             </p>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(140,165,200,0.55)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: dk ? "rgba(140,165,200,0.55)" : "rgba(40,70,130,0.5)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {user.email}
             </p>
           </div>
@@ -71,15 +77,15 @@ function ProfileMenu({ user, onLogout, onClose, onOpenSettings }) {
               background: "transparent", cursor: "pointer", transition: "background 0.13s",
               textAlign: "left",
             }}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.07)"}
+            onMouseEnter={e => e.currentTarget.style.background = dk ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)"}
             onMouseLeave={e => e.currentTarget.style.background = "transparent"}
           >
-            <Icon style={{ width: 15, height: 15, color: "rgba(160,185,220,0.6)", flexShrink: 0 }} />
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(215,225,240,0.85)", flex: 1 }}>
+            <Icon style={{ width: 15, height: 15, color: dk ? "rgba(160,185,220,0.6)" : "rgba(40,80,150,0.5)", flexShrink: 0 }} />
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: dk ? "rgba(215,225,240,0.85)" : "#1e3264", flex: 1 }}>
               {label}
             </span>
             {suffix && (
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(120,145,180,0.5)", background: "rgba(255,255,255,0.06)", padding: "2px 7px", borderRadius: "6px" }}>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: dk ? "rgba(120,145,180,0.5)" : "rgba(40,70,130,0.45)", background: dk ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)", padding: "2px 7px", borderRadius: "6px" }}>
                 {suffix}
               </span>
             )}
@@ -87,7 +93,7 @@ function ProfileMenu({ user, onLogout, onClose, onOpenSettings }) {
         ))}
 
         {/* Divider */}
-        <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "5px 8px" }} />
+        <div style={{ height: 1, background: dk ? "rgba(255,255,255,0.07)" : "rgba(80,120,200,0.1)", margin: "5px 8px" }} />
 
         {/* Logout */}
         <button
@@ -210,42 +216,42 @@ const THEMES = {
     heroGlow: "0 2px 4px rgba(0,0,0,0.9), 0 8px 32px rgba(0,0,0,0.7), 0 0 120px rgba(20,60,160,0.35)",
   },
   light: {
-    pageBg: "linear-gradient(to bottom, #b8d0f4 0%, #cfe0ff 35%, #e2ecff 65%, #f0f5ff 100%)",
-    navBg: "rgba(210,228,255,0.65)",
-    navBorder: "rgba(100,140,220,0.2)",
-    logoText: "#080f28",
-    logoHoverBg: "rgba(0,0,0,0.04)",
-    text1: "#070d25",
-    text2: "rgba(30,50,100,0.75)",
-    text3: "rgba(60,85,140,0.55)",
-    inputBg: "linear-gradient(160deg, rgba(255,255,255,0.92) 0%, rgba(235,244,255,0.96) 100%)",
-    inputBorderNormal: "rgba(80,120,200,0.18)",
-    inputBorderFocus: "rgba(60,120,240,0.4)",
-    inputShadowNormal: "inset 0 1px 0 rgba(255,255,255,0.9), 0 8px 32px rgba(40,80,180,0.1)",
-    inputShadowFocus: "inset 0 1px 0 rgba(255,255,255,0.9), 0 0 0 4px rgba(60,120,240,0.1), 0 16px 40px rgba(40,80,180,0.14)",
-    textareaColor: "#0a0f25",
-    pillBg: "linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(225,238,255,0.8) 100%)",
-    pillBorder: "rgba(80,120,200,0.2)",
-    pillText: "rgba(40,65,130,0.75)",
-    pillTextHover: "rgba(30,90,220,0.9)",
-    pillBorderHover: "rgba(30,90,220,0.3)",
-    pillBgHover: "linear-gradient(135deg, rgba(30,90,220,0.1) 0%, rgba(30,90,220,0.04) 100%)",
-    cardBg: "linear-gradient(160deg, rgba(255,255,255,0.88) 0%, rgba(225,238,255,0.92) 100%)",
-    cardBorder: "rgba(80,120,200,0.16)",
-    cardBorderHover: "rgba(80,120,200,0.3)",
-    cardBgHover: "linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(210,228,255,0.95) 100%)",
-    labelColor: "rgba(70,100,160,0.55)",
-    signInText: "rgba(30,50,100,0.7)",
-    signInBorder: "rgba(80,120,200,0.2)",
-    signInBg: "rgba(255,255,255,0.5)",
-    signInTextHover: "rgba(20,40,100,0.95)",
-    signInBgHover: "rgba(255,255,255,0.8)",
-    dropdownBg: "linear-gradient(160deg, rgba(240,247,255,0.98) 0%, rgba(255,255,255,0.99) 100%)",
-    dropdownBorder: "rgba(80,120,200,0.2)",
-    dropdownText: "rgba(30,50,100,0.85)",
-    separator: "rgba(100,130,200,0.5)",
-    themeIconColor: "rgba(255,180,40,0.9)",
-    heroGlow: "0 2px 4px rgba(0,50,150,0.1), 0 0 60px rgba(30,70,200,0.12)",
+    pageBg: "transparent",  // SkyWaterOverlay gère le fond
+    navBg: "rgba(255,255,255,0.25)",
+    navBorder: "rgba(255,255,255,0.3)",
+    logoText: "#0a2a5e",
+    logoHoverBg: "rgba(255,255,255,0.15)",
+    text1: "#0a1a3e",
+    text2: "rgba(10,40,90,0.7)",
+    text3: "rgba(30,70,130,0.5)",
+    inputBg: "linear-gradient(160deg, rgba(255,255,255,0.75) 0%, rgba(230,245,255,0.7) 100%)",
+    inputBorderNormal: "rgba(255,255,255,0.5)",
+    inputBorderFocus: "rgba(60,140,240,0.5)",
+    inputShadowNormal: "inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 32px rgba(20,80,160,0.12)",
+    inputShadowFocus: "inset 0 1px 0 rgba(255,255,255,0.9), 0 0 0 4px rgba(60,140,240,0.12), 0 16px 40px rgba(20,80,160,0.16)",
+    textareaColor: "#0a1a3e",
+    pillBg: "linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(220,240,255,0.55) 100%)",
+    pillBorder: "rgba(255,255,255,0.5)",
+    pillText: "rgba(20,60,120,0.8)",
+    pillTextHover: "rgba(10,80,200,0.95)",
+    pillBorderHover: "rgba(60,140,240,0.4)",
+    pillBgHover: "linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(200,230,255,0.7) 100%)",
+    cardBg: "linear-gradient(160deg, rgba(255,255,255,0.7) 0%, rgba(220,240,255,0.65) 100%)",
+    cardBorder: "rgba(255,255,255,0.45)",
+    cardBorderHover: "rgba(255,255,255,0.7)",
+    cardBgHover: "linear-gradient(160deg, rgba(255,255,255,0.85) 0%, rgba(210,235,255,0.8) 100%)",
+    labelColor: "rgba(30,70,140,0.5)",
+    signInText: "rgba(10,30,80,0.75)",
+    signInBorder: "rgba(255,255,255,0.45)",
+    signInBg: "rgba(255,255,255,0.35)",
+    signInTextHover: "rgba(10,20,60,0.95)",
+    signInBgHover: "rgba(255,255,255,0.6)",
+    dropdownBg: "linear-gradient(160deg, rgba(240,250,255,0.95) 0%, rgba(255,255,255,0.97) 100%)",
+    dropdownBorder: "rgba(100,160,230,0.25)",
+    dropdownText: "rgba(15,45,100,0.85)",
+    separator: "rgba(80,140,220,0.35)",
+    themeIconColor: "rgba(255,200,50,0.95)",
+    heroGlow: "0 2px 4px rgba(255,255,255,0.3), 0 0 80px rgba(255,255,255,0.15)",
   },
 };
 
@@ -402,22 +408,30 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         isDark={isDark}
         onToggleTheme={onToggleTheme}
       />
-      {/* Subtle horizontal scan lines for depth */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px)",
-        }}
-      />
+      {/* Sky & Water overlay for light mode */}
+      {!isDark ? null : null}
+      {!isDark && <SkyWaterOverlay />}
 
-      {/* Blue glow at top center */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse 70% 55% at 50% 5%, rgba(12,60,150,0.65) 0%, rgba(5,20,70,0.3) 45%, transparent 100%)",
-          filter: "blur(2px)",
-        }}
-      />
+      {/* Subtle horizontal scan lines for depth (dark only) */}
+      {isDark && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px)",
+          }}
+        />
+      )}
+
+      {/* Blue glow at top center (dark only) */}
+      {isDark && (
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse 70% 55% at 50% 5%, rgba(12,60,150,0.65) 0%, rgba(5,20,70,0.3) 45%, transparent 100%)",
+            filter: "blur(2px)",
+          }}
+        />
+      )}
 
       {/* Minimal top nav */}
       <motion.nav
@@ -499,6 +513,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                       onLogout={onLogout}
                       onClose={() => setShowProfileMenu(false)}
                       onOpenSettings={() => { setShowProfileMenu(false); setShowSettings(true); }}
+                      isDark={isDark}
                     />
                   )}
                 </AnimatePresence>
