@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock } from "lucide-react";
 import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
+import LandingSections from "./LandingSections";
 
 function relativeTime(ts) {
   if (!ts) return "";
@@ -174,7 +175,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
 
   return (
     <div
-      className="min-h-screen w-full flex flex-col relative overflow-hidden"
+      className="w-full flex flex-col relative"
       style={{
         background: "linear-gradient(to bottom, #0c1f4a 0%, #060d1e 35%, #010408 65%, #000000 100%)",
       }}
@@ -241,10 +242,10 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         </div>
       </motion.nav>
 
-      {/* HERO — centered vertically in the viewport */}
+      {/* HERO — full viewport height */}
       <div
-        className="flex-1 flex flex-col items-center justify-center relative z-10"
-        style={{ minHeight: "80vh" }}
+        className="flex flex-col items-center justify-center relative z-10"
+        style={{ minHeight: "100vh", overflow: "hidden" }}
       >
 
         {/* Giant SONAR text */}
@@ -584,6 +585,10 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           </motion.div>
         )}
       </div>
+
+      {/* ── Landing sections (scroll down) ── */}
+      <LandingSections />
+
     </div>
   );
 }

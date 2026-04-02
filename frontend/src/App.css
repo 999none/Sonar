@@ -1,16 +1,17 @@
 /* Global Styles for Sonar */
-@import url('https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.bunny.net/css?family=sora:700,800,900&family=space-grotesk:400,500,600,700&family=manrope:400,500,600,700&display=swap');
 
 * {
   box-sizing: border-box;
 }
 
-html, body, #root {
-  height: 100%;
+html, body {
   margin: 0;
   padding: 0;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 body {
@@ -19,7 +20,7 @@ body {
   color: #e2e8f0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* Scrollbar */
