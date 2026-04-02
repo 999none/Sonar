@@ -1,6 +1,6 @@
 // Real AI model icons using uploaded brand images
 
-const CLAUDE_URL  = "https://customer-assets.emergentagent.com/job_emergent-mock-2/artifacts/bocxbvjv_66af99839e55f1ee29f117ac.png";
+const CLAUDE_URL  = "https://customer-assets.emergentagent.com/job_sonar-preferences/artifacts/n8dx7aam_image.png";
 const CHATGPT_URL = "https://customer-assets.emergentagent.com/job_emergent-mock-2/artifacts/lgeh51by_image.png";
 const GEMINI_URL  = "https://customer-assets.emergentagent.com/job_emergent-mock-2/artifacts/5vls8viv_image.png";
 
