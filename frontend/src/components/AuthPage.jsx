@@ -32,7 +32,7 @@ const inputBase = {
   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
   color: "#e2e8f0",
   fontSize: "14px",
-  fontFamily: "'Manrope', sans-serif",
+  fontFamily: "'DM Sans', sans-serif",
   outline: "none",
   boxSizing: "border-box",
   transition: "border-color 0.15s, box-shadow 0.15s",
@@ -96,7 +96,7 @@ export default function AuthPage({ onBack, onLogin }) {
         >
           <span
             style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontWeight: 900,
               fontSize: "1.1rem",
               letterSpacing: "-0.05em",
@@ -219,7 +219,7 @@ export default function AuthPage({ onBack, onLogin }) {
         {/* Divider */}
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 22 }}>
           <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
-          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.3)", whiteSpace: "nowrap" }}>
+          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.3)", whiteSpace: "nowrap" }}>
             or continue with email
           </span>
           <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
@@ -237,7 +237,7 @@ export default function AuthPage({ onBack, onLogin }) {
                 transition={{ duration: 0.2 }}
                 style={{ overflow: "hidden" }}
               >
-                <label style={{ display: "block", fontFamily: "'Manrope', sans-serif", fontSize: "13px", fontWeight: 600, color: "rgba(200,215,235,0.7)", marginBottom: 7 }}>
+                <label style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: "rgba(200,215,235,0.7)", marginBottom: 7 }}>
                   Full name
                 </label>
                 <input
@@ -255,7 +255,7 @@ export default function AuthPage({ onBack, onLogin }) {
           </AnimatePresence>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: "block", fontFamily: "'Manrope', sans-serif", fontSize: "13px", fontWeight: 600, color: "rgba(200,215,235,0.7)", marginBottom: 7 }}>
+            <label style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: "rgba(200,215,235,0.7)", marginBottom: 7 }}>
               Email
             </label>
             <input
@@ -271,7 +271,7 @@ export default function AuthPage({ onBack, onLogin }) {
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <label style={{ display: "block", fontFamily: "'Manrope', sans-serif", fontSize: "13px", fontWeight: 600, color: "rgba(200,215,235,0.7)", marginBottom: 7 }}>
+            <label style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: "rgba(200,215,235,0.7)", marginBottom: 7 }}>
               Password
             </label>
             <input
@@ -317,7 +317,7 @@ export default function AuthPage({ onBack, onLogin }) {
           </button>
         </form>
 
-        <p style={{ textAlign: "center", fontFamily: "'Manrope', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.38)", marginBottom: 10 }}>
+        <p style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.38)", marginBottom: 10 }}>
           {tab === "signup" ? "Already have an account? " : "No account yet? "}
           <span
             data-testid="auth-switch-tab"
@@ -329,7 +329,7 @@ export default function AuthPage({ onBack, onLogin }) {
         </p>
 
         {tab === "signup" && (
-          <p style={{ textAlign: "center", fontFamily: "'Manrope', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.22)", lineHeight: 1.5 }}>
+          <p style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.22)", lineHeight: 1.5 }}>
             By continuing you agree to our{" "}
             <span style={{ textDecoration: "underline", cursor: "pointer", color: "rgba(255,255,255,0.38)" }}>Terms</span>
             {" & "}
@@ -380,7 +380,7 @@ export default function AuthPage({ onBack, onLogin }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: "'Outfit', sans-serif",
             fontSize: "clamp(5rem, 12vw, 9rem)",
             fontWeight: 900,
             letterSpacing: "-0.055em",

@@ -52,7 +52,7 @@ function StatsSection() {
             }}
           >
             <p style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontSize: "clamp(2rem, 4vw, 3rem)",
               fontWeight: 900,
               letterSpacing: "-0.04em",
@@ -63,7 +63,7 @@ function StatsSection() {
               {s.display ? s.display : <Counter target={s.value} suffix={s.suffix} />}
             </p>
             <p style={{
-              fontFamily: "'Manrope', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontSize: "12px",
               color: "rgba(140,158,180,0.55)",
               fontWeight: 500,
@@ -164,13 +164,13 @@ function MockBuilderPreview() {
           gap: 6,
         }}>
           <Lock style={{ width: 9, height: 9, color: "rgba(6,182,212,0.6)" }} />
-          <span style={{ fontSize: "11px", color: "rgba(180,200,230,0.5)", fontFamily: "'Manrope', sans-serif" }}>
+          <span style={{ fontSize: "11px", color: "rgba(180,200,230,0.5)", fontFamily: "'DM Sans', sans-serif" }}>
             app.sonar.dev/todo-app-7f3a
           </span>
         </div>
         <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
-          <div style={{ padding: "3px 10px", borderRadius: 6, background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", fontSize: "10px", fontFamily: "'Space Grotesk', sans-serif", color: "#06b6d4", fontWeight: 600 }}>E-1</div>
-          <div style={{ padding: "3px 10px", borderRadius: 6, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", fontSize: "10px", fontFamily: "'Space Grotesk', sans-serif", color: "rgba(180,200,230,0.6)", fontWeight: 600 }}>Deploy</div>
+          <div style={{ padding: "3px 10px", borderRadius: 6, background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.25)", fontSize: "10px", fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#06b6d4", fontWeight: 600 }}>E-1</div>
+          <div style={{ padding: "3px 10px", borderRadius: 6, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", fontSize: "10px", fontFamily: "'Plus Jakarta Sans', sans-serif", color: "rgba(180,200,230,0.6)", fontWeight: 600 }}>Deploy</div>
         </div>
       </div>
 
@@ -350,10 +350,10 @@ function DemoSection() {
           transition={{ duration: 0.55 }}
         >
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: "11px", color: "rgba(6,182,212,0.7)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 14 }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(6,182,212,0.7)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 14 }}>
               Voyez-le en action
             </p>
-            <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, letterSpacing: "-0.04em", color: "#fff", lineHeight: 1.1 }}>
+            <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 700, letterSpacing: "-0.04em", color: "#fff", lineHeight: 1.1 }}>
               De l'idée au code,<br />en temps réel.
             </h2>
           </div>
@@ -424,13 +424,13 @@ function ValueCard({ item, index }) {
       <div style={{ width: 44, height: 44, borderRadius: 12, background: `${item.color}15`, border: `1px solid ${item.color}28`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
         <Icon style={{ width: 20, height: 20, color: item.color }} />
       </div>
-      <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: "10px", fontWeight: 700, color: item.color, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>
+      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", fontWeight: 700, color: item.color, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>
         {item.eyebrow}
       </p>
-      <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "1.55rem", fontWeight: 700, color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.1, marginBottom: 14 }}>
+      <h3 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "1.55rem", fontWeight: 700, color: "#fff", letterSpacing: "-0.035em", lineHeight: 1.1, marginBottom: 14 }}>
         {item.title}
       </h3>
-      <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: "13.5px", color: "rgba(140,158,180,0.7)", lineHeight: 1.65 }}>
+      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13.5px", color: "rgba(140,158,180,0.7)", lineHeight: 1.65 }}>
         {item.desc}
       </p>
     </motion.div>
@@ -445,7 +445,7 @@ function ValuesSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          style={{ fontFamily: "'Manrope', sans-serif", fontSize: "11px", color: "rgba(6,182,212,0.7)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 14, textAlign: "center" }}
+          style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(6,182,212,0.7)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 14, textAlign: "center" }}
         >
           Pourquoi les devs choisissent Sonar
         </motion.p>
@@ -505,7 +505,7 @@ function TestimonialCard({ t, index }) {
         boxShadow: hovered ? `0 8px 32px ${t.color}10` : "none",
       }}
     >
-      <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: "14px", color: "rgba(200,215,235,0.8)", lineHeight: 1.65, marginBottom: 24, fontStyle: "italic" }}>
+      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", color: "rgba(200,215,235,0.8)", lineHeight: 1.65, marginBottom: 24, fontStyle: "italic" }}>
         "{t.text}"
       </p>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -516,15 +516,15 @@ function TestimonialCard({ t, index }) {
           display: "flex", alignItems: "center", justifyContent: "center",
           flexShrink: 0,
         }}>
-          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: "11px", fontWeight: 900, color: t.color }}>
+          <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "11px", fontWeight: 900, color: t.color }}>
             {t.avatar}
           </span>
         </div>
         <div>
-          <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", fontWeight: 600, color: "#e2e8f0", marginBottom: 2 }}>
+          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: "#e2e8f0", marginBottom: 2 }}>
             {t.name}
           </p>
-          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: "11px", color: "rgba(100,120,150,0.6)" }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(100,120,150,0.6)" }}>
             {t.role} · <span style={{ color: t.color }}>{t.handle}</span>
           </p>
         </div>
@@ -542,7 +542,7 @@ function TestimonialsSection() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            style={{ fontFamily: "'Manrope', sans-serif", fontSize: "11px", color: "rgba(6,182,212,0.7)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 14 }}
+            style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(6,182,212,0.7)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 14 }}
           >
             Ce qu'ils disent
           </motion.p>
@@ -551,7 +551,7 @@ function TestimonialsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(1.9rem, 4vw, 2.8rem)", fontWeight: 700, letterSpacing: "-0.04em", color: "#fff", lineHeight: 1.1 }}
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "clamp(1.9rem, 4vw, 2.8rem)", fontWeight: 700, letterSpacing: "-0.04em", color: "#fff", lineHeight: 1.1 }}
           >
             Des équipes qui livrent<br />deux fois plus vite.
           </motion.h2>
@@ -596,11 +596,11 @@ function CtaSection() {
           pointerEvents: "none",
         }} />
 
-        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: "11px", color: "rgba(6,182,212,0.7)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 20, position: "relative" }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(6,182,212,0.7)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 20, position: "relative" }}>
           Prêt à builder ?
         </p>
         <h2 style={{
-          fontFamily: "'Space Grotesk', sans-serif",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
           fontSize: "clamp(2.2rem, 5vw, 3.5rem)",
           fontWeight: 700,
           letterSpacing: "-0.045em",
@@ -611,7 +611,7 @@ function CtaSection() {
         }}>
           Votre prochaine app<br />commence ici.
         </h2>
-        <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "1.05rem", color: "rgba(180,195,215,0.55)", marginBottom: 40, position: "relative" }}>
+        <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "1.05rem", color: "rgba(180,195,215,0.55)", marginBottom: 40, position: "relative" }}>
           Gratuit pour commencer. Aucune carte bancaire requise.
         </p>
 
@@ -630,7 +630,7 @@ function CtaSection() {
               borderRadius: "12px",
               background: "linear-gradient(135deg, #06b6d4, #0ea5e9)",
               color: "#000",
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontWeight: 700,
               fontSize: "15px",
               border: "none",
@@ -653,7 +653,7 @@ function CtaSection() {
               borderRadius: "12px",
               background: "rgba(255,255,255,0.06)",
               color: "rgba(220,230,245,0.8)",
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontWeight: 600,
               fontSize: "14px",
               border: "1px solid rgba(255,255,255,0.1)",
@@ -686,23 +686,23 @@ function Footer() {
       <div style={{ maxWidth: "1080px", margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "32px", marginBottom: 56 }}>
           <div>
-            <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "-0.05em", color: "#fff", display: "block", marginBottom: 12 }}>
+            <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "-0.05em", color: "#fff", display: "block", marginBottom: 12 }}>
               sonar
             </span>
-            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: "13px", color: "rgba(140,158,180,0.5)", lineHeight: 1.7, maxWidth: 220 }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(140,158,180,0.5)", lineHeight: 1.7, maxWidth: 220 }}>
               Construisez des applications production-ready en quelques minutes grâce à l'IA.
             </p>
           </div>
           {Object.entries(links).map(([cat, items]) => (
             <div key={cat}>
-              <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 14 }}>
+              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 14 }}>
                 {cat}
               </p>
               {items.map(item => (
                 <a
                   key={item}
                   href="#"
-                  style={{ display: "block", fontFamily: "'Manrope', sans-serif", fontSize: "13px", color: "rgba(140,158,180,0.5)", marginBottom: 10, textDecoration: "none", transition: "color 0.15s" }}
+                  style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(140,158,180,0.5)", marginBottom: 10, textDecoration: "none", transition: "color 0.15s" }}
                   onMouseEnter={e => { e.target.style.color = "rgba(180,195,215,0.85)"; }}
                   onMouseLeave={e => { e.target.style.color = "rgba(140,158,180,0.5)"; }}
                 >
@@ -713,10 +713,10 @@ function Footer() {
           ))}
         </div>
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 24, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: "12px", color: "rgba(100,116,139,0.4)" }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "rgba(100,116,139,0.4)" }}>
             © 2025 Sonar. Tous droits réservés.
           </p>
-          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: "12px", color: "rgba(100,116,139,0.3)" }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "rgba(100,116,139,0.3)" }}>
             Propulsé par l'IA
           </p>
         </div>

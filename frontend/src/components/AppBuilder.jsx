@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import TopBar from "./TopBar";
 import ChatPanel from "./ChatPanel";
 import EmergentPreview from "./EmergentPreview";
@@ -49,6 +50,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
   const [projectName, setProjectName] = useState("untitled-app");
   const [activeTab, setActiveTab] = useState("preview");
   const [previewReady, setPreviewReady] = useState(false);
+  const [showPreviewPanel, setShowPreviewPanel] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [activeTaskId, setActiveTaskId] = useState(null);
   const [tasks, setTasks] = useState(externalTasks || loadHistory());
@@ -81,6 +83,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
     setCurrentCode("");
     setTerminalLogs([]);
     setPreviewReady(false);
+    setShowPreviewPanel(false);
     setMessages([]);
     setActiveTab("preview");
     pushTask(id, type, name, prompt);
@@ -103,6 +106,12 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
       const step = AGENT_STEPS[i];
       const meta = AGENT_META[step.id];
       addMsg({ role: "agent", agentId: step.id, label: meta.label, status: "working", steps: [] });
+
+      // Preview slides in when the Coder starts writing files
+      if (step.id === "coder") {
+        setShowPreviewPanel(true);
+      }
+
       await delay(400);
       for (let j = 0; j < meta.steps.length; j++) {
         await delay(500);
@@ -195,6 +204,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
     setProjectName(task.projectName);
     setProjectType(task.projectType);
     setPreviewReady(true);
+    setShowPreviewPanel(true);
     setActiveTab("preview");
     setMessages([
       { role: "user", content: task.prompt },
@@ -228,9 +238,15 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
       />
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Chat */}
-        <div className="flex flex-col overflow-hidden flex-shrink-0"
-          style={{ width: "50%", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
+        {/* Chat — full width until coder starts, then 50% */}
+        <div
+          className="flex flex-col overflow-hidden flex-shrink-0"
+          style={{
+            width: showPreviewPanel ? "50%" : "100%",
+            transition: "width 0.55s cubic-bezier(0.16, 1, 0.3, 1)",
+            borderRight: showPreviewPanel ? "1px solid rgba(255,255,255,0.06)" : "none",
+          }}
+        >
           <ChatPanel
             messages={messages}
             isTyping={isTyping}
@@ -240,19 +256,30 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
           />
         </div>
 
-        {/* Preview */}
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <EmergentPreview
-            projectType={projectType}
-            isGenerating={isGenerating}
-            previewReady={previewReady}
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            code={currentCode}
-            terminalLogs={terminalLogs}
-            projectName={projectName}
-          />
-        </div>
+        {/* Preview — slides in when coder starts */}
+        <AnimatePresence>
+          {showPreviewPanel && (
+            <motion.div
+              key="preview-panel"
+              initial={{ opacity: 0, x: 32 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 32 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              className="flex flex-col flex-1 overflow-hidden"
+            >
+              <EmergentPreview
+                projectType={projectType}
+                isGenerating={isGenerating}
+                previewReady={previewReady}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                code={currentCode}
+                terminalLogs={terminalLogs}
+                projectName={projectName}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <CostPreviewModal

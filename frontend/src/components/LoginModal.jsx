@@ -96,7 +96,7 @@ export default function LoginModal({ open, onClose, onGoToAuth }) {
               margin: "0 auto 22px",
             }}>
               <span style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: "'Outfit', sans-serif",
                 fontWeight: 900,
                 fontSize: "1.15rem",
                 letterSpacing: "-0.05em",
@@ -108,7 +108,7 @@ export default function LoginModal({ open, onClose, onGoToAuth }) {
 
             {/* Text */}
             <h2 style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontWeight: 700, fontSize: "1.25rem",
               letterSpacing: "-0.03em", color: "#fff",
               marginBottom: 10,
@@ -116,7 +116,7 @@ export default function LoginModal({ open, onClose, onGoToAuth }) {
               Connectez-vous pour continuer
             </h2>
             <p style={{
-              fontFamily: "'Manrope', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontSize: "13.5px",
               color: "rgba(160,178,200,0.65)",
               lineHeight: 1.6,
@@ -135,7 +135,7 @@ export default function LoginModal({ open, onClose, onGoToAuth }) {
                 width: "100%", padding: "13px 0",
                 borderRadius: "12px", border: "none",
                 background: "linear-gradient(90deg, #7c3aed 0%, #a855f7 60%, #c084fc 100%)",
-                color: "#fff", fontFamily: "'Space Grotesk', sans-serif",
+                color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontWeight: 700, fontSize: "14px", cursor: "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 gap: 8, boxShadow: "0 4px 24px rgba(124,58,237,0.4)",
@@ -146,7 +146,7 @@ export default function LoginModal({ open, onClose, onGoToAuth }) {
             </motion.button>
 
             <p style={{
-              fontFamily: "'Manrope', sans-serif",
+              fontFamily: "'DM Sans', sans-serif",
               fontSize: "12px",
               color: "rgba(255,255,255,0.25)",
             }}>

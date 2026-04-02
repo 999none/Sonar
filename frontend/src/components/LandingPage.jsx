@@ -225,7 +225,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         <span
           className="text-white font-black select-none"
           style={{
-            fontFamily: "'Sora', 'Inter', sans-serif",
+            fontFamily: "'Outfit', sans-serif",
             fontSize: "1.15rem",
             fontWeight: 900,
             letterSpacing: "-0.05em",
@@ -261,7 +261,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                   {(user.name || user.email || "U").slice(0, 2)}
                 </span>
               </div>
-              <span style={{ fontSize: "13px", fontFamily: "'Manrope', sans-serif", color: "rgba(200,215,235,0.75)", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <span style={{ fontSize: "13px", fontFamily: "'DM Sans', sans-serif", color: "rgba(200,215,235,0.75)", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {user.name || user.email}
               </span>
               <button
@@ -311,8 +311,8 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            fontFamily: "'Sora', 'Inter', sans-serif",
-            fontSize: "clamp(7rem, 22vw, 18rem)",
+            fontFamily: "'Outfit', sans-serif",
+            fontSize: "clamp(4rem, 12vw, 8rem)",
             fontWeight: 900,
             lineHeight: 0.88,
             letterSpacing: "-0.055em",
@@ -337,7 +337,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         >
           <p
             style={{
-              fontFamily: "'Space Grotesk', 'Inter', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
               fontSize: "clamp(1.6rem, 4.5vw, 3.2rem)",
               fontWeight: 700,
               color: "#ffffff",
@@ -351,7 +351,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           <p
             className="mt-2"
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontSize: "clamp(1rem, 2.5vw, 1.45rem)",
               fontWeight: 500,
               color: "rgba(180,190,210,0.7)",
@@ -402,7 +402,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                 padding: "22px 24px 56px",
                 color: "#e8ecf4",
                 fontSize: "1rem",
-                fontFamily: "'Manrope', sans-serif",
+                fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 400,
                 lineHeight: 1.6,
                 outline: "none",
@@ -414,7 +414,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
             {!isFocused && !inputValue && (
               <div
                 className="absolute pointer-events-none flex items-center gap-0.5"
-                style={{ top: "22px", left: "24px", color: "rgba(120,135,160,0.7)", fontSize: "1rem", fontFamily: "'Manrope', sans-serif" }}
+                style={{ top: "22px", left: "24px", color: "rgba(120,135,160,0.7)", fontSize: "1rem", fontFamily: "'DM Sans', sans-serif" }}
               >
                 <span>{inputValue}</span>
                 <motion.span
@@ -440,7 +440,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                     className="flex items-center gap-1 px-2 py-1 rounded-md transition-all"
                     style={{
                       fontSize: "11px",
-                      fontFamily: "'Manrope', sans-serif",
+                      fontFamily: "'DM Sans', sans-serif",
                       color: modeOpen ? "#06b6d4" : "rgba(110,130,165,0.9)",
                       background: modeOpen ? "rgba(6,182,212,0.08)" : "rgba(255,255,255,0.04)",
                       border: modeOpen ? "1px solid rgba(6,182,212,0.25)" : "1px solid rgba(255,255,255,0.06)",
@@ -498,7 +498,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                     className="flex items-center gap-1.5 px-2 py-1 rounded-md transition-all"
                     style={{
                       fontSize: "11px",
-                      fontFamily: "'Manrope', sans-serif",
+                      fontFamily: "'DM Sans', sans-serif",
                       color: modelOpen ? "#06b6d4" : "rgba(110,130,165,0.9)",
                       background: modelOpen ? "rgba(6,182,212,0.08)" : "rgba(255,255,255,0.04)",
                       border: modelOpen ? "1px solid rgba(6,182,212,0.25)" : "1px solid rgba(255,255,255,0.06)",
@@ -553,7 +553,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                 {/* Cost estimate — updates with mode */}
                 <span
                   data-testid="landing-cost-estimate"
-                  style={{ fontSize: "11px", color: "rgba(110,130,165,0.8)", fontFamily: "'Manrope', sans-serif" }}
+                  style={{ fontSize: "11px", color: "rgba(110,130,165,0.8)", fontFamily: "'DM Sans', sans-serif" }}
                 >
                   Est. ~{estimatedCost}
                 </span>
