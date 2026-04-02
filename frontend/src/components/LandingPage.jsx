@@ -145,10 +145,10 @@ function TaskCard({ task, onSelect, onClose, T = THEMES.dark }) {
         position: "relative", padding: "14px 16px 12px", borderRadius: "16px",
         background: hovered ? T.cardBgHover : T.cardBg,
         border: `1px solid ${hovered ? T.cardBorderHover : T.cardBorder}`,
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
         cursor: "pointer", transition: "all 0.2s", overflow: "hidden",
-        boxShadow: hovered ? "inset 0 1px 0 rgba(255,255,255,0.09), 0 12px 40px rgba(0,0,0,0.2)" : "inset 0 1px 0 rgba(255,255,255,0.05)",
+        boxShadow: hovered ? (T.cardShadowHover || "inset 0 1px 0 rgba(255,255,255,0.09), 0 12px 40px rgba(0,0,0,0.2)") : (T.cardShadow || "inset 0 1px 0 rgba(255,255,255,0.05)"),
       }}
     >
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${color}, transparent)`, opacity: hovered ? 1 : 0.5, transition: "opacity 0.2s" }} />
@@ -217,41 +217,55 @@ const THEMES = {
   },
   light: {
     pageBg: "transparent",  // SkyWaterOverlay gère le fond
-    navBg: "rgba(255,255,255,0.25)",
-    navBorder: "rgba(255,255,255,0.3)",
+    // ── Nav: frosted glass avec profondeur ──
+    navBg: "rgba(255,255,255,0.35)",
+    navBorder: "rgba(255,255,255,0.55)",
+    navShadow: "0 4px 30px rgba(20,80,160,0.08), 0 1px 0 rgba(255,255,255,0.7) inset",
     logoText: "#0a2a5e",
-    logoHoverBg: "rgba(255,255,255,0.15)",
+    logoHoverBg: "rgba(255,255,255,0.2)",
     text1: "#0a1a3e",
     text2: "rgba(10,40,90,0.7)",
     text3: "rgba(30,70,130,0.5)",
-    inputBg: "linear-gradient(160deg, rgba(255,255,255,0.75) 0%, rgba(230,245,255,0.7) 100%)",
-    inputBorderNormal: "rgba(255,255,255,0.5)",
-    inputBorderFocus: "rgba(60,140,240,0.5)",
-    inputShadowNormal: "inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 32px rgba(20,80,160,0.12)",
-    inputShadowFocus: "inset 0 1px 0 rgba(255,255,255,0.9), 0 0 0 4px rgba(60,140,240,0.12), 0 16px 40px rgba(20,80,160,0.16)",
+    // ── Input: deep glass avec ombres multi-couches ──
+    inputBg: "linear-gradient(160deg, rgba(255,255,255,0.6) 0%, rgba(220,240,255,0.5) 100%)",
+    inputBorderNormal: "rgba(255,255,255,0.65)",
+    inputBorderFocus: "rgba(56,189,248,0.55)",
+    inputShadowNormal: "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 2px rgba(20,80,160,0.04), 0 8px 32px rgba(20,80,160,0.1), 0 2px 8px rgba(20,80,160,0.06), 0 20px 60px -10px rgba(20,80,160,0.08)",
+    inputShadowFocus: "inset 0 1px 0 rgba(255,255,255,0.95), 0 0 0 4px rgba(56,189,248,0.12), 0 12px 40px rgba(20,80,160,0.14), 0 24px 70px -10px rgba(20,80,160,0.1)",
     textareaColor: "#0a1a3e",
-    pillBg: "linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(220,240,255,0.55) 100%)",
-    pillBorder: "rgba(255,255,255,0.5)",
-    pillText: "rgba(20,60,120,0.8)",
+    // ── Pills: glass micro-cards ──
+    pillBg: "linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(220,240,255,0.45) 100%)",
+    pillBorder: "rgba(255,255,255,0.6)",
+    pillShadow: "0 2px 8px rgba(20,80,160,0.06), inset 0 1px 0 rgba(255,255,255,0.8)",
+    pillText: "rgba(20,60,120,0.75)",
     pillTextHover: "rgba(10,80,200,0.95)",
-    pillBorderHover: "rgba(60,140,240,0.4)",
-    pillBgHover: "linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(200,230,255,0.7) 100%)",
-    cardBg: "linear-gradient(160deg, rgba(255,255,255,0.7) 0%, rgba(220,240,255,0.65) 100%)",
-    cardBorder: "rgba(255,255,255,0.45)",
-    cardBorderHover: "rgba(255,255,255,0.7)",
-    cardBgHover: "linear-gradient(160deg, rgba(255,255,255,0.85) 0%, rgba(210,235,255,0.8) 100%)",
+    pillBorderHover: "rgba(56,189,248,0.4)",
+    pillBgHover: "linear-gradient(135deg, rgba(255,255,255,0.75) 0%, rgba(200,230,255,0.65) 100%)",
+    pillShadowHover: "0 4px 16px rgba(20,80,160,0.1), inset 0 1px 0 rgba(255,255,255,0.9)",
+    // ── Cards: elevated glass ──
+    cardBg: "linear-gradient(160deg, rgba(255,255,255,0.6) 0%, rgba(215,238,255,0.5) 100%)",
+    cardBorder: "rgba(255,255,255,0.55)",
+    cardShadow: "0 4px 16px rgba(20,80,160,0.07), 0 12px 40px -8px rgba(20,80,160,0.06), inset 0 1px 0 rgba(255,255,255,0.85)",
+    cardBorderHover: "rgba(255,255,255,0.8)",
+    cardBgHover: "linear-gradient(160deg, rgba(255,255,255,0.78) 0%, rgba(205,232,255,0.68) 100%)",
+    cardShadowHover: "0 8px 24px rgba(20,80,160,0.1), 0 20px 60px -10px rgba(20,80,160,0.08), inset 0 1px 0 rgba(255,255,255,0.95)",
     labelColor: "rgba(30,70,140,0.5)",
+    // ── Sign-in button: glass ──
     signInText: "rgba(10,30,80,0.75)",
-    signInBorder: "rgba(255,255,255,0.45)",
+    signInBorder: "rgba(255,255,255,0.55)",
     signInBg: "rgba(255,255,255,0.35)",
+    signInShadow: "0 2px 8px rgba(20,80,160,0.06), inset 0 1px 0 rgba(255,255,255,0.7)",
     signInTextHover: "rgba(10,20,60,0.95)",
     signInBgHover: "rgba(255,255,255,0.6)",
-    dropdownBg: "linear-gradient(160deg, rgba(240,250,255,0.95) 0%, rgba(255,255,255,0.97) 100%)",
-    dropdownBorder: "rgba(100,160,230,0.25)",
+    signInShadowHover: "0 4px 16px rgba(20,80,160,0.1), inset 0 1px 0 rgba(255,255,255,0.85)",
+    // ── Dropdown: elevated glass panel ──
+    dropdownBg: "linear-gradient(160deg, rgba(240,250,255,0.92) 0%, rgba(255,255,255,0.95) 100%)",
+    dropdownBorder: "rgba(255,255,255,0.6)",
+    dropdownShadow: "0 12px 40px rgba(20,80,160,0.12), 0 4px 16px rgba(20,80,160,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
     dropdownText: "rgba(15,45,100,0.85)",
     separator: "rgba(80,140,220,0.35)",
     themeIconColor: "rgba(255,200,50,0.95)",
-    heroGlow: "0 2px 4px rgba(255,255,255,0.3), 0 0 80px rgba(255,255,255,0.15)",
+    heroGlow: "0 2px 4px rgba(255,255,255,0.4), 0 0 80px rgba(255,255,255,0.2), 0 0 160px rgba(56,189,248,0.08)",
   },
 };
 
@@ -433,12 +447,21 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         />
       )}
 
-      {/* Minimal top nav */}
+      {/* Minimal top nav — glass bar */}
       <motion.nav
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.1 }}
-        className="relative z-20 flex items-center justify-between px-10 py-5"
+        className="relative z-20 flex items-center justify-between px-10 py-3"
+        style={{
+          margin: isDark ? 0 : "12px 16px 0",
+          borderRadius: isDark ? 0 : "18px",
+          background: isDark ? "transparent" : T.navBg,
+          backdropFilter: isDark ? "none" : "blur(20px)",
+          WebkitBackdropFilter: isDark ? "none" : "blur(20px)",
+          border: isDark ? "none" : `1px solid ${T.navBorder}`,
+          boxShadow: isDark ? "none" : (T.navShadow || "none"),
+        }}
       >
         <span
           className="select-none"
@@ -528,9 +551,12 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                 color: T.signInText,
                 border: `1px solid ${T.signInBorder}`,
                 background: T.signInBg,
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                boxShadow: T.signInShadow || "none",
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = T.signInTextHover; e.currentTarget.style.background = T.signInBgHover; }}
-              onMouseLeave={e => { e.currentTarget.style.color = T.signInText; e.currentTarget.style.background = T.signInBg; }}
+              onMouseEnter={e => { e.currentTarget.style.color = T.signInTextHover; e.currentTarget.style.background = T.signInBgHover; e.currentTarget.style.boxShadow = T.signInShadowHover || ""; }}
+              onMouseLeave={e => { e.currentTarget.style.color = T.signInText; e.currentTarget.style.background = T.signInBg; e.currentTarget.style.boxShadow = T.signInShadow || "none"; }}
             >
               Sign in
             </button>
@@ -899,20 +925,22 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                   color: T.pillText,
                   border: `1px solid ${T.pillBorder}`,
                   background: T.pillBg,
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                  boxShadow: T.pillShadow || "inset 0 1px 0 rgba(255,255,255,0.08)",
                   cursor: "pointer",
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.color = T.pillTextHover;
                   e.currentTarget.style.borderColor = T.pillBorderHover;
                   e.currentTarget.style.background = T.pillBgHover;
+                  e.currentTarget.style.boxShadow = T.pillShadowHover || T.pillShadow || "";
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.color = T.pillText;
                   e.currentTarget.style.borderColor = T.pillBorder;
                   e.currentTarget.style.background = T.pillBg;
+                  e.currentTarget.style.boxShadow = T.pillShadow || "inset 0 1px 0 rgba(255,255,255,0.08)";
                 }}
               >
                 <ChevronRight style={{ width: "11px", height: "11px" }} /> {t.name}

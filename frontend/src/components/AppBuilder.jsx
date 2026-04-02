@@ -228,7 +228,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
   };
 
   return (
-    <div className="flex flex-col overflow-hidden" style={{ height: "100vh", background: isDark ? "#0a0a0a" : "#e8f2fb" }}>
+    <div className="flex flex-col overflow-hidden" style={{ height: "100vh", background: isDark ? "#0a0a0a" : "linear-gradient(to bottom, #7cc0e6 0%, #a8d5ef 35%, #bdddf3 55%, #95cae8 100%)" }}>
       <TopBar
         isGenerating={isGenerating}
         onDeploy={handleDeploy}

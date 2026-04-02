@@ -25,8 +25,11 @@ function UserMsg({ content, isNew, isDark }) {
     <motion.div initial={isNew ? { opacity: 0, y: 8 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22 }} className="mb-5">
       <div className="text-sm leading-relaxed px-4 py-3 rounded-2xl"
         style={{
-          background: isDark ? "rgba(22,101,78,0.5)" : "rgba(6,182,212,0.1)",
-          border: isDark ? "1px solid rgba(34,197,94,0.13)" : "1px solid rgba(6,182,212,0.2)",
+          background: isDark ? "rgba(22,101,78,0.5)" : "rgba(255,255,255,0.5)",
+          backdropFilter: isDark ? "none" : "blur(12px)",
+          WebkitBackdropFilter: isDark ? "none" : "blur(12px)",
+          border: isDark ? "1px solid rgba(34,197,94,0.13)" : "1px solid rgba(255,255,255,0.6)",
+          boxShadow: isDark ? "none" : "0 2px 12px rgba(20,80,160,0.06), inset 0 1px 0 rgba(255,255,255,0.7)",
           color: isDark ? "#dff5ea" : "#0a2a4e",
           fontFamily: "'Manrope',sans-serif",
           lineHeight: 1.65,
@@ -134,7 +137,7 @@ export default function ChatPanel({ messages, isTyping, isGenerating, onSendMess
   };
 
   return (
-    <div className="flex flex-col h-full" style={{ background: dk ? "#0a0a0a" : "#eaf3fc" }}>
+    <div className="flex flex-col h-full" style={{ background: dk ? "#0a0a0a" : "rgba(220,238,252,0.6)", backdropFilter: dk ? "none" : "blur(8px)" }}>
 
       {/* Messages */}
       <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto relative" style={{ padding: "24px 22px 12px" }}>
@@ -188,11 +191,13 @@ export default function ChatPanel({ messages, isTyping, isGenerating, onSendMess
       )}
 
       {/* Input */}
-      <div className="flex-shrink-0 px-3 pb-3 pt-1" style={{ background: dk ? "#0a0a0a" : "#eaf3fc" }}>
+      <div className="flex-shrink-0 px-3 pb-3 pt-1">
         <div className="rounded-xl overflow-hidden" style={{
-          background: dk ? "#111318" : "rgba(255,255,255,0.8)",
-          border: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,140,220,0.2)",
-          backdropFilter: dk ? "none" : "blur(12px)",
+          background: dk ? "#111318" : "rgba(255,255,255,0.55)",
+          border: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(255,255,255,0.65)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          boxShadow: dk ? "none" : "0 4px 20px rgba(20,80,160,0.07), inset 0 1px 0 rgba(255,255,255,0.8)",
         }}>
           <textarea
             data-testid="chat-input"

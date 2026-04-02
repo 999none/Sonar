@@ -18,9 +18,11 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
     <div
       className="h-11 flex items-center flex-shrink-0 z-20 relative"
       style={{
-        background: dk ? "#06090f" : "rgba(255,255,255,0.7)",
-        backdropFilter: dk ? "none" : "blur(12px)",
-        borderBottom: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.15)",
+        background: dk ? "#06090f" : "rgba(255,255,255,0.45)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderBottom: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(255,255,255,0.5)",
+        boxShadow: dk ? "none" : "0 2px 16px rgba(20,80,160,0.06), inset 0 1px 0 rgba(255,255,255,0.7)",
       }}
     >
       {/* Home — left */}

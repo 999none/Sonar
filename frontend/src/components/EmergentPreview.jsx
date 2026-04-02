@@ -380,13 +380,15 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
   };
 
   return (
-    <div className="flex flex-col h-full relative" style={{ background: dk ? "#060c14" : "#dfeefb" }}>
+    <div className="flex flex-col h-full relative" style={{ background: dk ? "#060c14" : "rgba(215,235,252,0.5)", backdropFilter: dk ? "none" : "blur(8px)" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2.5 flex-shrink-0"
         style={{
-          background: dk ? "#06090f" : "rgba(255,255,255,0.65)",
-          backdropFilter: dk ? "none" : "blur(12px)",
-          borderBottom: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.15)",
+          background: dk ? "#06090f" : "rgba(255,255,255,0.5)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          borderBottom: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(255,255,255,0.5)",
+          boxShadow: dk ? "none" : "0 2px 12px rgba(20,80,160,0.05), inset 0 1px 0 rgba(255,255,255,0.7)",
         }}>
         <div className="flex items-center gap-1">
           {[
@@ -398,8 +400,9 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all"
               style={{
                 color: activeTab===id ? (dk ? "#e2e8f0" : "#0a1a3e") : (dk ? "rgba(100,116,139,0.7)" : "rgba(40,70,130,0.45)"),
-                background: activeTab===id ? (dk ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.7)") : "transparent",
-                border: activeTab===id ? (dk ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(80,140,220,0.2)") : "1px solid transparent",
+                background: activeTab===id ? (dk ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.6)") : "transparent",
+                border: activeTab===id ? (dk ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)") : "1px solid transparent",
+                boxShadow: activeTab===id && !dk ? "0 1px 4px rgba(20,80,160,0.06)" : "none",
               }}>
               <Icon style={{ width: 11, height: 11 }} /> {label}
             </button>
