@@ -31,9 +31,9 @@ export const AGENT_STEPS = [
 ];
 
 export const MODELS = [
-  { id: "gpt-4o", label: "GPT-4o", provider: "openai", color: "#10B981" },
-  { id: "claude-sonnet", label: "Claude 4 Sonnet", provider: "anthropic", color: "#8B5CF6" },
-  { id: "gemini-pro", label: "Gemini 3 Pro", provider: "google", color: "#3B82F6" },
+  { id: "gpt-4o", label: "ChatGPT", provider: "openai", color: "#10B981" },
+  { id: "claude-sonnet", label: "Claude", provider: "anthropic", color: "#D97757" },
+  { id: "gemini-pro", label: "Gemini", provider: "google", color: "#4285F4" },
 ];
 
 export const TODO_CODE = `import { useState } from "react";

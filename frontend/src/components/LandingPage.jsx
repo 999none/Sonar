@@ -2,6 +2,19 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronRight, ChevronDown, Check } from "lucide-react";
 import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
+import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
+
+const MODEL_ICON_COLORS = {
+  openai: "#ffffff",
+  anthropic: "#D97757",
+  google: "url(#gemini-gradient)",
+};
+
+function ModelIcon({ provider, size = 15 }) {
+  if (provider === "openai") return <span style={{ color: "#fff", opacity: 0.9 }}><ChatGPTIcon size={size} /></span>;
+  if (provider === "anthropic") return <span style={{ color: "#D97757" }}><ClaudeIcon size={size} /></span>;
+  return <GeminiIcon size={size} />;
+}
 
 const MODE_INFO = {
   "E-1": { label: "E-1", desc: "Fast · Prototype-ready", cost: { todo: "$0.08", dashboard: "$0.12", ecommerce: "$0.16", default: "$0.09" } },
@@ -348,7 +361,7 @@ export default function LandingPage({ onStart }) {
                   <button
                     data-testid="landing-model-selector"
                     onClick={() => { setModelOpen(o => !o); setModeOpen(false); }}
-                    className="flex items-center gap-1 px-2 py-1 rounded-md transition-all"
+                    className="flex items-center gap-1.5 px-2 py-1 rounded-md transition-all"
                     style={{
                       fontSize: "11px",
                       fontFamily: "'Manrope', sans-serif",
@@ -357,15 +370,7 @@ export default function LandingPage({ onStart }) {
                       border: modelOpen ? "1px solid rgba(6,182,212,0.25)" : "1px solid rgba(255,255,255,0.06)",
                     }}
                   >
-                    <span
-                      className="font-black flex items-center justify-center"
-                      style={{
-                        width: "14px", height: "14px", borderRadius: "3px", fontSize: "8px",
-                        background: currentModel.color, color: "#000", flexShrink: 0,
-                      }}
-                    >
-                      {currentModel.provider === "openai" ? "G" : currentModel.provider === "anthropic" ? "C" : "G"}
-                    </span>
+                    <ModelIcon provider={currentModel.provider} size={13} />
                     <span>{currentModel.label}</span>
                     <ChevronDown style={{ width: "10px", height: "10px", opacity: 0.6 }} />
                   </button>
@@ -378,7 +383,7 @@ export default function LandingPage({ onStart }) {
                         transition={{ duration: 0.15 }}
                         className="absolute bottom-full mb-2 left-0 rounded-xl overflow-hidden z-50"
                         style={{
-                          width: "210px",
+                          width: "185px",
                           background: "#0d1424",
                           border: "1px solid rgba(40,60,100,0.7)",
                           boxShadow: "0 16px 40px rgba(0,0,0,0.7)",
@@ -396,12 +401,7 @@ export default function LandingPage({ onStart }) {
                             onMouseLeave={e => e.currentTarget.style.background = selectedModel === m.id ? "rgba(6,182,212,0.07)" : "transparent"}
                           >
                             <div className="flex items-center gap-2.5">
-                              <span
-                                className="font-black flex items-center justify-center"
-                                style={{ width: "18px", height: "18px", borderRadius: "4px", fontSize: "9px", background: m.color, color: "#000", flexShrink: 0 }}
-                              >
-                                {m.provider === "openai" ? "G" : m.provider === "anthropic" ? "C" : "G"}
-                              </span>
+                              <ModelIcon provider={m.provider} size={15} />
                               <span style={{ fontSize: "12px", color: selectedModel === m.id ? "#06b6d4" : "#e2e8f0" }}>{m.label}</span>
                             </div>
                             {selectedModel === m.id && <Check style={{ width: "12px", height: "12px", color: "#06b6d4", flexShrink: 0 }} />}

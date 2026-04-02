@@ -1,18 +1,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Rocket, Coins, Clock, DollarSign, Info, HelpCircle, X } from "lucide-react";
+import { ChevronDown, Rocket, Coins, Clock, DollarSign, HelpCircle, Check } from "lucide-react";
 import { MODELS } from "../data/mockData";
+import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
 
-const ModelIcon = ({ provider }) => {
-  const colors = { openai: "#10B981", anthropic: "#8B5CF6", google: "#3B82F6" };
-  const labels = { openai: "GPT", anthropic: "C", google: "G" };
-  return (
-    <span className="w-4 h-4 rounded text-xs font-black flex items-center justify-center"
-      style={{ background: colors[provider], color: "#000", fontSize: "9px" }}>
-      {labels[provider]}
-    </span>
-  );
-};
+function ModelIcon({ provider, size = 14 }) {
+  if (provider === "openai") return <span style={{ color: "#fff", opacity: 0.85, display: "flex" }}><ChatGPTIcon size={size} /></span>;
+  if (provider === "anthropic") return <span style={{ color: "#D97757", display: "flex" }}><ClaudeIcon size={size} /></span>;
+  return <span style={{ display: "flex" }}><GeminiIcon size={size} /></span>;
+}
 
 export default function TopBar({
   selectedModel, setSelectedModel,
@@ -65,7 +61,7 @@ export default function TopBar({
               color: "#cbd5e1",
             }}
           >
-            <ModelIcon provider={currentModel.provider} />
+            <ModelIcon provider={currentModel.provider} size={14} />
             <span>{currentModel.label}</span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
           </button>
@@ -77,7 +73,7 @@ export default function TopBar({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -8, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute top-full mt-2 left-0 w-52 rounded-xl overflow-hidden z-50 shadow-2xl"
+                className="absolute top-full mt-2 left-0 w-48 rounded-xl overflow-hidden z-50 shadow-2xl"
                 style={{
                   background: "#0F172A",
                   border: "1px solid rgba(30,41,59,0.9)",
@@ -92,9 +88,9 @@ export default function TopBar({
                     className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-slate-800/60"
                     style={{ color: selectedModel === m.id ? "#06b6d4" : "#94a3b8" }}
                   >
-                    <ModelIcon provider={m.provider} />
+                    <ModelIcon provider={m.provider} size={15} />
                     <span>{m.label}</span>
-                    {selectedModel === m.id && <span className="ml-auto text-cyan-400">✓</span>}
+                    {selectedModel === m.id && <Check className="w-3 h-3 text-cyan-400 ml-auto" />}
                   </button>
                 ))}
               </motion.div>
