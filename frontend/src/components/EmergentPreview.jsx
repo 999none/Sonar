@@ -1,0 +1,319 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, RefreshCw, ExternalLink, Smartphone, Monitor, Tablet, Code2, Eye, Terminal } from "lucide-react";
+
+const SONAR_ICON = "https://customer-assets.emergentagent.com/job_emergent-mock-2/artifacts/bocxbvjv_66af99839e55f1ee29f117ac.png";
+
+// ── Matrix rain background ──
+function MatrixBg() {
+  const chars = "01アイウエオカキクケコサシスセソタチツテト";
+  const columns = 28;
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none select-none" style={{ opacity: 0.08 }}>
+      {Array.from({ length: columns }, (_, col) => (
+        <motion.div
+          key={col}
+          className="absolute top-0 flex flex-col"
+          style={{
+            left: `${(col / columns) * 100}%`,
+            fontSize: "11px",
+            fontFamily: "'JetBrains Mono', monospace",
+            color: "#06b6d4",
+            lineHeight: "1.6",
+            width: "20px",
+          }}
+          animate={{ y: ["-100%", "110%"] }}
+          transition={{
+            duration: 6 + Math.random() * 8,
+            repeat: Infinity,
+            delay: Math.random() * 6,
+            ease: "linear",
+          }}
+        >
+          {Array.from({ length: 20 }, (_, r) => (
+            <span key={r}>{chars[Math.floor(Math.random() * chars.length)]}</span>
+          ))}
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+// ── Spinning up loading state ──
+function SpinningUpState({ projectName }) {
+  return (
+    <div className="flex flex-col items-center justify-center h-full gap-6">
+      <MatrixBg />
+      <div className="relative z-10 flex flex-col items-center gap-5">
+        {/* Sonar logo glowing */}
+        <motion.div
+          animate={{ boxShadow: ["0 0 20px rgba(6,182,212,0.3)", "0 0 50px rgba(6,182,212,0.6)", "0 0 20px rgba(6,182,212,0.3)"] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="w-20 h-20 rounded-full flex items-center justify-center"
+          style={{ background: "rgba(6,182,212,0.1)", border: "2px solid rgba(6,182,212,0.35)" }}
+        >
+          <img src={SONAR_ICON} alt="Sonar" width={42} height={42} style={{ objectFit: "contain" }} />
+        </motion.div>
+
+        <div className="text-center">
+          <p style={{ color: "rgba(180,200,220,0.7)", fontSize: "13px", fontFamily: "'Manrope',sans-serif", marginBottom: 4 }}>
+            One-click deploy with custom domains
+          </p>
+        </div>
+
+        {/* Spinning up button */}
+        <motion.div
+          animate={{ opacity: [0.7, 1, 0.7] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl"
+          style={{
+            background: "rgba(6,182,212,0.15)",
+            border: "1px solid rgba(6,182,212,0.35)",
+            color: "#06b6d4",
+            fontSize: "13px",
+            fontFamily: "'Manrope',sans-serif",
+            fontWeight: 500,
+          }}
+        >
+          <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+            className="w-3.5 h-3.5 rounded-full border-2"
+            style={{ borderColor: "rgba(6,182,212,0.3)", borderTopColor: "#06b6d4" }}
+          />
+          Spinning up the Preview
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Live app previews ───
+function TodoPreview() {
+  const [todos, setTodos] = useState([
+    { id: 1, text: "Design system architecture", done: false, priority: "High" },
+    { id: 2, text: "Set up CI/CD pipeline", done: true, priority: "Medium" },
+    { id: 3, text: "Write unit tests", done: false, priority: "High" },
+    { id: 4, text: "Deploy to production", done: false, priority: "Low" },
+  ]);
+  const [input, setInput] = useState("");
+  const toggle = (id) => setTodos(t => t.map(x => x.id === id ? { ...x, done: !x.done } : x));
+  const add = () => { if (!input.trim()) return; setTodos(t => [...t, { id: Date.now(), text: input, done: false, priority: "Medium" }]); setInput(""); };
+  return (
+    <div style={{ background: "#030712", minHeight: "100%", padding: "20px", fontFamily: "system-ui,sans-serif" }}>
+      <h1 style={{ color: "#22d3ee", fontSize: "20px", fontWeight: 700, marginBottom: 4 }}>My Tasks</h1>
+      <p style={{ color: "#6b7280", fontSize: "12px", marginBottom: 16 }}>{todos.filter(t => !t.done).length} remaining</p>
+      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key==="Enter"&&add()} placeholder="Add task..."
+          style={{ flex:1, padding:"8px 12px", borderRadius:8, background:"#1f2937", color:"#f9fafb", border:"1px solid #374151", outline:"none", fontSize:13 }} />
+        <button onClick={add} style={{ padding:"8px 14px", borderRadius:8, background:"#0e7490", color:"#fff", fontWeight:600, fontSize:12, border:"none", cursor:"pointer" }}>Add</button>
+      </div>
+      <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+        {todos.map(t => (
+          <div key={t.id} onClick={()=>toggle(t.id)} style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 14px", borderRadius:12, background:"#111827", cursor:"pointer", opacity:t.done?0.5:1 }}>
+            <div style={{ width:16, height:16, borderRadius:"50%", border:`2px solid ${t.done?"#22d3ee":"#374151"}`, background:t.done?"#22d3ee":"transparent", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+              {t.done && <span style={{color:"#000",fontSize:"9px"}}>✓</span>}
+            </div>
+            <span style={{ flex:1, fontSize:13, color:"#d1d5db", textDecoration:t.done?"line-through":"none" }}>{t.text}</span>
+            <span style={{ fontSize:11, padding:"2px 8px", borderRadius:99, background:t.priority==="High"?"#450a0a":t.priority==="Medium"?"#422006":"#052e16", color:t.priority==="High"?"#f87171":t.priority==="Medium"?"#fb923c":"#4ade80" }}>{t.priority}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DashboardPreview() {
+  const kpis = [{ label: "Revenue", value: "$378K", change: "+18%", up: true }, { label: "Users", value: "24.8K", change: "+5%", up: true }, { label: "Conv.", value: "3.24%", change: "-0.8%", up: false }, { label: "Session", value: "4m 32s", change: "+12%", up: true }];
+  const bars = [42, 53, 48, 61, 79, 95];
+  const months = ["Jan","Feb","Mar","Apr","May","Jun"];
+  return (
+    <div style={{ background: "#030712", minHeight: "100%", padding: "20px", fontFamily: "system-ui,sans-serif" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+        <h1 style={{ color:"#f9fafb", fontSize:20, fontWeight:700 }}>Analytics</h1>
+        <span style={{ fontSize:11, padding:"4px 10px", borderRadius:8, background:"#1f2937", color:"#6b7280" }}>Last 6 months</span>
+      </div>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:16 }}>
+        {kpis.map(k => (
+          <div key={k.label} style={{ padding:"14px", borderRadius:12, background:"#111827" }}>
+            <p style={{ fontSize:11, color:"#6b7280", marginBottom:4 }}>{k.label}</p>
+            <p style={{ fontSize:20, fontWeight:700, color:"#f9fafb", marginBottom:2 }}>{k.value}</p>
+            <span style={{ fontSize:11, color:k.up?"#4ade80":"#f87171" }}>{k.change}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ padding:"14px", borderRadius:12, background:"#111827" }}>
+        <p style={{ fontSize:11, color:"#6b7280", marginBottom:12 }}>Monthly Revenue</p>
+        <div style={{ display:"flex", alignItems:"flex-end", gap:6, height:80 }}>
+          {bars.map((b,i) => (
+            <div key={i} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
+              <motion.div initial={{ height:0 }} animate={{ height:`${(b/100)*70}px` }} transition={{ delay:i*0.06, duration:0.5 }}
+                style={{ width:"100%", background:"#0e7490", borderRadius:"3px 3px 0 0", minHeight:4 }} />
+              <span style={{ fontSize:9, color:"#4b5563" }}>{months[i]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EcommercePreview() {
+  const [cart, setCart] = useState([]);
+  const products = [{ id:1, name:"Headphones", price:149, emoji:"🎧" },{ id:2, name:"Keyboard", price:229, emoji:"⌨️" },{ id:3, name:"Webcam", price:99, emoji:"📷" },{ id:4, name:"Desk Lamp", price:59, emoji:"💡" }];
+  return (
+    <div style={{ background:"#fff", minHeight:"100%", padding:"20px", fontFamily:"system-ui,sans-serif" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+        <h1 style={{ color:"#111827", fontSize:20, fontWeight:700 }}>TechStore</h1>
+        <div style={{ position:"relative" }}>
+          <span style={{ fontSize:22 }}>🛒</span>
+          {cart.length>0 && <span style={{ position:"absolute", top:-4, right:-4, width:16, height:16, borderRadius:"50%", background:"#2563eb", color:"#fff", fontSize:9, display:"flex", alignItems:"center", justifyContent:"center" }}>{cart.length}</span>}
+        </div>
+      </div>
+      {cart.length>0 && <div style={{ padding:"8px 12px", borderRadius:10, marginBottom:12, background:"#eff6ff", display:"flex", justifyContent:"space-between" }}><span style={{ fontSize:12, color:"#1d4ed8" }}>{cart.length} items</span><span style={{ fontWeight:700, fontSize:12, color:"#1d4ed8" }}>${cart.reduce((s,p)=>s+p.price,0)}</span></div>}
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+        {products.map(p => (
+          <div key={p.id} style={{ padding:"14px", borderRadius:12, border:"1px solid #e5e7eb" }}>
+            <div style={{ fontSize:32, textAlign:"center", marginBottom:8 }}>{p.emoji}</div>
+            <p style={{ fontWeight:600, fontSize:13, color:"#111827", marginBottom:8 }}>{p.name}</p>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <span style={{ fontWeight:700, fontSize:13, color:"#111827" }}>${p.price}</span>
+              <button onClick={()=>setCart(c=>[...c,p])} style={{ padding:"4px 10px", borderRadius:8, background:"#2563eb", color:"#fff", fontSize:11, border:"none", cursor:"pointer" }}>Add</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const PREVIEWS = { todo: TodoPreview, dashboard: DashboardPreview, ecommerce: EcommercePreview };
+
+// ── Code viewer (simplified) ──
+function CodeView({ code, terminalLogs }) {
+  const [tab, setTab] = useState("code");
+  return (
+    <div className="flex flex-col h-full" style={{ background: "#0d1117" }}>
+      {/* Tabs */}
+      <div className="flex items-center gap-0 flex-shrink-0" style={{ background: "#010409", borderBottom: "1px solid #21262d" }}>
+        {[{ id: "code", Icon: Code2, label: "App.tsx" }, { id: "terminal", Icon: Terminal, label: "Terminal" }].map(({ id, Icon, label }) => (
+          <button key={id} onClick={() => setTab(id)}
+            className="flex items-center gap-1.5 px-4 py-2 text-xs transition-colors border-b-2"
+            style={{ background: tab===id?"#0d1117":"transparent", color: tab===id?"#e6edf3":"#848d97", borderBottomColor: tab===id?"#58a6ff":"transparent" }}>
+            <Icon style={{ width: 11, height: 11 }} /> {label}
+          </button>
+        ))}
+      </div>
+      {tab === "code" ? (
+        <div className="flex-1 overflow-auto" style={{ fontFamily: "'JetBrains Mono',monospace" }}>
+          <table style={{ width:"100%", borderCollapse:"collapse" }}>
+            <tbody>
+              {(code || "// waiting for generation...").split("\n").map((line, i) => (
+                <tr key={i} style={{ background: "transparent" }}>
+                  <td style={{ padding:"1px 16px", color:"#3d444d", fontSize:11, textAlign:"right", userSelect:"none", width:40, verticalAlign:"top" }}>{i+1}</td>
+                  <td style={{ padding:"1px 16px 1px 0", color:"#e6edf3", fontSize:11, whiteSpace:"pre" }}>{line || " "}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="flex-1 overflow-auto p-4" style={{ fontFamily: "'JetBrains Mono',monospace" }}>
+          {terminalLogs.length === 0
+            ? <p style={{ color:"#3d444d", fontSize:12 }}>No output yet.</p>
+            : terminalLogs.map((line, i) => (
+                <div key={i} style={{ fontSize:11, marginBottom:2, color: line.startsWith("✓")?"#4ade80":line.startsWith("$")?"#60a5fa":"#6b7280" }}>{line}</div>
+              ))
+          }
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function EmergentPreview({ projectType, isGenerating, previewReady, activeTab, onTabChange, code, terminalLogs, projectName }) {
+  const [viewMode, setViewMode] = useState("desktop");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const PreviewComp = PREVIEWS[projectType];
+
+  return (
+    <div className="flex flex-col h-full" style={{ background: "#060c14" }}>
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-2.5 flex-shrink-0"
+        style={{ background: "#06090f", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="flex items-center gap-1">
+          {[
+            { id: "preview", Icon: Eye, label: "App Preview" },
+            { id: "code", Icon: Code2, label: "Code" },
+          ].map(({ id, Icon, label }) => (
+            <button key={id} onClick={() => onTabChange(id)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all"
+              style={{
+                color: activeTab===id ? "#e2e8f0" : "rgba(100,116,139,0.7)",
+                background: activeTab===id ? "rgba(255,255,255,0.07)" : "transparent",
+                border: activeTab===id ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
+              }}>
+              <Icon style={{ width: 11, height: 11 }} /> {label}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-1">
+          {[{ id: "mobile", Icon: Smartphone }, { id: "tablet", Icon: Tablet }, { id: "desktop", Icon: Monitor }].map(({ id, Icon }) => (
+            <button key={id} data-testid={`view-${id}`} onClick={() => setViewMode(id)}
+              className="p-1.5 rounded transition-colors"
+              style={{ color: viewMode===id?"#06b6d4":"rgba(100,116,139,0.5)", background: viewMode===id?"rgba(6,182,212,0.1)":"transparent" }}>
+              <Icon style={{ width: 13, height: 13 }} />
+            </button>
+          ))}
+          <div style={{ width:1, height:16, background:"rgba(255,255,255,0.08)", margin:"0 4px" }} />
+          <button data-testid="refresh-preview" onClick={() => setRefreshKey(k=>k+1)} className="p-1.5 rounded transition-colors" style={{ color:"rgba(100,116,139,0.5)" }}>
+            <RefreshCw style={{ width: 12, height: 12 }} />
+          </button>
+          <button data-testid="open-external" className="p-1.5 rounded transition-colors" style={{ color:"rgba(100,116,139,0.5)" }}>
+            <ExternalLink style={{ width: 12, height: 12 }} />
+          </button>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 overflow-hidden relative">
+        <AnimatePresence mode="wait">
+          {activeTab === "code" ? (
+            <motion.div key="code" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+              <CodeView code={code} terminalLogs={terminalLogs} />
+            </motion.div>
+          ) : isGenerating || !previewReady ? (
+            <motion.div key="spinning" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
+              <SpinningUpState projectName={projectName} />
+            </motion.div>
+          ) : PreviewComp ? (
+            <motion.div key={`${projectType}-${refreshKey}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+              className="h-full overflow-auto">
+              {/* Browser chrome */}
+              <div className="flex items-center gap-2 px-3 py-2" style={{ background:"#010409", borderBottom:"1px solid #21262d", flexShrink:0 }}>
+                <div className="flex gap-1.5">
+                  {["#ff5f57","#febc2e","#28c840"].map(c => <div key={c} style={{ width:10,height:10,borderRadius:"50%",background:c }} />)}
+                </div>
+                <div className="flex-1 flex items-center gap-2 px-3 py-1 rounded-md text-xs" style={{ background:"#161b22", border:"1px solid #30363d", color:"#848d97" }}>
+                  <span style={{ color:"#4ade80", fontSize:10 }}>🔒</span> localhost:3000
+                </div>
+              </div>
+              <div className={`overflow-auto ${viewMode==="mobile"?"mx-auto":" "}`}
+                style={{ maxWidth: viewMode==="mobile"?"375px":viewMode==="tablet"?"768px":"100%", height:"calc(100% - 36px)" }}>
+                <PreviewComp key={refreshKey} />
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex items-center justify-center">
+              <MatrixBg />
+              <div className="relative z-10 flex flex-col items-center gap-4 text-center">
+                <div style={{ width:60, height:60, borderRadius:"50%", background:"rgba(6,182,212,0.08)", border:"1px solid rgba(6,182,212,0.15)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <img src={SONAR_ICON} alt="" width={32} height={32} style={{ objectFit:"contain", opacity:0.5 }} />
+                </div>
+                <p style={{ fontSize:13, color:"rgba(100,120,150,0.6)", fontFamily:"'Manrope',sans-serif" }}>Start building to see the preview</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}

@@ -1,35 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import TopBar from "./TopBar";
 import ChatPanel from "./ChatPanel";
-import AgentPanel from "./AgentPanel";
 import CodeEditor from "./CodeEditor";
-import PreviewPanel from "./PreviewPanel";
-import LogsPanel from "./LogsPanel";
+import EmergentPreview from "./EmergentPreview";
 import CostPreviewModal from "./CostPreviewModal";
-import { AGENT_STEPS, CODE_BY_PROJECT, CHAT_RESPONSES, MOCK_LOGS, PROJECT_TEMPLATES } from "../data/mockData";
+import { AGENT_STEPS, CODE_BY_PROJECT, CHAT_RESPONSES, MOCK_LOGS } from "../data/mockData";
 
-const AGENT_LOGS = {
-  planner: [
-    "Parsing requirements...",
-    "Identifying core features",
-    "Architecture plan ready",
-  ],
-  architect: [
-    "Designing component tree",
-    "Setting up data models",
-    "API contracts defined",
-  ],
-  coder: [
-    "Writing App.tsx",
-    "Implementing state management",
-    "Styling components",
-  ],
-  debugger: [
-    "Running test suite",
-    "0 errors found",
-    "Performance optimized",
-  ],
+const AGENT_META = {
+  planner:   { label: "Planner",   steps: ["Parsing requirements...", "Identifying core features", "Architecture plan ready"] },
+  architect: { label: "Architect", steps: ["Designing component tree", "Setting up data models", "API contracts defined"] },
+  coder:     { label: "Coder",     steps: ["Writing App.tsx", "Implementing state management", "Styling components"] },
+  debugger:  { label: "Debugger",  steps: ["Running test suite", "0 errors found", "Performance optimized"] },
 };
 
 function detectProjectType(prompt) {
@@ -37,15 +18,15 @@ function detectProjectType(prompt) {
   if (p.includes("todo") || p.includes("task") || p.includes("list")) return "todo";
   if (p.includes("dashboard") || p.includes("analytics") || p.includes("chart")) return "dashboard";
   if (p.includes("shop") || p.includes("store") || p.includes("commerce") || p.includes("product")) return "ecommerce";
-  // cycle based on timestamp
   const types = ["todo", "dashboard", "ecommerce"];
   return types[Math.floor(Date.now() / 10000) % 3];
 }
 
 function getProjectName(type) {
-  const names = { todo: "task-manager", dashboard: "analytics-dash", ecommerce: "tech-store" };
-  return names[type] || "my-app";
+  return { todo: "task-manager", dashboard: "analytics-dash", ecommerce: "tech-store" }[type] || "my-app";
 }
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 export default function AppBuilder({ initialPrompt, onReset }) {
   const [selectedModel, setSelectedModel] = useState(window.__sonarInitModel || "gpt-4o");
@@ -54,23 +35,22 @@ export default function AppBuilder({ initialPrompt, onReset }) {
   const [messages, setMessages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const [agentStatuses, setAgentStatuses] = useState({});
-  const [agentLogs, setAgentLogs] = useState({});
   const [currentCode, setCurrentCode] = useState("");
   const [projectType, setProjectType] = useState(null);
-  const [logsOpen, setLogsOpen] = useState(true);
   const [terminalLogs, setTerminalLogs] = useState([]);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [estimatedCost, setEstimatedCost] = useState("$0.00");
   const [showCostModal, setShowCostModal] = useState(false);
   const [pendingPrompt, setPendingPrompt] = useState("");
   const [projectName, setProjectName] = useState("untitled-app");
-  const [isDeployed, setIsDeployed] = useState(false);
+  const [activeTab, setActiveTab] = useState("preview"); // "preview" | "code"
+  const [previewReady, setPreviewReady] = useState(false);
 
   const timerRef = useRef(null);
   const hasStarted = useRef(false);
 
-  // Start generation flow
+  const addMsg = (msg) => setMessages(prev => [...prev, msg]);
+
   const startGeneration = useCallback((prompt) => {
     const type = detectProjectType(prompt);
     setProjectType(type);
@@ -79,81 +59,95 @@ export default function AppBuilder({ initialPrompt, onReset }) {
     setIsTyping(false);
     setCurrentCode("");
     setTerminalLogs([]);
-    setAgentStatuses({});
-    setAgentLogs({});
     setTimeElapsed(0);
     setEstimatedCost("$0.00");
+    setPreviewReady(false);
+    setMessages([]);
 
-    // Timer
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setTimeElapsed(t => {
         const next = t + 1;
-        const cost = (next * 0.002).toFixed(3);
-        setEstimatedCost(`$${cost}`);
+        setEstimatedCost(`$${(next * 0.002).toFixed(3)}`);
         return next;
       });
     }, 1000);
 
-    // Start agent sequence
-    runAgentSequence(type, prompt);
+    runFlow(type, prompt);
   }, []);
 
-  const runAgentSequence = async (type, prompt) => {
+  const runFlow = async (type, prompt) => {
     const responses = CHAT_RESPONSES[type] || CHAT_RESPONSES.todo;
 
-    // Add user message
-    setMessages(prev => [...prev, { role: "user", content: prompt }]);
+    // User message
+    addMsg({ role: "user", content: prompt });
+    await delay(700);
 
-    // Step through agents
-    for (let i = 0; i < AGENT_STEPS.length; i++) {
-      const step = AGENT_STEPS[i];
-      await delay(800);
-
-      setAgentStatuses(prev => ({ ...prev, [step.id]: "active" }));
-
-      // Show agent log messages progressively
-      const logs = AGENT_LOGS[step.id] || [];
-      for (let j = 0; j < logs.length; j++) {
-        await delay(600);
-        setAgentLogs(prev => ({
-          ...prev,
-          [step.id]: [...(prev[step.id] || []), logs[j]],
-        }));
-      }
-
-      // Show assistant chat response for first 2 agents
-      if (i < 2 && responses[i]) {
-        setIsTyping(true);
-        await delay(900);
-        setIsTyping(false);
-        setMessages(prev => [...prev, { role: "assistant", content: responses[i].content }]);
-      }
-
-      await delay(400);
-      setAgentStatuses(prev => ({ ...prev, [step.id]: "done" }));
-    }
-
-    // Code is being generated by CodeEditor via prop during generation
-    setCurrentCode(CODE_BY_PROJECT[type] || CODE_BY_PROJECT.todo);
-
-    // Stream terminal logs
-    await delay(500);
-    for (let i = 0; i < MOCK_LOGS.length; i++) {
-      await delay(120);
-      setTerminalLogs(prev => [...prev, MOCK_LOGS[i]]);
-    }
-
-    // Final chat message
-    await delay(600);
+    // Welcome assistant message
     setIsTyping(true);
     await delay(1000);
     setIsTyping(false);
-    if (responses[responses.length - 1]) {
-      setMessages(prev => [...prev, responses[responses.length - 1]]);
+    addMsg({ role: "assistant", content: responses[0].content });
+    await delay(500);
+
+    // Agent steps inline in chat
+    for (let i = 0; i < AGENT_STEPS.length; i++) {
+      const step = AGENT_STEPS[i];
+      const meta = AGENT_META[step.id];
+
+      // Agent "working" system message
+      addMsg({ role: "agent", agentId: step.id, label: meta.label, status: "working", steps: [] });
+      await delay(400);
+
+      // Feed steps into the agent message progressively
+      for (let j = 0; j < meta.steps.length; j++) {
+        await delay(500);
+        setMessages(prev => prev.map(m =>
+          m.role === "agent" && m.agentId === step.id
+            ? { ...m, steps: [...m.steps, meta.steps[j]] }
+            : m
+        ));
+      }
+
+      await delay(400);
+      // Mark done
+      setMessages(prev => prev.map(m =>
+        m.role === "agent" && m.agentId === step.id
+          ? { ...m, status: "done" }
+          : m
+      ));
+
+      // Assistant response after architect
+      if (i === 1 && responses[1]) {
+        await delay(600);
+        setIsTyping(true);
+        await delay(900);
+        setIsTyping(false);
+        addMsg({ role: "assistant", content: responses[1].content });
+      }
     }
 
-    // Done
+    // Code generation
+    setCurrentCode(CODE_BY_PROJECT[type] || CODE_BY_PROJECT.todo);
+
+    // Terminal logs
+    await delay(400);
+    for (let i = 0; i < MOCK_LOGS.length; i++) {
+      await delay(110);
+      setTerminalLogs(prev => [...prev, MOCK_LOGS[i]]);
+    }
+
+    // Preview ready
+    setPreviewReady(true);
+    setActiveTab("preview");
+
+    // Final message
+    await delay(500);
+    setIsTyping(true);
+    await delay(1000);
+    setIsTyping(false);
+    addMsg({ role: "assistant", content: responses[responses.length - 1].content });
+
     if (timerRef.current) clearInterval(timerRef.current);
     setIsGenerating(false);
     setCredits(c => c - Math.floor(Math.random() * 15 + 5));
@@ -175,14 +169,11 @@ export default function AppBuilder({ initialPrompt, onReset }) {
 
   const handleSendMessage = (msg) => {
     if (isGenerating) return;
-    setMessages(prev => [...prev, { role: "user", content: msg }]);
+    addMsg({ role: "user", content: msg });
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
-      setMessages(prev => [...prev, {
-        role: "assistant",
-        content: "Got it! I'll make those changes. Updating the component now...",
-      }]);
+      addMsg({ role: "assistant", content: "Got it! Making those changes now..." });
     }, 1500);
   };
 
@@ -195,7 +186,6 @@ export default function AppBuilder({ initialPrompt, onReset }) {
       "✓ Deployed to https://my-app.sonar.sh",
       "✓ Live in 1.2s",
     ]);
-    setIsDeployed(true);
   };
 
   const handleReset = () => {
@@ -205,11 +195,7 @@ export default function AppBuilder({ initialPrompt, onReset }) {
   };
 
   return (
-    <div
-      className="flex flex-col overflow-hidden"
-      style={{ height: "100vh", background: "#02040A" }}
-    >
-      {/* Top Bar */}
+    <div className="flex flex-col overflow-hidden" style={{ height: "100vh", background: "#0a0a0a" }}>
       <TopBar
         selectedModel={selectedModel}
         setSelectedModel={setSelectedModel}
@@ -223,61 +209,38 @@ export default function AppBuilder({ initialPrompt, onReset }) {
         projectName={projectName}
       />
 
-      {/* Workspace */}
+      {/* 2-panel layout like Emergent */}
       <div className="flex flex-1 overflow-hidden">
-        {/* LEFT: Chat + Agents */}
+
+        {/* LEFT — Full chat */}
         <div
           className="flex flex-col overflow-hidden flex-shrink-0"
-          style={{ width: "320px", borderRight: "1px solid rgba(30,41,59,0.7)" }}
+          style={{ width: "50%", borderRight: "1px solid rgba(255,255,255,0.06)" }}
         >
-          {/* Chat - top 60% */}
-          <div className="flex flex-col overflow-hidden" style={{ flex: "1 1 0" }}>
-            <ChatPanel
-              messages={messages}
-              isTyping={isTyping}
-              isGenerating={isGenerating}
-              onSendMessage={handleSendMessage}
-              projectPrompt={pendingPrompt}
-              onReset={handleReset}
-            />
-          </div>
-
-          {/* Agents - bottom section with fixed height */}
-          <div
-            className="flex flex-col overflow-hidden flex-shrink-0"
-            style={{ height: "320px", borderTop: "1px solid rgba(30,41,59,0.7)" }}
-          >
-            <AgentPanel agentStatuses={agentStatuses} agentLogs={agentLogs} />
-          </div>
-        </div>
-
-        {/* CENTER: Editor + Logs */}
-        <div className="flex flex-col flex-1 overflow-hidden" style={{ borderRight: "1px solid rgba(30,41,59,0.7)" }}>
-          <div className="flex-1 overflow-hidden">
-            <CodeEditor
-              code={currentCode}
-              isGenerating={isGenerating}
-              projectType={projectType}
-            />
-          </div>
-          <LogsPanel
-            logs={terminalLogs}
+          <ChatPanel
+            messages={messages}
+            isTyping={isTyping}
             isGenerating={isGenerating}
-            isOpen={logsOpen}
-            onToggle={() => setLogsOpen(o => !o)}
+            onSendMessage={handleSendMessage}
+            onReset={handleReset}
           />
         </div>
 
-        {/* RIGHT: Preview */}
-        <div className="flex-shrink-0 overflow-hidden" style={{ width: "360px" }}>
-          <PreviewPanel
-            projectType={isGenerating ? null : projectType}
+        {/* RIGHT — Preview / Code tabs */}
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <EmergentPreview
+            projectType={projectType}
             isGenerating={isGenerating}
+            previewReady={previewReady}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            code={currentCode}
+            terminalLogs={terminalLogs}
+            projectName={projectName}
           />
         </div>
       </div>
 
-      {/* Cost Preview Modal */}
       <CostPreviewModal
         isOpen={showCostModal}
         onClose={() => { setShowCostModal(false); handleReset(); }}
@@ -288,8 +251,4 @@ export default function AppBuilder({ initialPrompt, onReset }) {
       />
     </div>
   );
-}
-
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
