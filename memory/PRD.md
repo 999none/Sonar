@@ -90,8 +90,8 @@ Full IDE-like layout with:
 - Mobile responsive layout
 - coder.com codespace integration (user said "on mettra en place après")
 
-### P2 – Future
-- Dark/light theme toggle
+### P2 – Future (some done)
+- ~~Dark/light theme toggle~~ ✅ Done (2026-04-02)
 - Share/export generated code
 - Onboarding tutorial overlay
 - Real-time collaboration simulation

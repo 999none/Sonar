@@ -21,22 +21,88 @@ function DiscordIcon() {
   );
 }
 
-const inputBase = {
-  width: "100%",
-  padding: "13px 16px",
-  borderRadius: "12px",
-  background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
-  border: "1px solid rgba(255,255,255,0.1)",
-  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
-  color: "#e2e8f0",
-  fontSize: "14px",
-  fontFamily: "'DM Sans', sans-serif",
-  outline: "none",
-  boxSizing: "border-box",
-  transition: "border-color 0.15s, box-shadow 0.15s",
-  caretColor: "#a78bfa",
+// ── Theme tokens ──────────────────────────────────────────────────────
+const T = {
+  dark: {
+    pageBg: "linear-gradient(135deg, #050b1f 0%, #000308 100%)",
+    leftBg: "linear-gradient(160deg, rgba(14,22,52,0.97) 0%, rgba(4,6,16,0.99) 100%)",
+    leftBorder: "1px solid rgba(255,255,255,0.07)",
+    logoColor: "#fff",
+    tabBg: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+    tabBorder: "1px solid rgba(255,255,255,0.1)",
+    tabInner: "inset 0 1px 0 rgba(255,255,255,0.07)",
+    tabActive: "rgba(255,255,255,0.12)",
+    tabActiveText: "#fff",
+    tabInactiveText: "rgba(255,255,255,0.38)",
+    tabActiveShadow: "0 1px 4px rgba(0,0,0,0.4)",
+    socialBg: "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)",
+    socialBorder: "1px solid rgba(255,255,255,0.11)",
+    socialShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+    socialText: "#e2e8f0",
+    socialHoverBg: "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.07) 100%)",
+    socialHoverBorder: "rgba(255,255,255,0.18)",
+    dividerLine: "rgba(255,255,255,0.08)",
+    dividerText: "rgba(255,255,255,0.3)",
+    labelColor: "rgba(200,215,235,0.7)",
+    inputBg: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+    inputBorder: "1px solid rgba(255,255,255,0.1)",
+    inputShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
+    inputText: "#e2e8f0",
+    inputFocusBorder: "rgba(167,139,250,0.5)",
+    inputFocusShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 3px rgba(167,139,250,0.1)",
+    inputPlaceholder: "rgba(255,255,255,0.25)",
+    switchText: "rgba(255,255,255,0.38)",
+    switchLink: "#a78bfa",
+    termsText: "rgba(255,255,255,0.22)",
+    termsLink: "rgba(255,255,255,0.38)",
+    // Right panel
+    rightBg: "linear-gradient(160deg, rgba(14,22,52,1) 0%, rgba(3,5,14,1) 100%)",
+    rightGlow: "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(14,60,160,0.55) 0%, rgba(6,20,70,0.2) 50%, transparent 100%)",
+    rightTitle: "#ffffff",
+    rightSubtitle: "#ffffff",
+    rightDesc: "rgba(180,195,215,0.55)",
+    rightScanOpacity: 0.012,
+  },
+  light: {
+    pageBg: "linear-gradient(135deg, #b8d0f4 0%, #dde9ff 100%)",
+    leftBg: "linear-gradient(160deg, rgba(240,247,255,0.99) 0%, rgba(255,255,255,1) 100%)",
+    leftBorder: "1px solid rgba(80,120,200,0.15)",
+    logoColor: "#080f28",
+    tabBg: "linear-gradient(135deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.02) 100%)",
+    tabBorder: "1px solid rgba(80,120,200,0.15)",
+    tabInner: "inset 0 1px 0 rgba(255,255,255,0.5)",
+    tabActive: "rgba(255,255,255,0.95)",
+    tabActiveText: "#080f28",
+    tabInactiveText: "rgba(40,60,120,0.45)",
+    tabActiveShadow: "0 1px 4px rgba(0,0,0,0.08)",
+    socialBg: "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(240,248,255,0.85) 100%)",
+    socialBorder: "1px solid rgba(80,120,200,0.18)",
+    socialShadow: "inset 0 1px 0 rgba(255,255,255,0.8)",
+    socialText: "#1e3264",
+    socialHoverBg: "linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(235,245,255,1) 100%)",
+    socialHoverBorder: "rgba(80,120,200,0.3)",
+    dividerLine: "rgba(80,120,200,0.15)",
+    dividerText: "rgba(40,60,120,0.4)",
+    labelColor: "rgba(30,50,100,0.65)",
+    inputBg: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,248,255,0.9) 100%)",
+    inputBorder: "1px solid rgba(80,120,200,0.2)",
+    inputShadow: "inset 0 1px 0 rgba(255,255,255,0.8)",
+    inputText: "#0a0f25",
+    inputFocusBorder: "rgba(124,58,237,0.45)",
+    inputFocusShadow: "inset 0 1px 0 rgba(255,255,255,0.8), 0 0 0 3px rgba(124,58,237,0.1)",
+    inputPlaceholder: "rgba(80,100,160,0.4)",
+    switchText: "rgba(40,60,120,0.5)",
+    switchLink: "#7c3aed",
+    termsText: "rgba(30,50,100,0.35)",
+    termsLink: "rgba(30,50,100,0.55)",
+    // Right panel
+    rightBg: "linear-gradient(160deg, #c8d8f8 0%, #dae7ff 40%, #e8f2ff 100%)",
+    rightGlow: "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(40,80,200,0.2) 0%, rgba(30,60,150,0.08) 50%, transparent 100%)",
+    rightTitle: "#080f28",
+    rightSubtitle: "#1a2a5e",
+    rightDesc: "rgba(40,60,120,0.5)",
+    rightScanOpacity: 0.008,
+  },
 };
 
 export default function AuthPage({ onBack, onLogin, isDark = true }) {
@@ -44,6 +110,25 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const t = T[isDark ? "dark" : "light"];
+
+  const inputStyle = {
+    width: "100%",
+    padding: "13px 16px",
+    borderRadius: "12px",
+    background: t.inputBg,
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    border: t.inputBorder,
+    boxShadow: t.inputShadow,
+    color: t.inputText,
+    fontSize: "14px",
+    fontFamily: "'DM Sans', sans-serif",
+    outline: "none",
+    boxSizing: "border-box",
+    transition: "border-color 0.15s, box-shadow 0.15s",
+    caretColor: "#a78bfa",
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -65,20 +150,16 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
         display: "grid",
         gridTemplateColumns: "46fr 54fr",
         minHeight: "100vh",
-        background: isDark
-          ? "linear-gradient(135deg, #050b1f 0%, #000308 100%)"
-          : "linear-gradient(135deg, #b8d0f4 0%, #dde9ff 100%)",
+        background: t.pageBg,
       }}
     >
       {/* ── Left panel: form ── */}
       <div
         style={{
-          background: isDark
-            ? "linear-gradient(160deg, rgba(14,22,52,0.97) 0%, rgba(4,6,16,0.99) 100%)"
-            : "linear-gradient(160deg, rgba(240,247,255,0.99) 0%, rgba(255,255,255,1) 100%)",
+          background: t.leftBg,
           backdropFilter: "blur(40px)",
           WebkitBackdropFilter: "blur(40px)",
-          borderRight: isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,120,200,0.15)",
+          borderRight: t.leftBorder,
           display: "flex",
           flexDirection: "column",
           padding: "52px 56px 48px",
@@ -104,7 +185,7 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
               fontWeight: 900,
               fontSize: "1.1rem",
               letterSpacing: "-0.05em",
-              color: "#fff",
+              color: t.logoColor,
             }}
           >
             sonar
@@ -115,22 +196,22 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
         <div
           style={{
             display: "flex",
-            background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+            background: t.tabBg,
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
-            border: "1px solid rgba(255,255,255,0.1)",
+            border: t.tabBorder,
             borderRadius: "14px",
             padding: "4px",
             marginBottom: 28,
             gap: 4,
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.07)",
+            boxShadow: t.tabInner,
           }}
         >
-          {["signup", "signin"].map((t) => (
+          {["signup", "signin"].map((v) => (
             <button
-              key={t}
-              data-testid={`auth-tab-${t}`}
-              onClick={() => setTab(t)}
+              key={v}
+              data-testid={`auth-tab-${v}`}
+              onClick={() => setTab(v)}
               style={{
                 flex: 1,
                 padding: "10px 0",
@@ -141,12 +222,12 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
                 fontWeight: 600,
                 fontSize: "14px",
                 transition: "all 0.18s",
-                background: tab === t ? "rgba(255,255,255,0.12)" : "transparent",
-                color: tab === t ? (isDark ? "#fff" : "#080f28") : (isDark ? "rgba(255,255,255,0.38)" : "rgba(40,60,120,0.45)"),
-                boxShadow: tab === t ? "0 1px 4px rgba(0,0,0,0.4)" : "none",
+                background: tab === v ? t.tabActive : "transparent",
+                color: tab === v ? t.tabActiveText : t.tabInactiveText,
+                boxShadow: tab === v ? t.tabActiveShadow : "none",
               }}
             >
-              {t === "signup" ? "Sign up" : "Sign in"}
+              {v === "signup" ? "Sign up" : "Sign in"}
             </button>
           ))}
         </div>
@@ -162,12 +243,12 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
             gap: 12,
             padding: "13px 0",
             borderRadius: "12px",
-            background: "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)",
+            background: t.socialBg,
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
-            border: "1px solid rgba(255,255,255,0.11)",
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
-            color: "#e2e8f0",
+            border: t.socialBorder,
+            boxShadow: t.socialShadow,
+            color: t.socialText,
             fontSize: "14px",
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 500,
@@ -175,8 +256,8 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
             marginBottom: 10,
             transition: "all 0.15s",
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.07) 100%)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.11)"; }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = t.socialHoverBg; e.currentTarget.style.borderColor = t.socialHoverBorder; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = t.socialBg; e.currentTarget.style.borderColor = t.socialBorder.replace("1px solid ", ""); }}
           onClick={() => handleSocial("Google")}
         >
           <GoogleIcon />
@@ -185,7 +266,7 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
 
         <div style={{ display: "flex", gap: 10, marginBottom: 24 }}>
           {[
-            { id: "github", label: "GitHub", Icon: Github, iconColor: "rgba(255,255,255,0.85)" },
+            { id: "github", label: "GitHub", Icon: Github, iconColor: isDark ? "rgba(255,255,255,0.85)" : "#1e3264" },
             { id: "discord", label: "Discord", Icon: DiscordIcon, iconColor: "#5865F2" },
           ].map(({ id, label, Icon, iconColor }) => (
             <button
@@ -199,20 +280,21 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
                 gap: 8,
                 padding: "12px 0",
                 borderRadius: "12px",
-                background: "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)",
+                background: t.socialBg,
                 backdropFilter: "blur(12px)",
                 WebkitBackdropFilter: "blur(12px)",
-                border: "1px solid rgba(255,255,255,0.11)",
-                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
-                color: "#e2e8f0",
+                border: t.socialBorder,
+                boxShadow: t.socialShadow,
+                color: t.socialText,
                 fontSize: "14px",
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 500,
                 cursor: "pointer",
                 transition: "all 0.15s",
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.07) 100%)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.11)"; }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = t.socialHoverBg; e.currentTarget.style.borderColor = t.socialHoverBorder; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = t.socialBg; e.currentTarget.style.borderColor = t.socialBorder.replace("1px solid ", ""); }}
+              onClick={() => handleSocial(label)}
             >
               <Icon style={{ width: 17, height: 17, color: iconColor }} />
               {label}
@@ -222,11 +304,11 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
 
         {/* Divider */}
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 22 }}>
-          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
-          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.3)", whiteSpace: "nowrap" }}>
+          <div style={{ flex: 1, height: 1, background: t.dividerLine }} />
+          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: t.dividerText, whiteSpace: "nowrap" }}>
             or continue with email
           </span>
-          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ flex: 1, height: 1, background: t.dividerLine }} />
         </div>
 
         {/* Form */}
@@ -241,7 +323,7 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
                 transition={{ duration: 0.2 }}
                 style={{ overflow: "hidden" }}
               >
-                <label style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: "rgba(200,215,235,0.7)", marginBottom: 7 }}>
+                <label style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: t.labelColor, marginBottom: 7 }}>
                   Full name
                 </label>
                 <input
@@ -250,16 +332,16 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
                   placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  style={inputBase}
-                  onFocus={(e) => { e.target.style.borderColor = "rgba(167,139,250,0.5)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 3px rgba(167,139,250,0.1)"; }}
-                  onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06)"; }}
+                  style={inputStyle}
+                  onFocus={(e) => { e.target.style.borderColor = t.inputFocusBorder; e.target.style.boxShadow = t.inputFocusShadow; }}
+                  onBlur={(e) => { e.target.style.borderColor = t.inputBorder.replace("1px solid ", ""); e.target.style.boxShadow = t.inputShadow; }}
                 />
               </motion.div>
             )}
           </AnimatePresence>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: "rgba(200,215,235,0.7)", marginBottom: 7 }}>
+            <label style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: t.labelColor, marginBottom: 7 }}>
               Email
             </label>
             <input
@@ -268,14 +350,14 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={inputBase}
-              onFocus={(e) => { e.target.style.borderColor = "rgba(167,139,250,0.5)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 3px rgba(167,139,250,0.1)"; }}
-              onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06)"; }}
+              style={inputStyle}
+              onFocus={(e) => { e.target.style.borderColor = t.inputFocusBorder; e.target.style.boxShadow = t.inputFocusShadow; }}
+              onBlur={(e) => { e.target.style.borderColor = t.inputBorder.replace("1px solid ", ""); e.target.style.boxShadow = t.inputShadow; }}
             />
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <label style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: "rgba(200,215,235,0.7)", marginBottom: 7 }}>
+            <label style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", fontWeight: 600, color: t.labelColor, marginBottom: 7 }}>
               Password
             </label>
             <input
@@ -284,9 +366,9 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
               placeholder="Min. 8 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={inputBase}
-              onFocus={(e) => { e.target.style.borderColor = "rgba(167,139,250,0.5)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 3px rgba(167,139,250,0.1)"; }}
-              onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06)"; }}
+              style={inputStyle}
+              onFocus={(e) => { e.target.style.borderColor = t.inputFocusBorder; e.target.style.boxShadow = t.inputFocusShadow; }}
+              onBlur={(e) => { e.target.style.borderColor = t.inputBorder.replace("1px solid ", ""); e.target.style.boxShadow = t.inputShadow; }}
             />
           </div>
 
@@ -321,23 +403,23 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
           </button>
         </form>
 
-        <p style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.38)", marginBottom: 10 }}>
+        <p style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: t.switchText, marginBottom: 10 }}>
           {tab === "signup" ? "Already have an account? " : "No account yet? "}
           <span
             data-testid="auth-switch-tab"
             onClick={() => setTab(tab === "signup" ? "signin" : "signup")}
-            style={{ color: "#a78bfa", cursor: "pointer", fontWeight: 600 }}
+            style={{ color: t.switchLink, cursor: "pointer", fontWeight: 600 }}
           >
             {tab === "signup" ? "Sign in" : "Sign up"}
           </span>
         </p>
 
         {tab === "signup" && (
-          <p style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.22)", lineHeight: 1.5 }}>
+          <p style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: t.termsText, lineHeight: 1.5 }}>
             By continuing you agree to our{" "}
-            <span style={{ textDecoration: "underline", cursor: "pointer", color: "rgba(255,255,255,0.38)" }}>Terms</span>
+            <span style={{ textDecoration: "underline", cursor: "pointer", color: t.termsLink }}>Terms</span>
             {" & "}
-            <span style={{ textDecoration: "underline", cursor: "pointer", color: "rgba(255,255,255,0.38)" }}>Privacy</span>
+            <span style={{ textDecoration: "underline", cursor: "pointer", color: t.termsLink }}>Privacy</span>
           </p>
         )}
       </div>
@@ -345,9 +427,7 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
       {/* ── Right panel: branding ── */}
       <div
         style={{
-          background: isDark
-            ? "linear-gradient(160deg, rgba(14,22,52,1) 0%, rgba(3,5,14,1) 100%)"
-            : "linear-gradient(160deg, #c8d8f8 0%, #dae7ff 40%, #e8f2ff 100%)",
+          background: t.rightBg,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -367,7 +447,7 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
             transform: "translateX(-50%)",
             width: "100%",
             height: "60%",
-            background: "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(14,60,160,0.55) 0%, rgba(6,20,70,0.2) 50%, transparent 100%)",
+            background: t.rightGlow,
             pointerEvents: "none",
           }}
         />
@@ -376,7 +456,7 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 4px)",
+            backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,${t.rightScanOpacity}) 2px, rgba(255,255,255,${t.rightScanOpacity}) 4px)`,
             pointerEvents: "none",
           }}
         />
@@ -390,7 +470,8 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
             fontSize: "clamp(5rem, 12vw, 9rem)",
             fontWeight: 900,
             letterSpacing: "-0.055em",
-            color: isDark ? "#ffffff" : "#080f28",, 0 4px 32px rgba(0,0,0,0.8)",
+            color: t.rightTitle,
+            textShadow: isDark ? "0 4px 32px rgba(0,0,0,0.8)" : "none",
           }}
         >
           sonar
@@ -404,7 +485,7 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)",
             fontWeight: 700,
-            color: "#ffffff",
+            color: t.rightSubtitle,
             letterSpacing: "-0.025em",
             marginBottom: 12,
             position: "relative",
@@ -421,7 +502,7 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
             fontFamily: "'Space Grotesk', sans-serif",
             fontSize: "clamp(0.85rem, 1.8vw, 1rem)",
             fontWeight: 400,
-            color: "rgba(180,195,215,0.55)",
+            color: t.rightDesc,
             lineHeight: 1.55,
             maxWidth: 280,
             position: "relative",

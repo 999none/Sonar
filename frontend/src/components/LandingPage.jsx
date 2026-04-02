@@ -392,6 +392,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         open={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         onGoToAuth={() => { setShowLoginModal(false); onShowAuth && onShowAuth(); }}
+        isDark={isDark}
       />
       {/* Settings modal */}
       <SettingsModal
