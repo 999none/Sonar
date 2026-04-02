@@ -280,6 +280,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
                 terminalLogs={terminalLogs}
                 projectName={projectName}
                 isDark={isDark}
+                onClose={() => setShowPreviewPanel(false)}
               />
             </motion.div>
           )}

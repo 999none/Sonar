@@ -364,7 +364,7 @@ function CoderModal({ onClose, projectName, isDark = false }) {
   );
 }
 
-export default function EmergentPreview({ projectType, isGenerating, previewReady, activeTab, onTabChange, code, terminalLogs, projectName, isDark = false }) {
+export default function EmergentPreview({ projectType, isGenerating, previewReady, activeTab, onTabChange, code, terminalLogs, projectName, isDark = false, onClose }) {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showCoderModal, setShowCoderModal] = useState(false);
   const PreviewComp = PREVIEWS[projectType];
@@ -417,6 +417,27 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
             className="p-1.5 rounded transition-colors" style={{ color: dk ? "rgba(100,116,139,0.5)" : "rgba(40,70,130,0.4)" }}>
             <ExternalLink style={{ width: 12, height: 12 }} />
           </button>
+          {onClose && (
+            <button
+              data-testid="close-preview"
+              onClick={onClose}
+              className="p-1.5 rounded-lg transition-all ml-0.5"
+              style={{
+                color: dk ? "rgba(100,116,139,0.5)" : "rgba(40,70,130,0.4)",
+                background: "transparent",
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = dk ? "rgba(248,113,113,0.12)" : "rgba(248,113,113,0.1)";
+                e.currentTarget.style.color = "#f87171";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = dk ? "rgba(100,116,139,0.5)" : "rgba(40,70,130,0.4)";
+              }}
+            >
+              <X style={{ width: 13, height: 13 }} />
+            </button>
+          )}
         </div>
       </div>
 

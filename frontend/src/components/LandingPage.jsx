@@ -179,37 +179,51 @@ function TaskCard({ task, onSelect, onClose, T = THEMES.dark }) {
 const THEMES = {
   dark: {
     pageBg: "linear-gradient(to bottom, #0c1f4a 0%, #060d1e 35%, #010408 65%, #000000 100%)",
-    navBg: "rgba(0,0,0,0.4)",
-    navBorder: "rgba(255,255,255,0.07)",
+    // ── Nav: dark frosted glass ──
+    navBg: "rgba(8,14,30,0.55)",
+    navBorder: "rgba(255,255,255,0.08)",
+    navShadow: "0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)",
     logoText: "#fff",
-    logoHoverBg: "rgba(255,255,255,0.05)",
+    logoHoverBg: "rgba(255,255,255,0.06)",
     text1: "#ffffff",
     text2: "rgba(180,190,210,0.7)",
     text3: "rgba(120,135,160,0.7)",
-    inputBg: "linear-gradient(160deg, rgba(18,30,70,0.72) 0%, rgba(8,12,28,0.88) 100%)",
+    // ── Input: deep dark glass ──
+    inputBg: "linear-gradient(160deg, rgba(18,30,70,0.55) 0%, rgba(8,12,28,0.65) 100%)",
     inputBorderNormal: "rgba(255,255,255,0.1)",
-    inputBorderFocus: "rgba(100,180,255,0.28)",
-    inputShadowNormal: "inset 0 1px 0 rgba(255,255,255,0.07), 0 24px 60px rgba(0,0,0,0.45), 0 0 40px rgba(6,40,120,0.12)",
-    inputShadowFocus: "inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 4px rgba(6,182,212,0.07), 0 32px 80px rgba(0,0,0,0.55)",
+    inputBorderFocus: "rgba(56,189,248,0.35)",
+    inputShadowNormal: "inset 0 1px 0 rgba(255,255,255,0.07), inset 0 -1px 2px rgba(0,0,0,0.2), 0 8px 32px rgba(0,0,0,0.35), 0 20px 60px -10px rgba(0,0,0,0.25)",
+    inputShadowFocus: "inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 4px rgba(56,189,248,0.08), 0 12px 40px rgba(0,0,0,0.4), 0 24px 70px -10px rgba(0,0,0,0.3)",
     textareaColor: "#e8ecf4",
+    // ── Pills: dark glass micro-cards ──
     pillBg: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)",
     pillBorder: "rgba(255,255,255,0.1)",
+    pillShadow: "0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)",
     pillText: "rgba(160,180,215,0.7)",
-    pillTextHover: "rgba(6,182,212,0.95)",
-    pillBorderHover: "rgba(6,182,212,0.3)",
-    pillBgHover: "linear-gradient(135deg, rgba(6,182,212,0.12) 0%, rgba(6,182,212,0.04) 100%)",
-    cardBg: "linear-gradient(160deg, rgba(14,22,50,0.6) 0%, rgba(6,9,20,0.75) 100%)",
+    pillTextHover: "rgba(56,189,248,0.95)",
+    pillBorderHover: "rgba(56,189,248,0.3)",
+    pillBgHover: "linear-gradient(135deg, rgba(56,189,248,0.12) 0%, rgba(56,189,248,0.04) 100%)",
+    pillShadowHover: "0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1)",
+    // ── Cards: elevated dark glass ──
+    cardBg: "linear-gradient(160deg, rgba(14,22,50,0.5) 0%, rgba(6,9,20,0.6) 100%)",
     cardBorder: "rgba(255,255,255,0.08)",
+    cardShadow: "0 4px 16px rgba(0,0,0,0.25), 0 12px 40px -8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)",
     cardBorderHover: "rgba(255,255,255,0.14)",
-    cardBgHover: "linear-gradient(160deg, rgba(20,35,75,0.75) 0%, rgba(10,14,30,0.88) 100%)",
+    cardBgHover: "linear-gradient(160deg, rgba(20,35,75,0.6) 0%, rgba(10,14,30,0.7) 100%)",
+    cardShadowHover: "0 8px 24px rgba(0,0,0,0.3), 0 20px 60px -10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1)",
     labelColor: "rgba(100,116,139,0.45)",
+    // ── Sign-in: dark glass button ──
     signInText: "rgba(255,255,255,0.6)",
-    signInBorder: "rgba(255,255,255,0.12)",
-    signInBg: "rgba(255,255,255,0.04)",
+    signInBorder: "rgba(255,255,255,0.1)",
+    signInBg: "rgba(255,255,255,0.05)",
+    signInShadow: "0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)",
     signInTextHover: "rgba(255,255,255,0.9)",
-    signInBgHover: "rgba(255,255,255,0.08)",
-    dropdownBg: "linear-gradient(160deg, rgba(16,26,60,0.96) 0%, rgba(6,9,20,0.98) 100%)",
+    signInBgHover: "rgba(255,255,255,0.1)",
+    signInShadowHover: "0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)",
+    // ── Dropdown: elevated dark glass ──
+    dropdownBg: "linear-gradient(160deg, rgba(16,26,60,0.88) 0%, rgba(6,9,20,0.92) 100%)",
     dropdownBorder: "rgba(255,255,255,0.1)",
+    dropdownShadow: "0 12px 40px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07)",
     dropdownText: "rgba(160,185,215,0.85)",
     separator: "rgba(50,70,100,0.7)",
     themeIconColor: "rgba(200,220,255,0.75)",
@@ -447,20 +461,22 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         />
       )}
 
-      {/* Minimal top nav — glass bar */}
+      {/* Minimal top nav — glass bar, sticky */}
       <motion.nav
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.1 }}
-        className="relative z-20 flex items-center justify-between px-10 py-3"
+        className="z-20 flex items-center justify-between px-10 py-3"
         style={{
-          margin: isDark ? 0 : "12px 16px 0",
-          borderRadius: isDark ? 0 : "18px",
-          background: isDark ? "transparent" : T.navBg,
-          backdropFilter: isDark ? "none" : "blur(20px)",
-          WebkitBackdropFilter: isDark ? "none" : "blur(20px)",
-          border: isDark ? "none" : `1px solid ${T.navBorder}`,
-          boxShadow: isDark ? "none" : (T.navShadow || "none"),
+          position: "sticky",
+          top: isDark ? 12 : 12,
+          margin: "12px 16px 0",
+          borderRadius: "18px",
+          background: T.navBg,
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: `1px solid ${T.navBorder}`,
+          boxShadow: T.navShadow || "none",
         }}
       >
         <span
