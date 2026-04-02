@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, ChevronRight } from "lucide-react";
-import { PROJECT_TEMPLATES } from "../data/mockData";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, ChevronRight, ChevronDown, Check } from "lucide-react";
+import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
+
+const MODE_INFO = {
+  "E-1": { label: "E-1", desc: "Fast · Prototype-ready", cost: { todo: "$0.08", dashboard: "$0.12", ecommerce: "$0.16", default: "$0.09" } },
+  "E-2": { label: "E-2", desc: "Deep · Production-grade", cost: { todo: "$0.14", dashboard: "$0.19", ecommerce: "$0.24", default: "$0.18" } },
+};
 
 const TYPING_PROMPTS = [
   "Build a todo app with priorities and deadlines",
@@ -17,7 +22,29 @@ export default function LandingPage({ onStart }) {
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  // Options state
+  const [selectedMode, setSelectedMode] = useState("E-1");
+  const [selectedModel, setSelectedModel] = useState("gpt-4o");
+  const [modelOpen, setModelOpen] = useState(false);
+  const [modeOpen, setModeOpen] = useState(false);
   const inputRef = useRef(null);
+  const modelRef = useRef(null);
+  const modeRef = useRef(null);
+
+  const currentModel = MODELS.find(m => m.id === selectedModel) || MODELS[0];
+
+  // Estimate cost based on mode
+  const estimatedCost = MODE_INFO[selectedMode].cost.default;
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (modelRef.current && !modelRef.current.contains(e.target)) setModelOpen(false);
+      if (modeRef.current && !modeRef.current.contains(e.target)) setModeOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   useEffect(() => {
     if (isFocused) return;
@@ -44,7 +71,7 @@ export default function LandingPage({ onStart }) {
 
   const handleSubmit = () => {
     if (!inputValue.trim()) return;
-    onStart(inputValue.trim());
+    onStart(inputValue.trim(), selectedModel, selectedMode);
   };
 
   const handleKeyDown = (e) => {
@@ -54,7 +81,7 @@ export default function LandingPage({ onStart }) {
   const handleSuggestion = (template) => {
     setIsFocused(true);
     setInputValue(template.prompt);
-    setTimeout(() => onStart(template.prompt), 300);
+    setTimeout(() => onStart(template.prompt, selectedModel, selectedMode), 300);
   };
 
   return (
@@ -244,13 +271,145 @@ export default function LandingPage({ onStart }) {
               className="absolute flex items-center justify-between"
               style={{ bottom: "12px", left: "16px", right: "16px" }}
             >
-              <div className="flex items-center gap-3">
-                <span style={{ fontSize: "11px", color: "rgba(100,120,150,0.7)", fontFamily: "'Manrope', sans-serif" }}>E-1</span>
-                <span style={{ color: "rgba(60,80,110,0.6)", fontSize: "11px" }}>·</span>
-                <span style={{ fontSize: "11px", color: "rgba(100,120,150,0.7)", fontFamily: "'Manrope', sans-serif" }}>GPT-4o</span>
-                <span style={{ color: "rgba(60,80,110,0.6)", fontSize: "11px" }}>·</span>
-                <span style={{ fontSize: "11px", color: "rgba(100,120,150,0.7)", fontFamily: "'Manrope', sans-serif" }}>Est. ~$0.12</span>
+              <div className="flex items-center gap-1.5">
+
+                {/* Mode selector */}
+                <div ref={modeRef} className="relative">
+                  <button
+                    data-testid="landing-mode-selector"
+                    onClick={() => { setModeOpen(o => !o); setModelOpen(false); }}
+                    className="flex items-center gap-1 px-2 py-1 rounded-md transition-all"
+                    style={{
+                      fontSize: "11px",
+                      fontFamily: "'Manrope', sans-serif",
+                      color: modeOpen ? "#06b6d4" : "rgba(110,130,165,0.9)",
+                      background: modeOpen ? "rgba(6,182,212,0.08)" : "rgba(255,255,255,0.04)",
+                      border: modeOpen ? "1px solid rgba(6,182,212,0.25)" : "1px solid rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    <span className="font-semibold">{selectedMode}</span>
+                    <ChevronDown style={{ width: "10px", height: "10px", opacity: 0.6 }} />
+                  </button>
+                  <AnimatePresence>
+                    {modeOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute bottom-full mb-2 left-0 rounded-xl overflow-hidden z-50"
+                        style={{
+                          width: "200px",
+                          background: "#0d1424",
+                          border: "1px solid rgba(40,60,100,0.7)",
+                          boxShadow: "0 16px 40px rgba(0,0,0,0.7)",
+                        }}
+                      >
+                        {Object.entries(MODE_INFO).map(([key, info]) => (
+                          <button
+                            key={key}
+                            data-testid={`landing-mode-${key.toLowerCase().replace("-","")}`}
+                            onClick={() => { setSelectedMode(key); setModeOpen(false); }}
+                            className="w-full flex items-start justify-between px-4 py-3 transition-colors text-left"
+                            style={{ background: selectedMode === key ? "rgba(6,182,212,0.07)" : "transparent" }}
+                            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
+                            onMouseLeave={e => e.currentTarget.style.background = selectedMode === key ? "rgba(6,182,212,0.07)" : "transparent"}
+                          >
+                            <div>
+                              <p className="font-semibold" style={{ fontSize: "12px", color: selectedMode === key ? "#06b6d4" : "#e2e8f0" }}>{info.label}</p>
+                              <p style={{ fontSize: "11px", color: "rgba(100,120,160,0.8)", marginTop: "1px" }}>{info.desc}</p>
+                            </div>
+                            {selectedMode === key && <Check style={{ width: "12px", height: "12px", color: "#06b6d4", marginTop: "2px", flexShrink: 0 }} />}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <span style={{ color: "rgba(50,70,100,0.7)", fontSize: "12px" }}>·</span>
+
+                {/* Model selector */}
+                <div ref={modelRef} className="relative">
+                  <button
+                    data-testid="landing-model-selector"
+                    onClick={() => { setModelOpen(o => !o); setModeOpen(false); }}
+                    className="flex items-center gap-1 px-2 py-1 rounded-md transition-all"
+                    style={{
+                      fontSize: "11px",
+                      fontFamily: "'Manrope', sans-serif",
+                      color: modelOpen ? "#06b6d4" : "rgba(110,130,165,0.9)",
+                      background: modelOpen ? "rgba(6,182,212,0.08)" : "rgba(255,255,255,0.04)",
+                      border: modelOpen ? "1px solid rgba(6,182,212,0.25)" : "1px solid rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    <span
+                      className="font-black flex items-center justify-center"
+                      style={{
+                        width: "14px", height: "14px", borderRadius: "3px", fontSize: "8px",
+                        background: currentModel.color, color: "#000", flexShrink: 0,
+                      }}
+                    >
+                      {currentModel.provider === "openai" ? "G" : currentModel.provider === "anthropic" ? "C" : "G"}
+                    </span>
+                    <span>{currentModel.label}</span>
+                    <ChevronDown style={{ width: "10px", height: "10px", opacity: 0.6 }} />
+                  </button>
+                  <AnimatePresence>
+                    {modelOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute bottom-full mb-2 left-0 rounded-xl overflow-hidden z-50"
+                        style={{
+                          width: "210px",
+                          background: "#0d1424",
+                          border: "1px solid rgba(40,60,100,0.7)",
+                          boxShadow: "0 16px 40px rgba(0,0,0,0.7)",
+                        }}
+                      >
+                        <p style={{ fontSize: "10px", color: "rgba(80,110,150,0.8)", padding: "10px 14px 6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Model</p>
+                        {MODELS.map(m => (
+                          <button
+                            key={m.id}
+                            data-testid={`landing-model-${m.id}`}
+                            onClick={() => { setSelectedModel(m.id); setModelOpen(false); }}
+                            className="w-full flex items-center justify-between px-4 py-2.5 transition-colors"
+                            style={{ background: selectedModel === m.id ? "rgba(6,182,212,0.07)" : "transparent" }}
+                            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
+                            onMouseLeave={e => e.currentTarget.style.background = selectedModel === m.id ? "rgba(6,182,212,0.07)" : "transparent"}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span
+                                className="font-black flex items-center justify-center"
+                                style={{ width: "18px", height: "18px", borderRadius: "4px", fontSize: "9px", background: m.color, color: "#000", flexShrink: 0 }}
+                              >
+                                {m.provider === "openai" ? "G" : m.provider === "anthropic" ? "C" : "G"}
+                              </span>
+                              <span style={{ fontSize: "12px", color: selectedModel === m.id ? "#06b6d4" : "#e2e8f0" }}>{m.label}</span>
+                            </div>
+                            {selectedModel === m.id && <Check style={{ width: "12px", height: "12px", color: "#06b6d4", flexShrink: 0 }} />}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <span style={{ color: "rgba(50,70,100,0.7)", fontSize: "12px" }}>·</span>
+
+                {/* Cost estimate — updates with mode */}
+                <span
+                  data-testid="landing-cost-estimate"
+                  style={{ fontSize: "11px", color: "rgba(110,130,165,0.8)", fontFamily: "'Manrope', sans-serif" }}
+                >
+                  Est. ~{estimatedCost}
+                </span>
               </div>
+
+              {/* Build button */}
               <motion.button
                 data-testid="landing-submit-btn"
                 onClick={handleSubmit}

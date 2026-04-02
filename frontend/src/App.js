@@ -8,9 +8,12 @@ function SonarApp() {
   const [view, setView] = useState("landing");
   const [initialPrompt, setInitialPrompt] = useState("");
 
-  const handleStart = (prompt) => {
+  const handleStart = (prompt, model, mode) => {
     setInitialPrompt(prompt);
     setView("builder");
+    // Pass model/mode as state
+    window.__sonarInitModel = model || "gpt-4o";
+    window.__sonarInitMode = mode || "E-1";
   };
 
   const handleReset = () => {

@@ -48,8 +48,8 @@ function getProjectName(type) {
 }
 
 export default function AppBuilder({ initialPrompt, onReset }) {
-  const [selectedModel, setSelectedModel] = useState("gpt-4o");
-  const [mode, setMode] = useState("E-1");
+  const [selectedModel, setSelectedModel] = useState(window.__sonarInitModel || "gpt-4o");
+  const [mode, setMode] = useState(window.__sonarInitMode || "E-1");
   const [credits, setCredits] = useState(1240);
   const [messages, setMessages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
