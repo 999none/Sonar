@@ -95,9 +95,9 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
       {/* Right — Preview/Code (only when panel visible) + Share + Deploy + Avatar */}
       <div className="flex items-center gap-2 px-3 flex-shrink-0 relative z-10" style={{ borderLeft: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.12)" }}>
 
-        {/* Preview & Code tabs — only visible when side panel is open */}
+        {/* Preview & Code tabs — only visible when side panel is closed */}
         <AnimatePresence>
-          {showPreview && (
+          {!showPreview && (
             <motion.div
               initial={{ opacity: 0, width: 0 }}
               animate={{ opacity: 1, width: "auto" }}
