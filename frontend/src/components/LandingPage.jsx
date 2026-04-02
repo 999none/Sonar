@@ -204,8 +204,13 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         className="relative z-20 flex items-center justify-between px-10 py-5"
       >
         <span
-          className="text-white font-black text-lg tracking-tight select-none"
-          style={{ fontFamily: "'Cabinet Grotesk', sans-serif", letterSpacing: "-0.02em" }}
+          className="text-white font-black select-none"
+          style={{
+            fontFamily: "'Sora', 'Inter', sans-serif",
+            fontSize: "1.15rem",
+            fontWeight: 900,
+            letterSpacing: "-0.05em",
+          }}
         >
           sonar
         </span>
@@ -248,11 +253,11 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            fontFamily: "'Cabinet Grotesk', 'Inter', sans-serif",
+            fontFamily: "'Sora', 'Inter', sans-serif",
             fontSize: "clamp(7rem, 22vw, 18rem)",
             fontWeight: 900,
             lineHeight: 0.88,
-            letterSpacing: "-0.04em",
+            letterSpacing: "-0.055em",
             color: "#ffffff",
             textShadow: [
               "0 2px 4px rgba(0,0,0,0.9)",
@@ -274,12 +279,12 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         >
           <p
             style={{
-              fontFamily: "'Cabinet Grotesk', sans-serif",
+              fontFamily: "'Space Grotesk', 'Inter', sans-serif",
               fontSize: "clamp(1.6rem, 4.5vw, 3.2rem)",
               fontWeight: 700,
               color: "#ffffff",
-              lineHeight: 1.15,
-              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
+              letterSpacing: "-0.035em",
               textShadow: "0 2px 12px rgba(0,0,0,0.6)",
             }}
           >
@@ -288,11 +293,11 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           <p
             className="mt-2"
             style={{
-              fontFamily: "'Manrope', sans-serif",
-              fontSize: "clamp(1rem, 2.5vw, 1.55rem)",
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: "clamp(1rem, 2.5vw, 1.45rem)",
               fontWeight: 500,
-              color: "rgba(180,190,210,0.75)",
-              letterSpacing: "-0.01em",
+              color: "rgba(180,190,210,0.7)",
+              letterSpacing: "-0.015em",
               textShadow: "0 1px 8px rgba(0,0,0,0.5)",
             }}
           >
