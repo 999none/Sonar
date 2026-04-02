@@ -347,10 +347,11 @@ function CoderModal({ onClose, projectName }) {
   );
 }
 
-export default function EmergentPreview({ projectType, isGenerating, previewReady, activeTab, onTabChange, code, terminalLogs, projectName }) {
+export default function EmergentPreview({ projectType, isGenerating, previewReady, activeTab, onTabChange, code, terminalLogs, projectName, isDark = false }) {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showCoderModal, setShowCoderModal] = useState(false);
   const PreviewComp = PREVIEWS[projectType];
+  const dk = isDark;
 
   // Open coder modal when "Code" tab is clicked
   const handleTabChange = (id) => {
@@ -362,10 +363,14 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
   };
 
   return (
-    <div className="flex flex-col h-full relative" style={{ background: "#060c14" }}>
+    <div className="flex flex-col h-full relative" style={{ background: dk ? "#060c14" : "#dfeefb" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2.5 flex-shrink-0"
-        style={{ background: "#06090f", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        style={{
+          background: dk ? "#06090f" : "rgba(255,255,255,0.65)",
+          backdropFilter: dk ? "none" : "blur(12px)",
+          borderBottom: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.15)",
+        }}>
         <div className="flex items-center gap-1">
           {[
             { id: "preview", Icon: Eye, label: "App Preview" },
@@ -375,9 +380,9 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
               data-testid={`tab-${id}`}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all"
               style={{
-                color: activeTab===id ? "#e2e8f0" : "rgba(100,116,139,0.7)",
-                background: activeTab===id ? "rgba(255,255,255,0.07)" : "transparent",
-                border: activeTab===id ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
+                color: activeTab===id ? (dk ? "#e2e8f0" : "#0a1a3e") : (dk ? "rgba(100,116,139,0.7)" : "rgba(40,70,130,0.45)"),
+                background: activeTab===id ? (dk ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.7)") : "transparent",
+                border: activeTab===id ? (dk ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(80,140,220,0.2)") : "1px solid transparent",
               }}>
               <Icon style={{ width: 11, height: 11 }} /> {label}
             </button>
@@ -385,11 +390,11 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
         </div>
         <div className="flex items-center gap-1">
           <button data-testid="refresh-preview" onClick={() => setRefreshKey(k=>k+1)}
-            className="p-1.5 rounded transition-colors" style={{ color:"rgba(100,116,139,0.5)" }}>
+            className="p-1.5 rounded transition-colors" style={{ color: dk ? "rgba(100,116,139,0.5)" : "rgba(40,70,130,0.4)" }}>
             <RefreshCw style={{ width: 12, height: 12 }} />
           </button>
           <button data-testid="open-external"
-            className="p-1.5 rounded transition-colors" style={{ color:"rgba(100,116,139,0.5)" }}>
+            className="p-1.5 rounded transition-colors" style={{ color: dk ? "rgba(100,116,139,0.5)" : "rgba(40,70,130,0.4)" }}>
             <ExternalLink style={{ width: 12, height: 12 }} />
           </button>
         </div>

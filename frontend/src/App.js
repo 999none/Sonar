@@ -76,6 +76,7 @@ function SonarApp() {
         onReset={handleReset}
         externalTasks={tasks}
         onTasksChange={setTasks}
+        isDark={isDark}
       />
     );
   }

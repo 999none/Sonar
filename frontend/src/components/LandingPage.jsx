@@ -666,6 +666,62 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
             >
               <div className="flex items-center gap-1.5">
 
+                {/* Integration button */}
+                <button
+                  data-testid="landing-btn-integration"
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full transition-all"
+                  style={{
+                    fontSize: "11px",
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 500,
+                    color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
+                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
+                    border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)",
+                    backdropFilter: "blur(8px)",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.75)";
+                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.18)" : "rgba(100,160,240,0.35)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)";
+                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
+                  }}
+                >
+                  <Plug style={{ width: 12, height: 12 }} />
+                  Intégration
+                </button>
+
+                {/* Github button */}
+                <button
+                  data-testid="landing-btn-github"
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full transition-all"
+                  style={{
+                    fontSize: "11px",
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 500,
+                    color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
+                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
+                    border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)",
+                    backdropFilter: "blur(8px)",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.75)";
+                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.18)" : "rgba(100,160,240,0.35)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)";
+                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
+                  }}
+                >
+                  <Github style={{ width: 12, height: 12 }} />
+                  Github
+                </button>
+
+                <span style={{ color: T.text3, fontSize: "12px" }}>·</span>
+
                 {/* Mode selector */}
                 <div ref={modeRef} className="relative">
                   <button
@@ -797,62 +853,6 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                     )}
                   </AnimatePresence>
                 </div>
-
-                <span style={{ color: T.text3, fontSize: "12px" }}>·</span>
-
-                {/* Integration button */}
-                <button
-                  data-testid="landing-btn-integration"
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full transition-all"
-                  style={{
-                    fontSize: "11px",
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 500,
-                    color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
-                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
-                    border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)",
-                    backdropFilter: "blur(8px)",
-                    cursor: "pointer",
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.75)";
-                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.18)" : "rgba(100,160,240,0.35)";
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)";
-                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
-                  }}
-                >
-                  <Plug style={{ width: 12, height: 12 }} />
-                  Intégration
-                </button>
-
-                {/* Github button */}
-                <button
-                  data-testid="landing-btn-github"
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full transition-all"
-                  style={{
-                    fontSize: "11px",
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 500,
-                    color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
-                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
-                    border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)",
-                    backdropFilter: "blur(8px)",
-                    cursor: "pointer",
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.75)";
-                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.18)" : "rgba(100,160,240,0.35)";
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)";
-                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
-                  }}
-                >
-                  <Github style={{ width: 12, height: 12 }} />
-                  Github
-                </button>
               </div>
 
               {/* Build button */}

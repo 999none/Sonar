@@ -36,7 +36,7 @@ function saveHistory(tasks) {
   try { localStorage.setItem("sonar-tasks", JSON.stringify(tasks.slice(0, 20))); } catch {}
 }
 
-export default function AppBuilder({ initialPrompt, initialTask, onReset, externalTasks, onTasksChange }) {
+export default function AppBuilder({ initialPrompt, initialTask, onReset, externalTasks, onTasksChange, isDark = false }) {
   const [selectedModel] = useState(window.__sonarInitModel || "gpt-4o");
   const [mode] = useState(window.__sonarInitMode || "S-1");
   const [messages, setMessages] = useState([]);
@@ -228,13 +228,14 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
   };
 
   return (
-    <div className="flex flex-col overflow-hidden" style={{ height: "100vh", background: "#0a0a0a" }}>
+    <div className="flex flex-col overflow-hidden" style={{ height: "100vh", background: isDark ? "#0a0a0a" : "#e8f2fb" }}>
       <TopBar
         isGenerating={isGenerating}
         onDeploy={handleDeploy}
         onShare={() => setShowShare(true)}
         onHome={handleReset}
         projectName={projectName}
+        isDark={isDark}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -244,7 +245,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
           style={{
             width: showPreviewPanel ? "50%" : "100%",
             transition: "width 0.55s cubic-bezier(0.16, 1, 0.3, 1)",
-            borderRight: showPreviewPanel ? "1px solid rgba(255,255,255,0.06)" : "none",
+            borderRight: showPreviewPanel ? (isDark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.15)") : "none",
           }}
         >
           <ChatPanel
@@ -253,6 +254,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
             isGenerating={isGenerating}
             onSendMessage={handleSendMessage}
             onReset={handleReset}
+            isDark={isDark}
           />
         </div>
 
@@ -276,6 +278,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
                 code={currentCode}
                 terminalLogs={terminalLogs}
                 projectName={projectName}
+                isDark={isDark}
               />
             </motion.div>
           )}
