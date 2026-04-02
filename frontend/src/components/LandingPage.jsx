@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock } from "lucide-react";
+import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock, LogOut } from "lucide-react";
 import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
+import LoginModal from "./LoginModal";
 
 function relativeTime(ts) {
   if (!ts) return "";
@@ -87,12 +88,13 @@ const TYPING_PROMPTS = [
   "Build a blog platform with markdown support",
 ];
 
-export default function LandingPage({ onStart, tasks = [], onSelectTask, onCloseTask, onShowAuth }) {
+export default function LandingPage({ onStart, tasks = [], onSelectTask, onCloseTask, onShowAuth, user, onLogin, onLogout }) {
   const [inputValue, setInputValue] = useState("");
   const [typingIndex, setTypingIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   // Options state
   const [selectedMode, setSelectedMode] = useState("E-1");
   const [selectedModel, setSelectedModel] = useState("gpt-4o");
@@ -150,8 +152,12 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
   };
 
   const handleFocus = () => {
+    if (!user) {
+      // Block input — show login modal instead
+      setShowLoginModal(true);
+      return;
+    }
     setIsFocused(true);
-    // Clear the animated placeholder text so user starts fresh
     setInputValue("");
     setCharIndex(0);
     setIsDeleting(false);
@@ -167,6 +173,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
   };
 
   const handleSuggestion = (template) => {
+    if (!user) { setShowLoginModal(true); return; }
     setIsFocused(true);
     setInputValue(template.prompt);
     setTimeout(() => onStart(template.prompt, selectedModel, selectedMode), 300);
@@ -179,6 +186,12 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         background: "linear-gradient(to bottom, #0c1f4a 0%, #060d1e 35%, #010408 65%, #000000 100%)",
       }}
     >
+      {/* Login modal */}
+      <LoginModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLogin={(userData) => { onLogin(userData); setShowLoginModal(false); }}
+      />
       {/* Subtle horizontal scan lines for depth */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -225,20 +238,58 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
             onMouseLeave={e => e.target.style.color="rgba(255,255,255,0.45)"}>
             Pricing
           </a>
-          <button
-            data-testid="nav-sign-in"
-            className="text-sm px-5 py-2 rounded-lg transition-all"
-            onClick={() => onShowAuth && onShowAuth()}
-            style={{
-              color: "rgba(255,255,255,0.6)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              background: "rgba(255,255,255,0.04)",
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color="rgba(255,255,255,0.9)"; e.currentTarget.style.background="rgba(255,255,255,0.08)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color="rgba(255,255,255,0.6)"; e.currentTarget.style.background="rgba(255,255,255,0.04)"; }}
-          >
-            Sign in
-          </button>
+
+          {user ? (
+            /* ── Avatar + logout ── */
+            <div className="flex items-center gap-3">
+              <div
+                data-testid="nav-user-avatar"
+                style={{
+                  width: 32, height: 32, borderRadius: "50%",
+                  background: "linear-gradient(135deg, #7c3aed, #a855f7)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: "11px", color: "#fff", textTransform: "uppercase" }}>
+                  {(user.name || user.email || "U").slice(0, 2)}
+                </span>
+              </div>
+              <span style={{ fontSize: "13px", fontFamily: "'Manrope', sans-serif", color: "rgba(200,215,235,0.75)", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {user.name || user.email}
+              </span>
+              <button
+                data-testid="nav-logout"
+                onClick={onLogout}
+                title="Se déconnecter"
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  width: 28, height: 28, borderRadius: "7px", border: "none",
+                  background: "rgba(255,255,255,0.05)", cursor: "pointer",
+                  color: "rgba(255,255,255,0.4)", transition: "all 0.15s",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,80,80,0.15)"; e.currentTarget.style.color = "#f87171"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}
+              >
+                <LogOut style={{ width: 13, height: 13 }} />
+              </button>
+            </div>
+          ) : (
+            <button
+              data-testid="nav-sign-in"
+              className="text-sm px-5 py-2 rounded-lg transition-all"
+              onClick={() => onShowAuth && onShowAuth()}
+              style={{
+                color: "rgba(255,255,255,0.6)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                background: "rgba(255,255,255,0.04)",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color="rgba(255,255,255,0.9)"; e.currentTarget.style.background="rgba(255,255,255,0.08)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color="rgba(255,255,255,0.6)"; e.currentTarget.style.background="rgba(255,255,255,0.04)"; }}
+            >
+              Sign in
+            </button>
+          )}
         </div>
       </motion.nav>
 
@@ -327,12 +378,13 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
               ref={inputRef}
               data-testid="landing-idea-input"
               value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
+              onChange={e => { if (user) setInputValue(e.target.value); }}
               onFocus={handleFocus}
               onBlur={handleBlur}
               onKeyDown={handleKeyDown}
               placeholder=""
               rows={3}
+              readOnly={!user}
               className="w-full bg-transparent outline-none resize-none"
               style={{
                 padding: "22px 24px 56px",
@@ -342,6 +394,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                 fontWeight: 400,
                 lineHeight: 1.6,
                 outline: "none",
+                cursor: user ? "text" : "pointer",
               }}
             />
 

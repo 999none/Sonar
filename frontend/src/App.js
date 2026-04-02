@@ -18,15 +18,24 @@ function saveHistory(tasks) {
 function SonarApp() {
   const [view, setView] = useState("landing");
   const [initialPrompt, setInitialPrompt] = useState("");
-  const [initialTask, setInitialTask] = useState(null);  const [tasks, setTasks] = useState(() => {
+  const [initialTask, setInitialTask] = useState(null);
+  const [user, setUser] = useState(null); // { name, email } when logged in
+  const [tasks, setTasks] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("sonar-tasks") || "null");
       if (saved && saved.length > 0) return saved;
-      // First visit — show demo tasks
       saveHistory(DEMO_TASKS);
       return DEMO_TASKS;
     } catch { return DEMO_TASKS; }
   });
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+  };
 
   const handleStart = (prompt, model, mode) => {
     setInitialTask(null);
@@ -77,6 +86,9 @@ function SonarApp() {
       onSelectTask={handleSelectTaskFromHome}
       onCloseTask={handleCloseTaskFromHome}
       onShowAuth={() => setView("auth")}
+      user={user}
+      onLogin={handleLogin}
+      onLogout={handleLogout}
     />
   );
 }
