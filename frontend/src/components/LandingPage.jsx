@@ -238,13 +238,9 @@ export default function LandingPage({ onStart }) {
             className="relative transition-all duration-300"
             style={{
               background: "rgba(22,28,40,0.92)",
-              border: isFocused
-                ? "1px solid rgba(6,182,212,0.5)"
-                : "1px solid rgba(60,75,100,0.5)",
+              border: "1px solid rgba(60,75,100,0.5)",
               borderRadius: "16px",
-              boxShadow: isFocused
-                ? "0 0 0 3px rgba(6,182,212,0.08), 0 8px 40px rgba(0,0,0,0.6)"
-                : "0 4px 30px rgba(0,0,0,0.5)",
+              boxShadow: "0 4px 30px rgba(0,0,0,0.5)",
             }}
           >
             <textarea
@@ -265,6 +261,7 @@ export default function LandingPage({ onStart }) {
                 fontFamily: "'Manrope', sans-serif",
                 fontWeight: 400,
                 lineHeight: 1.6,
+                outline: "none",
               }}
             />
 
