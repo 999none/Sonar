@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, RefreshCw, ExternalLink, Smartphone, Monitor, Tablet, Code2, Eye, Terminal } from "lucide-react";
+import { X, RefreshCw, ExternalLink, Code2, Eye, Terminal, Copy, Check, ExternalLink as OpenIcon } from "lucide-react";
 
 const SONAR_ICON = "https://customer-assets.emergentagent.com/job_emergent-mock-2/artifacts/bocxbvjv_66af99839e55f1ee29f117ac.png";
 
@@ -229,13 +229,140 @@ function CodeView({ code, terminalLogs }) {
   );
 }
 
-export default function EmergentPreview({ projectType, isGenerating, previewReady, activeTab, onTabChange, code, terminalLogs, projectName }) {
-  const [viewMode, setViewMode] = useState("desktop");
-  const [refreshKey, setRefreshKey] = useState(0);
-  const PreviewComp = PREVIEWS[projectType];
+// ── Coder.com codespace modal ──
+function CoderModal({ onClose, projectName }) {
+  const [copiedUrl, setCopiedUrl] = useState(false);
+  const [copiedPwd, setCopiedPwd] = useState(false);
+
+  const url = `https://coder.sonar.sh/workspaces/${projectName || "my-app"}`;
+  const password = "snr-" + Math.random().toString(36).slice(2, 10).toUpperCase();
+
+  const copy = (text, setCopied) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    <div className="flex flex-col h-full" style={{ background: "#060c14" }}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="absolute inset-0 z-50 flex items-center justify-center"
+      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)" }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.93, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.93, y: 16 }}
+        transition={{ duration: 0.2, type: "spring", bounce: 0.25 }}
+        onClick={e => e.stopPropagation()}
+        className="w-full mx-6 rounded-2xl overflow-hidden"
+        style={{
+          maxWidth: "420px",
+          background: "#0d1117",
+          border: "1px solid rgba(255,255,255,0.1)",
+          boxShadow: "0 32px 64px rgba(0,0,0,0.7)",
+        }}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4"
+          style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.2)" }}>
+              <Code2 style={{ width: 15, height: 15, color: "#06b6d4" }} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">Codespace</p>
+              <p style={{ fontSize: "11px", color: "rgba(100,116,139,0.7)" }}>Powered by coder.com</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg transition-colors hover:bg-white/5">
+            <X style={{ width: 14, height: 14, color: "#64748b" }} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="p-5 space-y-4">
+          <p style={{ fontSize: "13px", color: "rgba(180,195,215,0.7)", lineHeight: 1.6 }}>
+            Your codespace is ready. Open the link below in your browser and enter the password to access the full VS Code environment.
+          </p>
+
+          {/* URL */}
+          <div>
+            <p style={{ fontSize: "11px", color: "rgba(100,116,139,0.8)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Workspace URL</p>
+            <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
+              style={{ background: "#060c14", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <span className="flex-1 text-xs truncate" style={{ color: "#06b6d4", fontFamily: "'JetBrains Mono',monospace" }}>
+                {url}
+              </span>
+              <button onClick={() => copy(url, setCopiedUrl)}
+                className="flex-shrink-0 p-1 rounded transition-colors hover:bg-white/5">
+                {copiedUrl
+                  ? <Check style={{ width: 12, height: 12, color: "#4ade80" }} />
+                  : <Copy style={{ width: 12, height: 12, color: "#64748b" }} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Password */}
+          <div>
+            <p style={{ fontSize: "11px", color: "rgba(100,116,139,0.8)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Password</p>
+            <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
+              style={{ background: "#060c14", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <span className="flex-1 text-xs tracking-widest" style={{ color: "#e2e8f0", fontFamily: "'JetBrains Mono',monospace" }}>
+                {password}
+              </span>
+              <button onClick={() => copy(password, setCopiedPwd)}
+                className="flex-shrink-0 p-1 rounded transition-colors hover:bg-white/5">
+                {copiedPwd
+                  ? <Check style={{ width: 12, height: 12, color: "#4ade80" }} />
+                  : <Copy style={{ width: 12, height: 12, color: "#64748b" }} />}
+              </button>
+            </div>
+          </div>
+
+          <p style={{ fontSize: "11px", color: "rgba(100,116,139,0.5)", lineHeight: 1.5 }}>
+            The codespace integration with coder.com will be set up later. This is a preview of the future experience.
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="px-5 pb-5">
+          <a href="https://coder.com" target="_blank" rel="noreferrer"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-semibold transition-all"
+            style={{
+              background: "linear-gradient(135deg, #06b6d4, #0ea5e9)",
+              color: "#000",
+              boxShadow: "0 0 18px rgba(6,182,212,0.25)",
+              textDecoration: "none",
+            }}>
+            Open Codespace <ExternalLink style={{ width: 13, height: 13 }} />
+          </a>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export default function EmergentPreview({ projectType, isGenerating, previewReady, activeTab, onTabChange, code, terminalLogs, projectName }) {
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [showCoderModal, setShowCoderModal] = useState(false);
+  const PreviewComp = PREVIEWS[projectType];
+
+  // Open coder modal when "Code" tab is clicked
+  const handleTabChange = (id) => {
+    if (id === "code") {
+      setShowCoderModal(true);
+    } else {
+      onTabChange(id);
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-full relative" style={{ background: "#060c14" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2.5 flex-shrink-0"
         style={{ background: "#06090f", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
@@ -244,7 +371,8 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
             { id: "preview", Icon: Eye, label: "App Preview" },
             { id: "code", Icon: Code2, label: "Code" },
           ].map(({ id, Icon, label }) => (
-            <button key={id} onClick={() => onTabChange(id)}
+            <button key={id} onClick={() => handleTabChange(id)}
+              data-testid={`tab-${id}`}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all"
               style={{
                 color: activeTab===id ? "#e2e8f0" : "rgba(100,116,139,0.7)",
@@ -256,18 +384,12 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
           ))}
         </div>
         <div className="flex items-center gap-1">
-          {[{ id: "mobile", Icon: Smartphone }, { id: "tablet", Icon: Tablet }, { id: "desktop", Icon: Monitor }].map(({ id, Icon }) => (
-            <button key={id} data-testid={`view-${id}`} onClick={() => setViewMode(id)}
-              className="p-1.5 rounded transition-colors"
-              style={{ color: viewMode===id?"#06b6d4":"rgba(100,116,139,0.5)", background: viewMode===id?"rgba(6,182,212,0.1)":"transparent" }}>
-              <Icon style={{ width: 13, height: 13 }} />
-            </button>
-          ))}
-          <div style={{ width:1, height:16, background:"rgba(255,255,255,0.08)", margin:"0 4px" }} />
-          <button data-testid="refresh-preview" onClick={() => setRefreshKey(k=>k+1)} className="p-1.5 rounded transition-colors" style={{ color:"rgba(100,116,139,0.5)" }}>
+          <button data-testid="refresh-preview" onClick={() => setRefreshKey(k=>k+1)}
+            className="p-1.5 rounded transition-colors" style={{ color:"rgba(100,116,139,0.5)" }}>
             <RefreshCw style={{ width: 12, height: 12 }} />
           </button>
-          <button data-testid="open-external" className="p-1.5 rounded transition-colors" style={{ color:"rgba(100,116,139,0.5)" }}>
+          <button data-testid="open-external"
+            className="p-1.5 rounded transition-colors" style={{ color:"rgba(100,116,139,0.5)" }}>
             <ExternalLink style={{ width: 12, height: 12 }} />
           </button>
         </div>
@@ -276,21 +398,14 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
       {/* Body */}
       <div className="flex-1 overflow-hidden relative">
         <AnimatePresence mode="wait">
-          {activeTab === "code" ? (
-            <motion.div key="code" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-              <CodeView code={code} terminalLogs={terminalLogs} />
-            </motion.div>
-          ) : isGenerating || !previewReady ? (
+          {isGenerating || !previewReady ? (
             <motion.div key="spinning" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
               <SpinningUpState projectName={projectName} />
             </motion.div>
           ) : PreviewComp ? (
             <motion.div key={`${projectType}-${refreshKey}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
               className="h-full overflow-auto">
-              <div className={`overflow-auto ${viewMode==="mobile"?"mx-auto":""}`}
-                style={{ maxWidth: viewMode==="mobile"?"375px":viewMode==="tablet"?"768px":"100%", height:"100%" }}>
-                <PreviewComp key={refreshKey} />
-              </div>
+              <PreviewComp key={refreshKey} />
             </motion.div>
           ) : (
             <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex items-center justify-center">
@@ -302,6 +417,13 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
                 <p style={{ fontSize:13, color:"rgba(100,120,150,0.6)", fontFamily:"'Manrope',sans-serif" }}>Start building to see the preview</p>
               </div>
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Coder Modal */}
+        <AnimatePresence>
+          {showCoderModal && (
+            <CoderModal onClose={() => setShowCoderModal(false)} projectName={projectName} />
           )}
         </AnimatePresence>
       </div>
