@@ -239,7 +239,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
       {/* HERO — centered vertically in the viewport */}
       <div
         className="flex-1 flex flex-col items-center justify-center relative z-10"
-        style={{ minHeight: "80vh", paddingBottom: tasks.length > 0 ? "190px" : 0 }}
+        style={{ minHeight: "80vh" }}
       >
 
         {/* Giant SONAR text */}
@@ -548,52 +548,37 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
             ))}
           </motion.div>
         </motion.div>
-      </div>
 
-      {/* Projets récents — panneau fixé en bas du home */}
-      {tasks.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.4 }}
-          style={{
-            position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50,
-            background: "rgba(5,8,14,0.92)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            borderTop: "1px solid rgba(255,255,255,0.07)",
-            padding: "16px 40px 22px",
-          }}
-        >
-          <div style={{ maxWidth: "920px", margin: "0 auto" }}>
-            {/* Header */}
-            <div className="flex items-center gap-2 mb-4">
-              <Clock style={{ width: 10, height: 10, color: "rgba(100,116,139,0.5)" }} />
-              <span style={{ fontSize: "10px", color: "rgba(100,116,139,0.55)", fontFamily: "'Manrope',sans-serif", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.09em" }}>
+        {/* Projets récents — inline sous l'input, sans fond */}
+        {tasks.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.4 }}
+            className="w-full mt-8 px-6"
+            style={{ maxWidth: "680px" }}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <Clock style={{ width: 9, height: 9, color: "rgba(100,116,139,0.45)" }} />
+              <span style={{ fontSize: "10px", color: "rgba(100,116,139,0.45)", fontFamily: "'Manrope',sans-serif", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.09em" }}>
                 Projets récents
               </span>
-              <span style={{ fontSize: "10px", color: "rgba(100,116,139,0.3)", fontFamily: "'Manrope',sans-serif", marginLeft: 4 }}>
-                {tasks.length} projet{tasks.length > 1 ? "s" : ""}
-              </span>
             </div>
-
-            {/* Grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px" }}>
               {tasks.slice(0, 3).map((task, i) => (
                 <motion.div
                   key={task.id}
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: 0.6 + i * 0.06, duration: 0.22 }}
+                  transition={{ delay: 0.9 + i * 0.06, duration: 0.2 }}
                 >
                   <TaskCard task={task} onSelect={onSelectTask} onClose={onCloseTask} />
                 </motion.div>
               ))}
             </div>
-          </div>
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }

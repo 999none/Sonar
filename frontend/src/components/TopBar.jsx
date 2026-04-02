@@ -36,7 +36,6 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
       <div className="flex-1 flex items-center justify-center gap-2">
         {projectName && projectName !== "untitled-app" && (
           <>
-            <span style={{ fontSize: "12px", color: "rgba(100,116,139,0.4)", fontFamily: "'Manrope',sans-serif" }}>/</span>
             <span style={{ fontSize: "13px", color: "rgba(180,195,215,0.75)", fontFamily: "'Manrope',sans-serif", fontWeight: 500 }}>
               {projectName}
             </span>
