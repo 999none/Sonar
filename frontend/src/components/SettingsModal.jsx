@@ -25,11 +25,11 @@ const TH = {
     rowText: "rgba(210,225,245,0.85)",
     rowSubtext: "rgba(120,145,185,0.6)",
     toggleOff: "rgba(255,255,255,0.12)",
-    toggleOn: "linear-gradient(90deg, #7c3aed, #a855f7)",
-    toggleOnShadow: "0 0 12px rgba(124,58,237,0.4)",
+    toggleOn: "linear-gradient(90deg, #38bdf8, #0ea5e9)",
+    toggleOnShadow: "0 0 12px rgba(14,165,233,0.4)",
     themeLabel: "rgba(140,165,200,0.6)",
-    planBadgeBg: "rgba(167,139,250,0.12)",
-    planBadgeText: "#a78bfa",
+    planBadgeBg: "rgba(56,189,248,0.12)",
+    planBadgeText: "#38bdf8",
     creditText: "#10b981",
     langBtnBg: "rgba(255,255,255,0.06)",
     langBtnBorder: "1px solid rgba(255,255,255,0.1)",
@@ -41,7 +41,7 @@ const TH = {
     langDropItemBorder: "1px solid rgba(255,255,255,0.05)",
     langDropItemText: "rgba(200,220,245,0.8)",
     langDropItemHoverBg: "rgba(255,255,255,0.07)",
-    langDropItemActive: "#a78bfa",
+    langDropItemActive: "#38bdf8",
   },
   light: {
     backdrop: "rgba(100,130,200,0.25)",
@@ -62,11 +62,11 @@ const TH = {
     rowText: "#1e3264",
     rowSubtext: "rgba(40,60,120,0.5)",
     toggleOff: "rgba(0,0,0,0.1)",
-    toggleOn: "linear-gradient(90deg, #7c3aed, #a855f7)",
-    toggleOnShadow: "0 0 12px rgba(124,58,237,0.25)",
+    toggleOn: "linear-gradient(90deg, #38bdf8, #0ea5e9)",
+    toggleOnShadow: "0 0 12px rgba(14,165,233,0.25)",
     themeLabel: "rgba(40,60,120,0.5)",
-    planBadgeBg: "rgba(124,58,237,0.1)",
-    planBadgeText: "#7c3aed",
+    planBadgeBg: "rgba(14,165,233,0.1)",
+    planBadgeText: "#0ea5e9",
     creditText: "#059669",
     langBtnBg: "rgba(0,0,0,0.03)",
     langBtnBorder: "1px solid rgba(80,120,200,0.18)",
@@ -78,7 +78,7 @@ const TH = {
     langDropItemBorder: "1px solid rgba(80,120,200,0.08)",
     langDropItemText: "#1e3264",
     langDropItemHoverBg: "rgba(0,0,0,0.04)",
-    langDropItemActive: "#7c3aed",
+    langDropItemActive: "#0ea5e9",
   },
 };
 
@@ -364,10 +364,10 @@ export default function SettingsModal({ open, onClose, user, isDark, onToggleThe
                     <button
                       style={{
                         padding: "5px 14px", borderRadius: "8px", border: "none",
-                        background: "linear-gradient(90deg, #7c3aed, #a855f7)",
+                        background: "linear-gradient(90deg, #38bdf8, #0ea5e9)",
                         color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif",
                         fontSize: "12px", fontWeight: 600, cursor: "pointer",
-                        boxShadow: "0 2px 12px rgba(124,58,237,0.3)",
+                        boxShadow: "0 2px 12px rgba(14,165,233,0.3)",
                       }}
                     >
                       Ajouter des crédits

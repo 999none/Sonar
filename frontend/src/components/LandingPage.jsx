@@ -47,7 +47,7 @@ function ProfileMenu({ user, onLogout, onClose, onOpenSettings, isDark = true })
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{
             width: 34, height: 34, borderRadius: "50%",
-            background: "linear-gradient(135deg, #7c3aed, #a855f7)",
+            background: "linear-gradient(135deg, #7dd3fc, #38bdf8, #0ea5e9)",
             display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
           }}>
             <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: "11px", color: "#fff", textTransform: "uppercase" }}>
@@ -492,11 +492,11 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                   onClick={() => setShowProfileMenu(v => !v)}
                   style={{
                     width: 32, height: 32, borderRadius: "50%",
-                    background: "linear-gradient(135deg, #7c3aed, #a855f7)",
-                    border: showProfileMenu ? "2px solid rgba(167,139,250,0.6)" : "2px solid transparent",
+                    background: "linear-gradient(135deg, #7dd3fc, #38bdf8, #0ea5e9)",
+                    border: showProfileMenu ? "2px solid rgba(14,165,233,0.6)" : "2px solid transparent",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     cursor: "pointer", transition: "border-color 0.15s",
-                    boxShadow: showProfileMenu ? "0 0 0 3px rgba(167,139,250,0.15)" : "none",
+                    boxShadow: showProfileMenu ? "0 0 0 3px rgba(14,165,233,0.15)" : "none",
                     padding: 0,
                   }}
                 >

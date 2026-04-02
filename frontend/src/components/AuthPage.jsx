@@ -48,11 +48,11 @@ const T = {
     inputBorder: "1px solid rgba(255,255,255,0.1)",
     inputShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
     inputText: "#e2e8f0",
-    inputFocusBorder: "rgba(167,139,250,0.5)",
-    inputFocusShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 3px rgba(167,139,250,0.1)",
+    inputFocusBorder: "rgba(56,189,248,0.5)",
+    inputFocusShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 3px rgba(56,189,248,0.15)",
     inputPlaceholder: "rgba(255,255,255,0.25)",
     switchText: "rgba(255,255,255,0.38)",
-    switchLink: "#a78bfa",
+    switchLink: "#38bdf8",
     termsText: "rgba(255,255,255,0.22)",
     termsLink: "rgba(255,255,255,0.38)",
     // Right panel
@@ -88,11 +88,11 @@ const T = {
     inputBorder: "1px solid rgba(80,120,200,0.2)",
     inputShadow: "inset 0 1px 0 rgba(255,255,255,0.8)",
     inputText: "#0a0f25",
-    inputFocusBorder: "rgba(124,58,237,0.45)",
-    inputFocusShadow: "inset 0 1px 0 rgba(255,255,255,0.8), 0 0 0 3px rgba(124,58,237,0.1)",
+    inputFocusBorder: "rgba(14,165,233,0.45)",
+    inputFocusShadow: "inset 0 1px 0 rgba(255,255,255,0.8), 0 0 0 3px rgba(14,165,233,0.1)",
     inputPlaceholder: "rgba(80,100,160,0.4)",
     switchText: "rgba(40,60,120,0.5)",
-    switchLink: "#7c3aed",
+    switchLink: "#0ea5e9",
     termsText: "rgba(30,50,100,0.35)",
     termsLink: "rgba(30,50,100,0.55)",
     // Right panel — sky & water atmosphere
@@ -127,7 +127,7 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
     outline: "none",
     boxSizing: "border-box",
     transition: "border-color 0.15s, box-shadow 0.15s",
-    caretColor: "#a78bfa",
+    caretColor: "#38bdf8",
   };
 
   const handleSubmit = (e) => {
@@ -379,24 +379,24 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
               width: "100%",
               padding: "14px 0",
               borderRadius: "12px",
-              background: "linear-gradient(90deg, #7c3aed 0%, #a855f7 60%, #c084fc 100%)",
+              background: "linear-gradient(90deg, #38bdf8 0%, #0ea5e9 60%, #7dd3fc 100%)",
               color: "#fff",
               fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 700,
               fontSize: "15px",
               border: "none",
               cursor: "pointer",
-              boxShadow: "0 4px 24px rgba(124,58,237,0.45), 0 0 0 1px rgba(124,58,237,0.2)",
+              boxShadow: "0 4px 24px rgba(14,165,233,0.4), 0 0 0 1px rgba(56,189,248,0.2)",
               transition: "opacity 0.15s, box-shadow 0.15s",
               marginBottom: 18,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.opacity = "0.9";
-              e.currentTarget.style.boxShadow = "0 8px 32px rgba(124,58,237,0.6), 0 0 0 1px rgba(124,58,237,0.3)";
+              e.currentTarget.style.boxShadow = "0 8px 32px rgba(14,165,233,0.5), 0 0 0 1px rgba(56,189,248,0.3)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.opacity = "1";
-              e.currentTarget.style.boxShadow = "0 4px 24px rgba(124,58,237,0.45), 0 0 0 1px rgba(124,58,237,0.2)";
+              e.currentTarget.style.boxShadow = "0 4px 24px rgba(14,165,233,0.4), 0 0 0 1px rgba(56,189,248,0.2)";
             }}
           >
             {tab === "signup" ? "Create account" : "Sign in"}

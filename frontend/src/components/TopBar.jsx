@@ -16,18 +16,18 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
 
   return (
     <div
-      className="h-11 flex items-center flex-shrink-0 z-20"
+      className="h-11 flex items-center flex-shrink-0 z-20 relative"
       style={{
         background: dk ? "#06090f" : "rgba(255,255,255,0.7)",
         backdropFilter: dk ? "none" : "blur(12px)",
         borderBottom: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.15)",
       }}
     >
-      {/* Home */}
+      {/* Home — left */}
       <button
         data-testid="nav-home"
         onClick={onHome}
-        className="flex items-center gap-2 px-4 h-full flex-shrink-0 transition-colors"
+        className="flex items-center gap-2 px-4 h-full flex-shrink-0 transition-colors relative z-10"
         style={{ color: dk ? "rgba(180,195,215,0.7)" : "rgba(30,60,120,0.6)", borderRight: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.12)" }}
         onMouseEnter={e => e.currentTarget.style.color = dk ? "#e2e8f0" : "#0a1a3e"}
         onMouseLeave={e => e.currentTarget.style.color = dk ? "rgba(180,195,215,0.7)" : "rgba(30,60,120,0.6)"}
@@ -36,31 +36,41 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
         <span style={{ fontSize: "13px", fontFamily: "'Manrope', sans-serif", fontWeight: 500 }}>Home</span>
       </button>
 
-      {/* Center — Project name + generating status */}
-      <div className="flex-1 flex items-center justify-center gap-2">
-        {projectName && projectName !== "untitled-app" && (
-          <>
-            <span style={{ fontSize: "13px", color: dk ? "rgba(180,195,215,0.75)" : "#1e3264", fontFamily: "'Space Grotesk', 'Manrope', sans-serif", fontWeight: 600 }}>
-              {projectName}
-            </span>
-            {isGenerating && (
-              <motion.div
-                animate={{ opacity: [1, 0.3, 1] }}
-                transition={{ duration: 1.1, repeat: Infinity }}
-                className="flex items-center gap-1"
-              >
-                <Zap style={{ width: 11, height: 11, color: "#4ade80" }} />
-                <span style={{ fontSize: "11px", color: "rgba(74,222,128,0.7)", fontFamily: "'Manrope',sans-serif" }}>
-                  generating
-                </span>
-              </motion.div>
-            )}
-          </>
-        )}
-      </div>
+      {/* Center — absolute positioned for true centering */}
+      {projectName && projectName !== "untitled-app" && (
+        <div
+          className="flex items-center justify-center gap-2"
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            pointerEvents: "none",
+          }}
+        >
+          <span style={{ fontSize: "13px", color: dk ? "rgba(180,195,215,0.75)" : "#1e3264", fontFamily: "'Space Grotesk', 'Manrope', sans-serif", fontWeight: 600 }}>
+            {projectName}
+          </span>
+          {isGenerating && (
+            <motion.div
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ duration: 1.1, repeat: Infinity }}
+              className="flex items-center gap-1"
+            >
+              <Zap style={{ width: 11, height: 11, color: "#4ade80" }} />
+              <span style={{ fontSize: "11px", color: "rgba(74,222,128,0.7)", fontFamily: "'Manrope',sans-serif" }}>
+                generating
+              </span>
+            </motion.div>
+          )}
+        </div>
+      )}
+
+      {/* Spacer */}
+      <div className="flex-1" />
 
       {/* Right — Share + Deploy + Avatar */}
-      <div className="flex items-center gap-2 px-3 flex-shrink-0" style={{ borderLeft: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.12)" }}>
+      <div className="flex items-center gap-2 px-3 flex-shrink-0 relative z-10" style={{ borderLeft: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.12)" }}>
         <motion.button
           data-testid="share-button"
           onClick={onShare}
@@ -98,14 +108,14 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
           {deployed ? "Deployed!" : "Deploy"}
         </motion.button>
 
-        {/* User avatar */}
+        {/* User avatar — sky blue gradient */}
         {user && (
           <div
             className="flex items-center justify-center flex-shrink-0 ml-1"
             style={{
               width: 30, height: 30, borderRadius: "50%",
-              background: "linear-gradient(135deg, #7c3aed, #a855f7)",
-              boxShadow: "0 2px 8px rgba(124,58,237,0.3)",
+              background: "linear-gradient(135deg, #7dd3fc, #38bdf8, #0ea5e9)",
+              boxShadow: "0 2px 8px rgba(14,165,233,0.3)",
             }}
           >
             <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: "10px", color: "#fff", textTransform: "uppercase" }}>

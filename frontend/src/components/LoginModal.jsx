@@ -173,11 +173,11 @@ export default function LoginModal({ open, onClose, onGoToAuth, isDark = true })
               style={{
                 width: "100%", padding: "13px 0",
                 borderRadius: "12px", border: "none",
-                background: "linear-gradient(90deg, #7c3aed 0%, #a855f7 60%, #c084fc 100%)",
+                background: "linear-gradient(90deg, #38bdf8 0%, #0ea5e9 60%, #7dd3fc 100%)",
                 color: "#fff", fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontWeight: 700, fontSize: "14px", cursor: "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                gap: 8, boxShadow: "0 4px 24px rgba(124,58,237,0.4)",
+                gap: 8, boxShadow: "0 4px 24px rgba(14,165,233,0.35)",
                 marginBottom: 12,
               }}
             >
