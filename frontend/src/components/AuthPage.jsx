@@ -39,7 +39,7 @@ const inputBase = {
   caretColor: "#a78bfa",
 };
 
-export default function AuthPage({ onBack, onLogin }) {
+export default function AuthPage({ onBack, onLogin, isDark = true }) {
   const [tab, setTab] = useState("signup");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -65,16 +65,20 @@ export default function AuthPage({ onBack, onLogin }) {
         display: "grid",
         gridTemplateColumns: "46fr 54fr",
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #050b1f 0%, #000308 100%)",
+        background: isDark
+          ? "linear-gradient(135deg, #050b1f 0%, #000308 100%)"
+          : "linear-gradient(135deg, #b8d0f4 0%, #dde9ff 100%)",
       }}
     >
       {/* ── Left panel: form ── */}
       <div
         style={{
-          background: "linear-gradient(160deg, rgba(14,22,52,0.97) 0%, rgba(4,6,16,0.99) 100%)",
+          background: isDark
+            ? "linear-gradient(160deg, rgba(14,22,52,0.97) 0%, rgba(4,6,16,0.99) 100%)"
+            : "linear-gradient(160deg, rgba(240,247,255,0.99) 0%, rgba(255,255,255,1) 100%)",
           backdropFilter: "blur(40px)",
           WebkitBackdropFilter: "blur(40px)",
-          borderRight: "1px solid rgba(255,255,255,0.07)",
+          borderRight: isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,120,200,0.15)",
           display: "flex",
           flexDirection: "column",
           padding: "52px 56px 48px",
@@ -138,7 +142,7 @@ export default function AuthPage({ onBack, onLogin }) {
                 fontSize: "14px",
                 transition: "all 0.18s",
                 background: tab === t ? "rgba(255,255,255,0.12)" : "transparent",
-                color: tab === t ? "#fff" : "rgba(255,255,255,0.38)",
+                color: tab === t ? (isDark ? "#fff" : "#080f28") : (isDark ? "rgba(255,255,255,0.38)" : "rgba(40,60,120,0.45)"),
                 boxShadow: tab === t ? "0 1px 4px rgba(0,0,0,0.4)" : "none",
               }}
             >
@@ -341,7 +345,9 @@ export default function AuthPage({ onBack, onLogin }) {
       {/* ── Right panel: branding ── */}
       <div
         style={{
-          background: "linear-gradient(160deg, #0c1f4a 0%, #070e28 40%, #03080f 75%, #000 100%)",
+          background: isDark
+            ? "linear-gradient(160deg, rgba(14,22,52,1) 0%, rgba(3,5,14,1) 100%)"
+            : "linear-gradient(160deg, #c8d8f8 0%, #dae7ff 40%, #e8f2ff 100%)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -384,11 +390,7 @@ export default function AuthPage({ onBack, onLogin }) {
             fontSize: "clamp(5rem, 12vw, 9rem)",
             fontWeight: 900,
             letterSpacing: "-0.055em",
-            color: "#ffffff",
-            lineHeight: 0.9,
-            marginBottom: 22,
-            position: "relative",
-            textShadow: "0 0 80px rgba(20,60,160,0.4), 0 4px 32px rgba(0,0,0,0.8)",
+            color: isDark ? "#ffffff" : "#080f28",, 0 4px 32px rgba(0,0,0,0.8)",
           }}
         >
           sonar

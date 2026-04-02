@@ -19,7 +19,8 @@ function SonarApp() {
   const [view, setView] = useState("landing");
   const [initialPrompt, setInitialPrompt] = useState("");
   const [initialTask, setInitialTask] = useState(null);
-  const [user, setUser] = useState(null); // { name, email } when logged in
+  const [user, setUser] = useState(null);
+  const [isDark, setIsDark] = useState(true); // { name, email } when logged in
   const [tasks, setTasks] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("sonar-tasks") || "null");
@@ -64,7 +65,7 @@ function SonarApp() {
   };
 
   if (view === "auth") {
-    return <AuthPage onBack={() => setView("landing")} onLogin={handleLogin} />;
+    return <AuthPage onBack={() => setView("landing")} onLogin={handleLogin} isDark={isDark} />;
   }
 
   if (view === "builder") {
@@ -89,6 +90,8 @@ function SonarApp() {
       user={user}
       onLogin={handleLogin}
       onLogout={handleLogout}
+      isDark={isDark}
+      onToggleTheme={() => setIsDark(d => !d)}
     />
   );
 }

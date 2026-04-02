@@ -4,9 +4,10 @@ import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock, LogOut, Setting
 import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
 import LoginModal from "./LoginModal";
+import SettingsModal from "./SettingsModal";
 
 // ── Profile dropdown ──────────────────────────────────────────────────────────
-function ProfileMenu({ user, onLogout, onClose }) {
+function ProfileMenu({ user, onLogout, onClose, onOpenSettings }) {
   const items = [
     { icon: Settings, label: "Paramètres de compte",  color: null },
     { icon: Globe,    label: "Langues",                color: null, suffix: "FR" },
@@ -63,7 +64,7 @@ function ProfileMenu({ user, onLogout, onClose }) {
         {items.map(({ icon: Icon, label, color, suffix }) => (
           <button
             key={label}
-            onClick={onClose}
+            onClick={() => label === "Paramètres de compte" ? onOpenSettings() : onClose()}
             style={{
               width: "100%", display: "flex", alignItems: "center", gap: 10,
               padding: "9px 12px", borderRadius: "10px", border: "none",
@@ -122,7 +123,7 @@ function relativeTime(ts) {
 const TYPE_COLORS = { todo: "#10b981", dashboard: "#06b6d4", ecommerce: "#f59e0b" };
 const TYPE_LABELS = { todo: "Todo App", dashboard: "Dashboard", ecommerce: "Store" };
 
-function TaskCard({ task, onSelect, onClose }) {
+function TaskCard({ task, onSelect, onClose, T = THEMES.dark }) {
   const [hovered, setHovered] = useState(false);
   const color = TYPE_COLORS[task.projectType] || "#64748b";
   const label = TYPE_LABELS[task.projectType] || "App";
@@ -136,43 +137,117 @@ function TaskCard({ task, onSelect, onClose }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         position: "relative", padding: "14px 16px 12px", borderRadius: "16px",
-        background: hovered
-          ? "linear-gradient(160deg, rgba(20,35,75,0.75) 0%, rgba(10,14,30,0.88) 100%)"
-          : "linear-gradient(160deg, rgba(14,22,50,0.6) 0%, rgba(6,9,20,0.75) 100%)",
-        border: `1px solid ${hovered ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.08)"}`,
+        background: hovered ? T.cardBgHover : T.cardBg,
+        border: `1px solid ${hovered ? T.cardBorderHover : T.cardBorder}`,
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
         cursor: "pointer", transition: "all 0.2s", overflow: "hidden",
-        boxShadow: hovered
-          ? "inset 0 1px 0 rgba(255,255,255,0.09), 0 12px 40px rgba(0,0,0,0.45)"
-          : "inset 0 1px 0 rgba(255,255,255,0.05)",
+        boxShadow: hovered ? "inset 0 1px 0 rgba(255,255,255,0.09), 0 12px 40px rgba(0,0,0,0.2)" : "inset 0 1px 0 rgba(255,255,255,0.05)",
       }}
     >
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${color}, transparent)`, opacity: hovered ? 1 : 0.5, transition: "opacity 0.2s" }} />
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 6 }}>
-        <p style={{ fontSize: "13px", fontFamily: "'Manrope',sans-serif", fontWeight: 600, color: "#dde3f0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "78%" }}>
+        <p style={{ fontSize: "13px", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, color: T.text1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "78%" }}>
           {task.projectName}
         </p>
         <button
           data-testid={`home-close-task-${task.id}`}
           onClick={e => { e.stopPropagation(); onClose(task.id); }}
-          style={{ width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 4, color: "rgba(100,116,139,0.5)", opacity: hovered ? 1 : 0, transition: "opacity 0.15s" }}
-          onMouseEnter={e => e.currentTarget.style.color = "#e2e8f0"}
-          onMouseLeave={e => e.currentTarget.style.color = "rgba(100,116,139,0.5)"}
+          style={{ width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 4, background: "none", border: "none", color: T.labelColor, opacity: hovered ? 1 : 0, transition: "opacity 0.15s", cursor: "pointer" }}
         >
           <X style={{ width: 10, height: 10 }} />
         </button>
       </div>
-      <p style={{ fontSize: "11px", color: "rgba(100,116,139,0.6)", fontFamily: "'Manrope',sans-serif", lineHeight: 1.55, marginBottom: 10, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+      <p style={{ fontSize: "11px", color: T.labelColor, fontFamily: "'DM Sans',sans-serif", lineHeight: 1.55, marginBottom: 10, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
         {task.prompt}
       </p>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ fontSize: "10px", color, background: `${color}18`, padding: "2px 8px", borderRadius: 99, fontFamily: "'Manrope',sans-serif", fontWeight: 500 }}>{label}</span>
-        <span style={{ fontSize: "10px", color: "rgba(100,116,139,0.4)", fontFamily: "'Manrope',sans-serif" }}>{relativeTime(task.timestamp)}</span>
+        <span style={{ fontSize: "10px", color, background: `${color}18`, padding: "2px 8px", borderRadius: 99, fontFamily: "'DM Sans',sans-serif", fontWeight: 500 }}>{label}</span>
+        <span style={{ fontSize: "10px", color: T.labelColor, fontFamily: "'DM Sans',sans-serif" }}>{relativeTime(task.timestamp)}</span>
       </div>
     </motion.div>
   );
 }
+
+// ── Theme constants ──────────────────────────────────────────────────────────
+const THEMES = {
+  dark: {
+    pageBg: "linear-gradient(to bottom, #0c1f4a 0%, #060d1e 35%, #010408 65%, #000000 100%)",
+    navBg: "rgba(0,0,0,0.4)",
+    navBorder: "rgba(255,255,255,0.07)",
+    logoText: "#fff",
+    logoHoverBg: "rgba(255,255,255,0.05)",
+    text1: "#ffffff",
+    text2: "rgba(180,190,210,0.7)",
+    text3: "rgba(120,135,160,0.7)",
+    inputBg: "linear-gradient(160deg, rgba(18,30,70,0.72) 0%, rgba(8,12,28,0.88) 100%)",
+    inputBorderNormal: "rgba(255,255,255,0.1)",
+    inputBorderFocus: "rgba(100,180,255,0.28)",
+    inputShadowNormal: "inset 0 1px 0 rgba(255,255,255,0.07), 0 24px 60px rgba(0,0,0,0.45), 0 0 40px rgba(6,40,120,0.12)",
+    inputShadowFocus: "inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 4px rgba(6,182,212,0.07), 0 32px 80px rgba(0,0,0,0.55)",
+    textareaColor: "#e8ecf4",
+    pillBg: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)",
+    pillBorder: "rgba(255,255,255,0.1)",
+    pillText: "rgba(160,180,215,0.7)",
+    pillTextHover: "rgba(6,182,212,0.95)",
+    pillBorderHover: "rgba(6,182,212,0.3)",
+    pillBgHover: "linear-gradient(135deg, rgba(6,182,212,0.12) 0%, rgba(6,182,212,0.04) 100%)",
+    cardBg: "linear-gradient(160deg, rgba(14,22,50,0.6) 0%, rgba(6,9,20,0.75) 100%)",
+    cardBorder: "rgba(255,255,255,0.08)",
+    cardBorderHover: "rgba(255,255,255,0.14)",
+    cardBgHover: "linear-gradient(160deg, rgba(20,35,75,0.75) 0%, rgba(10,14,30,0.88) 100%)",
+    labelColor: "rgba(100,116,139,0.45)",
+    signInText: "rgba(255,255,255,0.6)",
+    signInBorder: "rgba(255,255,255,0.12)",
+    signInBg: "rgba(255,255,255,0.04)",
+    signInTextHover: "rgba(255,255,255,0.9)",
+    signInBgHover: "rgba(255,255,255,0.08)",
+    dropdownBg: "linear-gradient(160deg, rgba(16,26,60,0.96) 0%, rgba(6,9,20,0.98) 100%)",
+    dropdownBorder: "rgba(255,255,255,0.1)",
+    dropdownText: "rgba(160,185,215,0.85)",
+    separator: "rgba(50,70,100,0.7)",
+    themeIconColor: "rgba(200,220,255,0.75)",
+    heroGlow: "0 2px 4px rgba(0,0,0,0.9), 0 8px 32px rgba(0,0,0,0.7), 0 0 120px rgba(20,60,160,0.35)",
+  },
+  light: {
+    pageBg: "linear-gradient(to bottom, #b8d0f4 0%, #cfe0ff 35%, #e2ecff 65%, #f0f5ff 100%)",
+    navBg: "rgba(210,228,255,0.65)",
+    navBorder: "rgba(100,140,220,0.2)",
+    logoText: "#080f28",
+    logoHoverBg: "rgba(0,0,0,0.04)",
+    text1: "#070d25",
+    text2: "rgba(30,50,100,0.75)",
+    text3: "rgba(60,85,140,0.55)",
+    inputBg: "linear-gradient(160deg, rgba(255,255,255,0.92) 0%, rgba(235,244,255,0.96) 100%)",
+    inputBorderNormal: "rgba(80,120,200,0.18)",
+    inputBorderFocus: "rgba(60,120,240,0.4)",
+    inputShadowNormal: "inset 0 1px 0 rgba(255,255,255,0.9), 0 8px 32px rgba(40,80,180,0.1)",
+    inputShadowFocus: "inset 0 1px 0 rgba(255,255,255,0.9), 0 0 0 4px rgba(60,120,240,0.1), 0 16px 40px rgba(40,80,180,0.14)",
+    textareaColor: "#0a0f25",
+    pillBg: "linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(225,238,255,0.8) 100%)",
+    pillBorder: "rgba(80,120,200,0.2)",
+    pillText: "rgba(40,65,130,0.75)",
+    pillTextHover: "rgba(30,90,220,0.9)",
+    pillBorderHover: "rgba(30,90,220,0.3)",
+    pillBgHover: "linear-gradient(135deg, rgba(30,90,220,0.1) 0%, rgba(30,90,220,0.04) 100%)",
+    cardBg: "linear-gradient(160deg, rgba(255,255,255,0.88) 0%, rgba(225,238,255,0.92) 100%)",
+    cardBorder: "rgba(80,120,200,0.16)",
+    cardBorderHover: "rgba(80,120,200,0.3)",
+    cardBgHover: "linear-gradient(160deg, rgba(255,255,255,0.97) 0%, rgba(210,228,255,0.95) 100%)",
+    labelColor: "rgba(70,100,160,0.55)",
+    signInText: "rgba(30,50,100,0.7)",
+    signInBorder: "rgba(80,120,200,0.2)",
+    signInBg: "rgba(255,255,255,0.5)",
+    signInTextHover: "rgba(20,40,100,0.95)",
+    signInBgHover: "rgba(255,255,255,0.8)",
+    dropdownBg: "linear-gradient(160deg, rgba(240,247,255,0.98) 0%, rgba(255,255,255,0.99) 100%)",
+    dropdownBorder: "rgba(80,120,200,0.2)",
+    dropdownText: "rgba(30,50,100,0.85)",
+    separator: "rgba(100,130,200,0.5)",
+    themeIconColor: "rgba(255,180,40,0.9)",
+    heroGlow: "0 2px 4px rgba(0,50,150,0.1), 0 0 60px rgba(30,70,200,0.12)",
+  },
+};
 
 const MODEL_ICON_COLORS = {
   openai: "#ffffff",
@@ -199,7 +274,7 @@ const TYPING_PROMPTS = [
   "Build a blog platform with markdown support",
 ];
 
-export default function LandingPage({ onStart, tasks = [], onSelectTask, onCloseTask, onShowAuth, user, onLogin, onLogout }) {
+export default function LandingPage({ onStart, tasks = [], onSelectTask, onCloseTask, onShowAuth, user, onLogin, onLogout, isDark = true, onToggleTheme }) {
   const [inputValue, setInputValue] = useState("");
   const [typingIndex, setTypingIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
@@ -207,8 +282,9 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
   const [isFocused, setIsFocused] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [isDark, setIsDark] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
   const profileRef = useRef(null);
+  const T = THEMES[isDark ? "dark" : "light"];
 
   // Close profile menu on outside click
   useEffect(() => {
@@ -309,15 +385,21 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
   return (
     <div
       className="w-full flex flex-col relative"
-      style={{
-        background: "linear-gradient(to bottom, #0c1f4a 0%, #060d1e 35%, #010408 65%, #000000 100%)",
-      }}
+      style={{ background: T.pageBg }}
     >
       {/* Login modal */}
       <LoginModal
         open={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         onGoToAuth={() => { setShowLoginModal(false); onShowAuth && onShowAuth(); }}
+      />
+      {/* Settings modal */}
+      <SettingsModal
+        open={showSettings}
+        onClose={() => setShowSettings(false)}
+        user={user}
+        isDark={isDark}
+        onToggleTheme={onToggleTheme}
       />
       {/* Subtle horizontal scan lines for depth */}
       <div
@@ -344,12 +426,13 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         className="relative z-20 flex items-center justify-between px-10 py-5"
       >
         <span
-          className="text-white font-black select-none"
+          className="select-none"
           style={{
             fontFamily: "'Outfit', sans-serif",
             fontSize: "1.15rem",
             fontWeight: 900,
             letterSpacing: "-0.05em",
+            color: T.logoText,
           }}
         >
           sonar
@@ -362,18 +445,17 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
               {/* Day / Night toggle */}
               <button
                 data-testid="theme-toggle"
-                onClick={() => setIsDark(d => !d)}
+                onClick={onToggleTheme}
                 title={isDark ? "Mode clair" : "Mode sombre"}
                 style={{
-                  width: 32, height: 32, borderRadius: "9px", border: "1px solid rgba(255,255,255,0.1)",
-                  background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+                  width: 32, height: 32, borderRadius: "9px",
+                  border: `1px solid ${T.inputBorderNormal}`,
+                  background: T.pillBg,
                   backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   cursor: "pointer", transition: "all 0.15s",
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.07)",
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
               >
                 <AnimatePresence mode="wait">
                   {isDark ? (
@@ -415,6 +497,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                       user={user}
                       onLogout={onLogout}
                       onClose={() => setShowProfileMenu(false)}
+                      onOpenSettings={() => { setShowProfileMenu(false); setShowSettings(true); }}
                     />
                   )}
                 </AnimatePresence>
@@ -426,12 +509,12 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
               className="text-sm px-5 py-2 rounded-lg transition-all"
               onClick={() => onShowAuth && onShowAuth()}
               style={{
-                color: "rgba(255,255,255,0.6)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                background: "rgba(255,255,255,0.04)",
+                color: T.signInText,
+                border: `1px solid ${T.signInBorder}`,
+                background: T.signInBg,
               }}
-              onMouseEnter={e => { e.currentTarget.style.color="rgba(255,255,255,0.9)"; e.currentTarget.style.background="rgba(255,255,255,0.08)"; }}
-              onMouseLeave={e => { e.currentTarget.style.color="rgba(255,255,255,0.6)"; e.currentTarget.style.background="rgba(255,255,255,0.04)"; }}
+              onMouseEnter={e => { e.currentTarget.style.color = T.signInTextHover; e.currentTarget.style.background = T.signInBgHover; }}
+              onMouseLeave={e => { e.currentTarget.style.color = T.signInText; e.currentTarget.style.background = T.signInBg; }}
             >
               Sign in
             </button>
@@ -462,6 +545,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
               "0 8px 32px rgba(0,0,0,0.7)",
               "0 0 120px rgba(20,60,160,0.35)",
             ].join(", "),
+            textShadow: T.heroGlow,
             userSelect: "none",
           }}
         >
@@ -480,10 +564,9 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
               fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
               fontSize: "clamp(1.6rem, 4.5vw, 3.2rem)",
               fontWeight: 700,
-              color: "#ffffff",
+              color: T.text1,
               lineHeight: 1.1,
               letterSpacing: "-0.035em",
-              textShadow: "0 2px 12px rgba(0,0,0,0.6)",
             }}
           >
             The future is here
@@ -494,9 +577,8 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontSize: "clamp(1rem, 2.5vw, 1.45rem)",
               fontWeight: 500,
-              color: "rgba(180,190,210,0.7)",
+              color: T.text2,
               letterSpacing: "-0.015em",
-              textShadow: "0 1px 8px rgba(0,0,0,0.5)",
             }}
           >
             Create your own app without coding a line.
@@ -514,16 +596,12 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           <div
             className="relative transition-all duration-500"
             style={{
-              background: "linear-gradient(160deg, rgba(18,30,70,0.72) 0%, rgba(8,12,28,0.88) 100%)",
+              background: T.inputBg,
               backdropFilter: "blur(28px)",
               WebkitBackdropFilter: "blur(28px)",
-              border: isFocused
-                ? "1px solid rgba(100,180,255,0.28)"
-                : "1px solid rgba(255,255,255,0.1)",
+              border: `1px solid ${isFocused ? T.inputBorderFocus : T.inputBorderNormal}`,
               borderRadius: "20px",
-              boxShadow: isFocused
-                ? "inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 4px rgba(6,182,212,0.07), 0 32px 80px rgba(0,0,0,0.55), 0 0 60px rgba(6,60,160,0.18)"
-                : "inset 0 1px 0 rgba(255,255,255,0.07), 0 24px 60px rgba(0,0,0,0.45), 0 0 40px rgba(6,40,120,0.12)",
+              boxShadow: isFocused ? T.inputShadowFocus : T.inputShadowNormal,
             }}
           >
             <textarea
@@ -540,7 +618,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
               className="w-full bg-transparent outline-none resize-none"
               style={{
                 padding: "22px 24px 56px",
-                color: "#e8ecf4",
+                color: T.textareaColor,
                 fontSize: "1rem",
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 400,
@@ -554,7 +632,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
             {!isFocused && !inputValue && (
               <div
                 className="absolute pointer-events-none flex items-center gap-0.5"
-                style={{ top: "22px", left: "24px", color: "rgba(120,135,160,0.7)", fontSize: "1rem", fontFamily: "'DM Sans', sans-serif" }}
+                style={{ top: "22px", left: "24px", color: T.text3, fontSize: "1rem", fontFamily: "'DM Sans', sans-serif" }}
               >
                 <span>{inputValue}</span>
                 <motion.span
@@ -742,25 +820,23 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                   padding: "5px 14px",
                   borderRadius: "99px",
                   fontSize: "12px",
-                  color: "rgba(160,180,215,0.7)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)",
+                  color: T.pillText,
+                  border: `1px solid ${T.pillBorder}`,
+                  background: T.pillBg,
                   backdropFilter: "blur(12px)",
                   WebkitBackdropFilter: "blur(12px)",
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
                   cursor: "pointer",
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.color = "rgba(6,182,212,0.95)";
-                  e.currentTarget.style.borderColor = "rgba(6,182,212,0.3)";
-                  e.currentTarget.style.background = "linear-gradient(135deg, rgba(6,182,212,0.12) 0%, rgba(6,182,212,0.04) 100%)";
-                  e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(6,182,212,0.15), 0 0 20px rgba(6,182,212,0.08)";
+                  e.currentTarget.style.color = T.pillTextHover;
+                  e.currentTarget.style.borderColor = T.pillBorderHover;
+                  e.currentTarget.style.background = T.pillBgHover;
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.color = "rgba(160,180,215,0.7)";
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
-                  e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)";
-                  e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.08)";
+                  e.currentTarget.style.color = T.pillText;
+                  e.currentTarget.style.borderColor = T.pillBorder;
+                  e.currentTarget.style.background = T.pillBg;
                 }}
               >
                 <ChevronRight style={{ width: "11px", height: "11px" }} /> {t.name}
@@ -779,8 +855,8 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
             style={{ maxWidth: "680px" }}
           >
             <div className="flex items-center gap-2 mb-3">
-              <Clock style={{ width: 9, height: 9, color: "rgba(100,116,139,0.45)" }} />
-              <span style={{ fontSize: "10px", color: "rgba(100,116,139,0.45)", fontFamily: "'Manrope',sans-serif", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.09em" }}>
+              <Clock style={{ width: 9, height: 9, color: T.labelColor }} />
+              <span style={{ fontSize: "10px", color: T.labelColor, fontFamily: "'DM Sans',sans-serif", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.09em" }}>
                 Projets récents
               </span>
             </div>
@@ -792,7 +868,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.9 + i * 0.06, duration: 0.2 }}
                 >
-                  <TaskCard task={task} onSelect={onSelectTask} onClose={onCloseTask} />
+                  <TaskCard task={task} onSelect={onSelectTask} onClose={onCloseTask} T={T} />
                 </motion.div>
               ))}
             </div>
