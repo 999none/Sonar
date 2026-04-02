@@ -41,10 +41,15 @@ Full IDE-like layout:
 - Credits counter
 - Deploy button (glows cyan)
 
-#### Left Panel (3-column layout: Sidebar | Chat | Preview)
-- **Project Sidebar** (`ProjectSidebar.jsx`): 188px left panel — "Nouveau projet" button, Active Tasks section (animated dot), Historique section (past tasks with timestamps)
-- **Chat Panel** (`ChatPanel.jsx`): Message thread with user/AI bubbles, typing indicator, follow-up input
-- **Agent Panel** (`AgentPanel.jsx`): Timeline with Planner → Architect → Coder → Debugger; each shows status (waiting/active/done) with animated indicators and log snippets
+#### Home Page — Panneau "Projets Récents"
+- Panneau `position: fixed; bottom: 0` avec effet glass (blur 20px)
+- Section "PROJETS RÉCENTS" avec compteur de projets
+- Grille 3 colonnes : cartes avec accent coloré en haut (vert todo / cyan dashboard / amber store), nom, prompt, badge type, timestamp relatif
+- Hover: carte surbrillance + bouton ✕ pour supprimer
+- Clic sur carte : navigation vers le builder avec ce projet (initialTask)
+- Tâches démo pré-chargées à la première visite (localStorage vide)
+- Bouton "Nouveau projet" dans la hero mène à l'input centré
+
 
 #### Center Panel
 - **Code Editor** (`CodeEditor.jsx`): VS Code dark theme with file tabs (App.tsx, styles.css, package.json, README.md), line numbers, syntax highlighting (purple keywords, green strings, blue JSX, orange numbers), streaming animation, copy button, VS Code status bar

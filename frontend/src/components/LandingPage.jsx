@@ -1,8 +1,66 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronRight, ChevronDown, Check } from "lucide-react";
+import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock } from "lucide-react";
 import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
+
+function relativeTime(ts) {
+  if (!ts) return "";
+  const m = Math.floor((Date.now() - ts) / 60000);
+  if (m < 1) return "à l'instant";
+  if (m < 60) return `${m}m`;
+  if (m < 1440) return `${Math.floor(m / 60)}h`;
+  return `${Math.floor(m / 1440)}j`;
+}
+
+const TYPE_COLORS = { todo: "#10b981", dashboard: "#06b6d4", ecommerce: "#f59e0b" };
+const TYPE_LABELS = { todo: "Todo App", dashboard: "Dashboard", ecommerce: "Store" };
+
+function TaskCard({ task, onSelect, onClose }) {
+  const [hovered, setHovered] = useState(false);
+  const color = TYPE_COLORS[task.projectType] || "#64748b";
+  const label = TYPE_LABELS[task.projectType] || "App";
+  return (
+    <motion.div
+      data-testid={`home-task-${task.id}`}
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.15 }}
+      onClick={() => onSelect(task)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: "relative", padding: "14px 16px 12px", borderRadius: "14px",
+        background: hovered ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.03)",
+        border: `1px solid ${hovered ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.07)"}`,
+        cursor: "pointer", transition: "background 0.2s, border 0.2s", overflow: "hidden",
+        boxShadow: hovered ? "0 8px 32px rgba(0,0,0,0.4)" : "none",
+      }}
+    >
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${color}, transparent)`, opacity: hovered ? 1 : 0.5, transition: "opacity 0.2s" }} />
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 6 }}>
+        <p style={{ fontSize: "13px", fontFamily: "'Manrope',sans-serif", fontWeight: 600, color: "#dde3f0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "78%" }}>
+          {task.projectName}
+        </p>
+        <button
+          data-testid={`home-close-task-${task.id}`}
+          onClick={e => { e.stopPropagation(); onClose(task.id); }}
+          style={{ width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 4, color: "rgba(100,116,139,0.5)", opacity: hovered ? 1 : 0, transition: "opacity 0.15s" }}
+          onMouseEnter={e => e.currentTarget.style.color = "#e2e8f0"}
+          onMouseLeave={e => e.currentTarget.style.color = "rgba(100,116,139,0.5)"}
+        >
+          <X style={{ width: 10, height: 10 }} />
+        </button>
+      </div>
+      <p style={{ fontSize: "11px", color: "rgba(100,116,139,0.6)", fontFamily: "'Manrope',sans-serif", lineHeight: 1.55, marginBottom: 10, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+        {task.prompt}
+      </p>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <span style={{ fontSize: "10px", color, background: `${color}18`, padding: "2px 8px", borderRadius: 99, fontFamily: "'Manrope',sans-serif", fontWeight: 500 }}>{label}</span>
+        <span style={{ fontSize: "10px", color: "rgba(100,116,139,0.4)", fontFamily: "'Manrope',sans-serif" }}>{relativeTime(task.timestamp)}</span>
+      </div>
+    </motion.div>
+  );
+}
 
 const MODEL_ICON_COLORS = {
   openai: "#ffffff",
@@ -29,7 +87,7 @@ const TYPING_PROMPTS = [
   "Build a blog platform with markdown support",
 ];
 
-export default function LandingPage({ onStart }) {
+export default function LandingPage({ onStart, tasks = [], onSelectTask, onCloseTask }) {
   const [inputValue, setInputValue] = useState("");
   const [typingIndex, setTypingIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
@@ -179,7 +237,10 @@ export default function LandingPage({ onStart }) {
       </motion.nav>
 
       {/* HERO — centered vertically in the viewport */}
-      <div className="flex-1 flex flex-col items-center justify-center relative z-10" style={{ minHeight: "80vh" }}>
+      <div
+        className="flex-1 flex flex-col items-center justify-center relative z-10"
+        style={{ minHeight: "80vh", paddingBottom: tasks.length > 0 ? "190px" : 0 }}
+      >
 
         {/* Giant SONAR text */}
         <motion.h1
@@ -488,6 +549,51 @@ export default function LandingPage({ onStart }) {
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Projets récents — panneau fixé en bas du home */}
+      {tasks.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.4 }}
+          style={{
+            position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50,
+            background: "rgba(5,8,14,0.92)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
+            padding: "16px 40px 22px",
+          }}
+        >
+          <div style={{ maxWidth: "920px", margin: "0 auto" }}>
+            {/* Header */}
+            <div className="flex items-center gap-2 mb-4">
+              <Clock style={{ width: 10, height: 10, color: "rgba(100,116,139,0.5)" }} />
+              <span style={{ fontSize: "10px", color: "rgba(100,116,139,0.55)", fontFamily: "'Manrope',sans-serif", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.09em" }}>
+                Projets récents
+              </span>
+              <span style={{ fontSize: "10px", color: "rgba(100,116,139,0.3)", fontFamily: "'Manrope',sans-serif", marginLeft: 4 }}>
+                {tasks.length} projet{tasks.length > 1 ? "s" : ""}
+              </span>
+            </div>
+
+            {/* Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
+              {tasks.slice(0, 3).map((task, i) => (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ delay: 0.6 + i * 0.06, duration: 0.22 }}
+                >
+                  <TaskCard task={task} onSelect={onSelectTask} onClose={onCloseTask} />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 }

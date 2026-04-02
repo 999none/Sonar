@@ -4,7 +4,6 @@ import ChatPanel from "./ChatPanel";
 import EmergentPreview from "./EmergentPreview";
 import CostPreviewModal from "./CostPreviewModal";
 import ShareModal from "./ShareModal";
-import ProjectSidebar from "./ProjectSidebar";
 import { AGENT_STEPS, CODE_BY_PROJECT, CHAT_RESPONSES, MOCK_LOGS } from "../data/mockData";
 
 const AGENT_META = {
@@ -36,7 +35,7 @@ function saveHistory(tasks) {
   try { localStorage.setItem("sonar-tasks", JSON.stringify(tasks.slice(0, 20))); } catch {}
 }
 
-export default function AppBuilder({ initialPrompt, onReset, externalTasks, onTasksChange }) {
+export default function AppBuilder({ initialPrompt, initialTask, onReset, externalTasks, onTasksChange }) {
   const [selectedModel] = useState(window.__sonarInitModel || "gpt-4o");
   const [mode] = useState(window.__sonarInitMode || "E-1");
   const [messages, setMessages] = useState([]);
@@ -142,13 +141,19 @@ export default function AppBuilder({ initialPrompt, onReset, externalTasks, onTa
   };
 
   useEffect(() => {
+    // Load existing task from home history
+    if (initialTask) {
+      handleSelectTask(initialTask);
+      return;
+    }
+    // New generation from landing page prompt
     if (initialPrompt && !hasStarted.current) {
       hasStarted.current = true;
       setPendingPrompt(initialPrompt);
       setShowCostModal(true);
     }
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [initialPrompt]);
+  }, [initialPrompt, initialTask]);
 
   const handleConfirmGenerate = () => {
     setShowCostModal(false);
@@ -223,19 +228,9 @@ export default function AppBuilder({ initialPrompt, onReset, externalTasks, onTa
       />
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar — tasks & history */}
-        <ProjectSidebar
-          tasks={tasks}
-          activeTaskId={activeTaskId}
-          isGenerating={isGenerating}
-          onSelectTask={handleSelectTask}
-          onCloseTask={handleCloseTask}
-          onNewTask={handleNewTask}
-        />
-
         {/* Chat */}
-        <div className="flex flex-col overflow-hidden"
-          style={{ flex: 1, minWidth: 0, borderRight: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="flex flex-col overflow-hidden flex-shrink-0"
+          style={{ width: "50%", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
           <ChatPanel
             messages={messages}
             isTyping={isTyping}
@@ -246,7 +241,7 @@ export default function AppBuilder({ initialPrompt, onReset, externalTasks, onTa
         </div>
 
         {/* Preview */}
-        <div className="flex flex-col overflow-hidden" style={{ width: "46%", flexShrink: 0 }}>
+        <div className="flex flex-col flex-1 overflow-hidden">
           <EmergentPreview
             projectType={projectType}
             isGenerating={isGenerating}
