@@ -43,7 +43,7 @@ function SonarApp() {
     setInitialPrompt(prompt);
     setView("builder");
     window.__sonarInitModel = model || "gpt-4o";
-    window.__sonarInitMode = mode || "E-1";
+    window.__sonarInitMode = mode || "S-1";
   };
 
   const handleSelectTaskFromHome = (task) => {

@@ -268,8 +268,8 @@ function ModelIcon({ provider, size = 15 }) {
 }
 
 const MODE_INFO = {
-  "E-1": { label: "E-1", desc: "Fast · Prototype-ready", cost: { todo: "$0.08", dashboard: "$0.12", ecommerce: "$0.16", default: "$0.09" } },
-  "E-2": { label: "E-2", desc: "Deep · Production-grade", cost: { todo: "$0.14", dashboard: "$0.19", ecommerce: "$0.24", default: "$0.18" } },
+  "S-1": { label: "S-1", desc: "Fast · Prototype-ready", cost: { todo: "$0.08", dashboard: "$0.12", ecommerce: "$0.16", default: "$0.09" } },
+  "S-2": { label: "S-2", desc: "Deep · Production-grade", cost: { todo: "$0.14", dashboard: "$0.19", ecommerce: "$0.24", default: "$0.18" } },
 };
 
 const TYPING_PROMPTS = [
@@ -305,7 +305,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
   }, [showProfileMenu]);
 
   // Options state
-  const [selectedMode, setSelectedMode] = useState("E-1");
+  const [selectedMode, setSelectedMode] = useState("S-1");
   const [selectedModel, setSelectedModel] = useState("gpt-4o");
   const [modelOpen, setModelOpen] = useState(false);
   const [modeOpen, setModeOpen] = useState(false);
