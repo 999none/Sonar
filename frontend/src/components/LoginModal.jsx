@@ -53,10 +53,12 @@ export default function LoginModal({ open, onClose, onGoToAuth }) {
               style={{
                 width: "100%",
                 maxWidth: "380px",
-                background: "#0a0c14",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: "20px",
-                boxShadow: "0 40px 100px rgba(0,0,0,0.85), 0 0 0 1px rgba(167,139,250,0.07)",
+                background: "linear-gradient(160deg, rgba(16,26,65,0.92) 0%, rgba(6,8,22,0.97) 100%)",
+                backdropFilter: "blur(48px)",
+                WebkitBackdropFilter: "blur(48px)",
+                border: "1px solid rgba(255,255,255,0.13)",
+                borderRadius: "24px",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1), 0 40px 100px rgba(0,0,0,0.85), 0 0 80px rgba(6,40,160,0.12)",
                 padding: "40px 36px 36px",
                 textAlign: "center",
                 position: "relative",
@@ -84,10 +86,13 @@ export default function LoginModal({ open, onClose, onGoToAuth }) {
             {/* Sonar logo */}
             <div style={{
               display: "inline-flex", alignItems: "center", justifyContent: "center",
-              padding: "10px 18px",
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              padding: "10px 20px",
+              background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 100%)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              border: "1px solid rgba(255,255,255,0.14)",
               borderRadius: "14px",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.1)",
               margin: "0 auto 22px",
             }}>
               <span style={{

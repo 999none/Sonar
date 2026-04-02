@@ -24,15 +24,18 @@ function DiscordIcon() {
 const inputBase = {
   width: "100%",
   padding: "13px 16px",
-  borderRadius: "10px",
-  background: "rgba(255,255,255,0.07)",
-  border: "1px solid rgba(255,255,255,0.09)",
+  borderRadius: "12px",
+  background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  border: "1px solid rgba(255,255,255,0.1)",
+  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
   color: "#e2e8f0",
   fontSize: "14px",
   fontFamily: "'Manrope', sans-serif",
   outline: "none",
   boxSizing: "border-box",
-  transition: "border-color 0.15s",
+  transition: "border-color 0.15s, box-shadow 0.15s",
   caretColor: "#a78bfa",
 };
 
@@ -62,13 +65,16 @@ export default function AuthPage({ onBack, onLogin }) {
         display: "grid",
         gridTemplateColumns: "46fr 54fr",
         minHeight: "100vh",
-        background: "#000",
+        background: "linear-gradient(135deg, #050b1f 0%, #000308 100%)",
       }}
     >
       {/* ── Left panel: form ── */}
       <div
         style={{
-          background: "#0a0c12",
+          background: "linear-gradient(160deg, rgba(14,22,52,0.97) 0%, rgba(4,6,16,0.99) 100%)",
+          backdropFilter: "blur(40px)",
+          WebkitBackdropFilter: "blur(40px)",
+          borderRight: "1px solid rgba(255,255,255,0.07)",
           display: "flex",
           flexDirection: "column",
           padding: "52px 56px 48px",
@@ -105,11 +111,15 @@ export default function AuthPage({ onBack, onLogin }) {
         <div
           style={{
             display: "flex",
-            background: "rgba(255,255,255,0.06)",
-            borderRadius: "12px",
+            background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: "14px",
             padding: "4px",
             marginBottom: 28,
             gap: 4,
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.07)",
           }}
         >
           {["signup", "signin"].map((t) => (
@@ -147,19 +157,22 @@ export default function AuthPage({ onBack, onLogin }) {
             justifyContent: "center",
             gap: 12,
             padding: "13px 0",
-            borderRadius: "10px",
-            background: "rgba(255,255,255,0.07)",
-            border: "1px solid rgba(255,255,255,0.09)",
+            borderRadius: "12px",
+            background: "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid rgba(255,255,255,0.11)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
             color: "#e2e8f0",
             fontSize: "14px",
             fontFamily: "'Space Grotesk', sans-serif",
             fontWeight: 500,
             cursor: "pointer",
             marginBottom: 10,
-            transition: "background 0.15s",
+            transition: "all 0.15s",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.07) 100%)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.11)"; }}
           onClick={() => handleSocial("Google")}
         >
           <GoogleIcon />
@@ -181,18 +194,21 @@ export default function AuthPage({ onBack, onLogin }) {
                 justifyContent: "center",
                 gap: 8,
                 padding: "12px 0",
-                borderRadius: "10px",
-                background: "rgba(255,255,255,0.07)",
-                border: "1px solid rgba(255,255,255,0.09)",
+                borderRadius: "12px",
+                background: "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                border: "1px solid rgba(255,255,255,0.11)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
                 color: "#e2e8f0",
                 fontSize: "14px",
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontWeight: 500,
                 cursor: "pointer",
-                transition: "background 0.15s",
+                transition: "all 0.15s",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.07) 100%)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.11)"; }}
             >
               <Icon style={{ width: 17, height: 17, color: iconColor }} />
               {label}
@@ -231,8 +247,8 @@ export default function AuthPage({ onBack, onLogin }) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   style={inputBase}
-                  onFocus={(e) => (e.target.style.borderColor = "rgba(167,139,250,0.5)")}
-                  onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.09)")}
+                  onFocus={(e) => { e.target.style.borderColor = "rgba(167,139,250,0.5)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 3px rgba(167,139,250,0.1)"; }}
+                  onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06)"; }}
                 />
               </motion.div>
             )}
@@ -249,8 +265,8 @@ export default function AuthPage({ onBack, onLogin }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={inputBase}
-              onFocus={(e) => (e.target.style.borderColor = "rgba(167,139,250,0.5)")}
-              onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.09)")}
+              onFocus={(e) => { e.target.style.borderColor = "rgba(167,139,250,0.5)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 3px rgba(167,139,250,0.1)"; }}
+              onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06)"; }}
             />
           </div>
 
@@ -265,8 +281,8 @@ export default function AuthPage({ onBack, onLogin }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={inputBase}
-              onFocus={(e) => (e.target.style.borderColor = "rgba(167,139,250,0.5)")}
-              onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.09)")}
+              onFocus={(e) => { e.target.style.borderColor = "rgba(167,139,250,0.5)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 3px rgba(167,139,250,0.1)"; }}
+              onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; e.target.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.06)"; }}
             />
           </div>
 

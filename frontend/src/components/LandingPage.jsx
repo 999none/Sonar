@@ -30,11 +30,17 @@ function TaskCard({ task, onSelect, onClose }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        position: "relative", padding: "14px 16px 12px", borderRadius: "14px",
-        background: hovered ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.03)",
-        border: `1px solid ${hovered ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.07)"}`,
-        cursor: "pointer", transition: "background 0.2s, border 0.2s", overflow: "hidden",
-        boxShadow: hovered ? "0 8px 32px rgba(0,0,0,0.4)" : "none",
+        position: "relative", padding: "14px 16px 12px", borderRadius: "16px",
+        background: hovered
+          ? "linear-gradient(160deg, rgba(20,35,75,0.75) 0%, rgba(10,14,30,0.88) 100%)"
+          : "linear-gradient(160deg, rgba(14,22,50,0.6) 0%, rgba(6,9,20,0.75) 100%)",
+        border: `1px solid ${hovered ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.08)"}`,
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        cursor: "pointer", transition: "all 0.2s", overflow: "hidden",
+        boxShadow: hovered
+          ? "inset 0 1px 0 rgba(255,255,255,0.09), 0 12px 40px rgba(0,0,0,0.45)"
+          : "inset 0 1px 0 rgba(255,255,255,0.05)",
       }}
     >
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${color}, transparent)`, opacity: hovered ? 1 : 0.5, transition: "opacity 0.2s" }} />
@@ -366,12 +372,18 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           style={{ maxWidth: "680px" }}
         >
           <div
-            className="relative transition-all duration-300"
+            className="relative transition-all duration-500"
             style={{
-              background: "rgba(22,28,40,0.92)",
-              border: "1px solid rgba(60,75,100,0.5)",
-              borderRadius: "16px",
-              boxShadow: "0 4px 30px rgba(0,0,0,0.5)",
+              background: "linear-gradient(160deg, rgba(18,30,70,0.72) 0%, rgba(8,12,28,0.88) 100%)",
+              backdropFilter: "blur(28px)",
+              WebkitBackdropFilter: "blur(28px)",
+              border: isFocused
+                ? "1px solid rgba(100,180,255,0.28)"
+                : "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "20px",
+              boxShadow: isFocused
+                ? "inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 4px rgba(6,182,212,0.07), 0 32px 80px rgba(0,0,0,0.55), 0 0 60px rgba(6,60,160,0.18)"
+                : "inset 0 1px 0 rgba(255,255,255,0.07), 0 24px 60px rgba(0,0,0,0.45), 0 0 40px rgba(6,40,120,0.12)",
             }}
           >
             <textarea
@@ -444,12 +456,14 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -6, scale: 0.97 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute bottom-full mb-2 left-0 rounded-xl overflow-hidden z-50"
+                        className="absolute bottom-full mb-2 left-0 rounded-2xl overflow-hidden z-50"
                         style={{
                           width: "200px",
-                          background: "#0d1424",
-                          border: "1px solid rgba(40,60,100,0.7)",
-                          boxShadow: "0 16px 40px rgba(0,0,0,0.7)",
+                          background: "linear-gradient(160deg, rgba(16,26,60,0.96) 0%, rgba(6,9,20,0.98) 100%)",
+                          backdropFilter: "blur(24px)",
+                          WebkitBackdropFilter: "blur(24px)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 20px 50px rgba(0,0,0,0.75)",
                         }}
                       >
                         {Object.entries(MODE_INFO).map(([key, info]) => (
@@ -501,12 +515,14 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -6, scale: 0.97 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute bottom-full mb-2 left-0 rounded-xl overflow-hidden z-50"
+                        className="absolute bottom-full mb-2 left-0 rounded-2xl overflow-hidden z-50"
                         style={{
                           width: "185px",
-                          background: "#0d1424",
-                          border: "1px solid rgba(40,60,100,0.7)",
-                          boxShadow: "0 16px 40px rgba(0,0,0,0.7)",
+                          background: "linear-gradient(160deg, rgba(16,26,60,0.96) 0%, rgba(6,9,20,0.98) 100%)",
+                          backdropFilter: "blur(24px)",
+                          WebkitBackdropFilter: "blur(24px)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 20px 50px rgba(0,0,0,0.75)",
                         }}
                       >
                         <p style={{ fontSize: "10px", color: "rgba(80,110,150,0.8)", padding: "10px 14px 6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Model</p>
@@ -583,23 +599,28 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                 onClick={() => handleSuggestion(t)}
                 className="flex items-center gap-1 transition-all duration-200"
                 style={{
-                  padding: "5px 12px",
+                  padding: "5px 14px",
                   borderRadius: "99px",
                   fontSize: "12px",
-                  color: "rgba(140,160,190,0.8)",
-                  border: "1px solid rgba(60,80,110,0.4)",
-                  background: "rgba(15,25,45,0.5)",
+                  color: "rgba(160,180,215,0.7)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
                   cursor: "pointer",
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.color = "rgba(6,182,212,0.9)";
-                  e.currentTarget.style.borderColor = "rgba(6,182,212,0.35)";
-                  e.currentTarget.style.background = "rgba(6,182,212,0.06)";
+                  e.currentTarget.style.color = "rgba(6,182,212,0.95)";
+                  e.currentTarget.style.borderColor = "rgba(6,182,212,0.3)";
+                  e.currentTarget.style.background = "linear-gradient(135deg, rgba(6,182,212,0.12) 0%, rgba(6,182,212,0.04) 100%)";
+                  e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(6,182,212,0.15), 0 0 20px rgba(6,182,212,0.08)";
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.color = "rgba(140,160,190,0.8)";
-                  e.currentTarget.style.borderColor = "rgba(60,80,110,0.4)";
-                  e.currentTarget.style.background = "rgba(15,25,45,0.5)";
+                  e.currentTarget.style.color = "rgba(160,180,215,0.7)";
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                  e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)";
+                  e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.08)";
                 }}
               >
                 <ChevronRight style={{ width: "11px", height: "11px" }} /> {t.name}
