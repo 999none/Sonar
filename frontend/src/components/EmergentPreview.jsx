@@ -287,17 +287,8 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
           ) : PreviewComp ? (
             <motion.div key={`${projectType}-${refreshKey}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
               className="h-full overflow-auto">
-              {/* Browser chrome */}
-              <div className="flex items-center gap-2 px-3 py-2" style={{ background:"#010409", borderBottom:"1px solid #21262d", flexShrink:0 }}>
-                <div className="flex gap-1.5">
-                  {["#ff5f57","#febc2e","#28c840"].map(c => <div key={c} style={{ width:10,height:10,borderRadius:"50%",background:c }} />)}
-                </div>
-                <div className="flex-1 flex items-center gap-2 px-3 py-1 rounded-md text-xs" style={{ background:"#161b22", border:"1px solid #30363d", color:"#848d97" }}>
-                  <span style={{ color:"#4ade80", fontSize:10 }}>🔒</span> localhost:3000
-                </div>
-              </div>
-              <div className={`overflow-auto ${viewMode==="mobile"?"mx-auto":" "}`}
-                style={{ maxWidth: viewMode==="mobile"?"375px":viewMode==="tablet"?"768px":"100%", height:"calc(100% - 36px)" }}>
+              <div className={`overflow-auto ${viewMode==="mobile"?"mx-auto":""}`}
+                style={{ maxWidth: viewMode==="mobile"?"375px":viewMode==="tablet"?"768px":"100%", height:"100%" }}>
                 <PreviewComp key={refreshKey} />
               </div>
             </motion.div>

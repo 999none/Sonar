@@ -197,15 +197,8 @@ export default function AppBuilder({ initialPrompt, onReset }) {
   return (
     <div className="flex flex-col overflow-hidden" style={{ height: "100vh", background: "#0a0a0a" }}>
       <TopBar
-        selectedModel={selectedModel}
-        setSelectedModel={setSelectedModel}
-        mode={mode}
-        setMode={setMode}
         isGenerating={isGenerating}
         onDeploy={handleDeploy}
-        credits={credits}
-        timeElapsed={timeElapsed}
-        estimatedCost={estimatedCost}
         projectName={projectName}
       />
 

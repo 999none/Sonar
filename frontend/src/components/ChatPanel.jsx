@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, GitFork, Square, ChevronDown, Github, Zap, Brain, GitBranch, Code2, Bug, CheckCircle } from "lucide-react";
+import { Mic, Square, ChevronDown, Github, Brain, GitBranch, Code2, Bug, CheckCircle } from "lucide-react";
 
 const SONAR_ICON = "https://customer-assets.emergentagent.com/job_emergent-mock-2/artifacts/bocxbvjv_66af99839e55f1ee29f117ac.png";
 
@@ -192,13 +192,9 @@ export default function ChatPanel({ messages, isTyping, isGenerating, onSendMess
           />
           <div className="flex items-center justify-between px-3 pb-2.5 pt-1">
             <div className="flex items-center gap-1">
-              <button data-testid="chat-mic-btn" className="w-7 h-7 flex items-center justify-center rounded-lg"
-                style={{ color: "rgba(100,116,139,0.6)" }}>
-                <Mic style={{ width: 13, height: 13 }} />
-              </button>
               {[
+                { id: "chat-mic-btn", icon: Mic, label: null },
                 { id: "chat-github-btn", icon: Github, label: "Save" },
-                { id: "chat-fork-btn", icon: GitFork, label: "Fork" },
               ].map(({ id, icon: Ic, label }) => (
                 <button key={id} data-testid={id}
                   className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all"
@@ -208,15 +204,6 @@ export default function ChatPanel({ messages, isTyping, isGenerating, onSendMess
                   <Ic style={{ width: 11, height: 11 }} /> {label}
                 </button>
               ))}
-              <button data-testid="chat-ultra-btn" onClick={() => setUltraOn(o => !o)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all"
-                style={{ color: ultraOn ? "#f59e0b" : "rgba(100,116,139,0.75)", background: ultraOn ? "rgba(245,158,11,0.1)" : "rgba(255,255,255,0.04)", border: `1px solid ${ultraOn ? "rgba(245,158,11,0.3)" : "rgba(255,255,255,0.06)"}` }}>
-                <Zap style={{ width: 11, height: 11 }} /> Ultra
-                <div style={{ width: 22, height: 12, borderRadius: 6, background: ultraOn ? "rgba(245,158,11,0.55)" : "rgba(60,70,90,0.55)", position: "relative", transition: "background 0.2s" }}>
-                  <motion.div animate={{ x: ultraOn ? 11 : 1 }} transition={{ duration: 0.15 }}
-                    style={{ width: 10, height: 10, borderRadius: "50%", background: "#fff", position: "absolute", top: 1 }} />
-                </div>
-              </button>
             </div>
 
             {/* Stop / Send */}
