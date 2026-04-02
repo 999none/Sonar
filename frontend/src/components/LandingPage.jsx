@@ -234,6 +234,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           sonar
         </span>
         <div className="flex items-center gap-7">
+          {user ? (
             /* ── Avatar + logout ── */
             <div className="flex items-center gap-3">
               <div
