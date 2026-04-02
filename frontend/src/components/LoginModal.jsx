@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight, Lock } from "lucide-react";
+import { X, ArrowRight } from "lucide-react";
 
 export default function LoginModal({ open, onClose, onGoToAuth }) {
   useEffect(() => {
@@ -40,19 +40,29 @@ export default function LoginModal({ open, onClose, onGoToAuth }) {
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: "fixed",
-              top: "50%", left: "50%",
-              transform: "translate(-50%, -50%)",
+              top: 0, left: 0, right: 0, bottom: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               zIndex: 1000,
-              width: "100%",
-              maxWidth: "380px",
-              background: "#0a0c14",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: "20px",
-              boxShadow: "0 40px 100px rgba(0,0,0,0.85), 0 0 0 1px rgba(167,139,250,0.07)",
-              padding: "40px 36px 36px",
-              textAlign: "center",
+              pointerEvents: "none",
             }}
           >
+            <div
+              data-testid="login-modal-inner"
+              style={{
+                width: "100%",
+                maxWidth: "380px",
+                background: "#0a0c14",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "20px",
+                boxShadow: "0 40px 100px rgba(0,0,0,0.85), 0 0 0 1px rgba(167,139,250,0.07)",
+                padding: "40px 36px 36px",
+                textAlign: "center",
+                position: "relative",
+                pointerEvents: "all",
+              }}
+            >
             {/* Close */}
             <button
               data-testid="login-modal-close"
@@ -71,15 +81,24 @@ export default function LoginModal({ open, onClose, onGoToAuth }) {
               <X style={{ width: 12, height: 12 }} />
             </button>
 
-            {/* Icon */}
+            {/* Sonar logo */}
             <div style={{
-              width: 52, height: 52, borderRadius: "14px",
-              background: "rgba(167,139,250,0.1)",
-              border: "1px solid rgba(167,139,250,0.2)",
-              display: "flex", alignItems: "center", justifyContent: "center",
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              padding: "10px 18px",
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "14px",
               margin: "0 auto 22px",
             }}>
-              <Lock style={{ width: 22, height: 22, color: "#a78bfa" }} />
+              <span style={{
+                fontFamily: "'Sora', sans-serif",
+                fontWeight: 900,
+                fontSize: "1.15rem",
+                letterSpacing: "-0.05em",
+                color: "#fff",
+              }}>
+                sonar
+              </span>
             </div>
 
             {/* Text */}
@@ -128,6 +147,7 @@ export default function LoginModal({ open, onClose, onGoToAuth }) {
             }}>
               Gratuit · Aucune carte bancaire requise
             </p>
+            </div>
           </motion.div>
         </>
       )}
