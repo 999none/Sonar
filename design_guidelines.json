@@ -1,0 +1,99 @@
+{
+  "theme": "Dark",
+  "archetype": "4 (Swiss & High-Contrast with Neon Accents)",
+  "colors": {
+    "background_primary": "#02040A",
+    "background_secondary": "#0F172A",
+    "background_glass": "rgba(15, 23, 42, 0.6)",
+    "accent_primary": "#00F0FF",
+    "accent_secondary": "#8B5CF6",
+    "text_primary": "#F8FAFC",
+    "text_secondary": "#94A3B8",
+    "border": "#1E293B",
+    "success": "#10B981",
+    "warning": "#F59E0B",
+    "error": "#EF4444"
+  },
+  "typography": {
+    "heading_font": "Cabinet Grotesk, sans-serif",
+    "body_font": "Manrope, sans-serif",
+    "mono_font": "JetBrains Mono, monospace",
+    "heading_sizes": {
+      "h1": "text-5xl sm:text-6xl lg:text-8xl tracking-tighter font-black",
+      "h2": "text-3xl sm:text-4xl tracking-tight font-bold",
+      "h3": "text-xl sm:text-2xl font-semibold"
+    },
+    "body_sizes": {
+      "primary": "text-base leading-relaxed",
+      "secondary": "text-sm",
+      "mono_small": "text-xs font-mono"
+    }
+  },
+  "spacing_and_layout": {
+    "padding_generous": "p-8 md:p-12",
+    "padding_dense": "p-4 md:p-6",
+    "grid_gap": "gap-4 md:gap-6",
+    "border_radius": "rounded-lg md:rounded-xl"
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-md px-6 py-2 transition-all duration-300 shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)]",
+      "secondary": "bg-slate-800/50 hover:bg-slate-700/80 text-white border border-slate-700 rounded-md px-4 py-2 transition-all duration-300",
+      "icon": "p-2 rounded-md hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+    },
+    "cards": {
+      "glass": "bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-xl shadow-lg",
+      "solid": "bg-[#0F172A] border border-slate-800 rounded-xl"
+    },
+    "inputs": {
+      "chat": "bg-slate-900/50 border border-slate-700 focus:border-cyan-500 rounded-2xl px-6 py-4 w-full text-white backdrop-blur-md outline-none transition-all shadow-inner focus:shadow-[0_0_10px_rgba(0,240,255,0.2)]"
+    }
+  },
+  "pages": {
+    "landing": {
+      "layout": "Flex column, centered vertically and horizontally. Full viewport height min-h-screen.",
+      "background": "Deep navy to black radial gradient (`bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#02040A] to-black`)",
+      "hero_title": "Giant bold 'Sonar' text in Cabinet Grotesk. Subtext 'The future is here' and 'Create your own app without coding a line.' in text-slate-400. Center aligned.",
+      "input_area": "Wide chat-like input box anchored at the bottom (or middle-bottom) for the user to type their first prompt. Glows on focus with a cyan tint."
+    },
+    "app_builder": {
+      "layout": "Flexbox/Grid filling 100vh w-full overflow-hidden text-slate-300.",
+      "top_bar": "Flex row, h-14 items-center justify-between px-4 border-b border-slate-800/80 bg-[#02040A]/90 backdrop-blur-md z-10. Contains: model selector dropdown, E-1/E-2 toggle switch with tooltip, deployment button, and metrics (credits, time elapsed, cost).",
+      "workspace": "Flex row h-[calc(100vh-3.5rem)] w-full.",
+      "left_panel_chat": "w-[350px] border-r border-slate-800 flex flex-col bg-[#02040A]. Contains: Chat thread at top, Agent Activity Panel (timeline of Planner, Architect, Coder, Debugger) in middle, Chat Input at bottom.",
+      "center_panel_editor": "flex-1 flex flex-col border-r border-slate-800 bg-[#0F172A] relative. VS Code aesthetic. Top: File tabs (e.g., App.tsx, styles.css). Middle: Code editor mock (JetBrains Mono, syntax highlighting colors).",
+      "right_panel_preview": "w-[400px] flex flex-col bg-slate-950. Top: Browser-like address bar (`localhost:3000`). Middle: The live preview area (can use a white background or light theme to simulate an app being built).",
+      "bottom_panel_logs": "Absolute or flex-based panel at the bottom of the center area. h-48 border-t border-slate-800 bg-black font-mono text-xs text-slate-400 p-4 overflow-y-auto. Simulates terminal build logs."
+    }
+  },
+  "animations": {
+    "hover": "Subtle translate-y-[-2px] and increased glow for interactive elements.",
+    "typing": "Animated typing effect for chat placeholders or initial code generation.",
+    "agent_status": "Pulsing indicator dots (cyan for active, green for done, yellow for waiting) next to agent names in the timeline.",
+    "glow": "Breathing neon glow on the 'Deploy' button and active agent."
+  },
+  "media": {
+    "image_urls": {
+      "user_avatar": {
+        "url": "https://images.unsplash.com/photo-1707396172424-f3293f788364?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBhdmF0YXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzUxMDUzODR8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Avatar for the user's chat messages."
+      }
+    }
+  },
+  "accessibility": {
+    "contrast": "Ensure text contrast against #02040A meets APCA standards. Use text-slate-400 for secondary, text-white for primary.",
+    "focus": "Visible focus rings on interactive elements.",
+    "test_ids": "Include data-testid on model selector, deploy button, chat input, toggle switches, and agent timeline."
+  },
+  "instructions_to_main_agent": [
+    "Build a pure frontend mock in React + Tailwind. No backend.",
+    "Use lucide-react for all system and agent icons (Bot, Code, Terminal, Brain, Play, etc).",
+    "For the code editor, mock it with a stylized pre/code block. Apply VS Code aesthetic (dark background, syntax colored text like pink for keywords, blue for functions, green for strings, file tabs).",
+    "Implement the agent timeline with a vertical step progress UI (like git commits/Linear issues). Steps: Planner -> Architect -> Coder -> Debugger.",
+    "Create a mock state that simulates a project being generated: e.g., typing a prompt, pressing enter -> chat shows message -> agent timeline starts spinning -> code starts appearing in the editor -> live preview updates -> terminal logs stream build output.",
+    "Include a functional-looking toggle for E-1/E-2 modes (with a hover tooltip) and a model selector (GPT/Claude/Gemini).",
+    "Include dummy metrics in the top bar: Time Elapsed (e.g. 45s) and Estimated Cost (e.g. $0.12) that increment during 'generation'.",
+    "Mock project types to cycle through: Todo app, Dashboard/analytics, E-commerce.",
+    "Use framer-motion for smooth transitions, list staggering, and status updates."
+  ]
+}
