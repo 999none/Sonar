@@ -64,7 +64,7 @@ function SonarApp() {
   };
 
   if (view === "auth") {
-    return <AuthPage onBack={() => setView("landing")} />;
+    return <AuthPage onBack={() => setView("landing")} onLogin={handleLogin} />;
   }
 
   if (view === "builder") {

@@ -36,7 +36,7 @@ const inputBase = {
   caretColor: "#a78bfa",
 };
 
-export default function AuthPage({ onBack }) {
+export default function AuthPage({ onBack, onLogin }) {
   const [tab, setTab] = useState("signup");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -44,7 +44,14 @@ export default function AuthPage({ onBack }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Mock — navigate back to home (or to builder)
+    const userData = { name: name || email.split("@")[0], email };
+    if (onLogin) onLogin(userData);
+    onBack();
+  };
+
+  const handleSocial = (provider) => {
+    const userData = { name: provider + " User", email: `user@${provider.toLowerCase()}.com` };
+    if (onLogin) onLogin(userData);
     onBack();
   };
 
@@ -153,6 +160,7 @@ export default function AuthPage({ onBack }) {
           }}
           onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.12)")}
           onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
+          onClick={() => handleSocial("Google")}
         >
           <GoogleIcon />
           Continue with Google

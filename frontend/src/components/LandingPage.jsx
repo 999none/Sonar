@@ -190,7 +190,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
       <LoginModal
         open={showLoginModal}
         onClose={() => setShowLoginModal(false)}
-        onLogin={(userData) => { onLogin(userData); setShowLoginModal(false); }}
+        onGoToAuth={() => { setShowLoginModal(false); onShowAuth && onShowAuth(); }}
       />
       {/* Subtle horizontal scan lines for depth */}
       <div
