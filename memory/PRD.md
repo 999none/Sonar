@@ -41,7 +41,8 @@ Full IDE-like layout:
 - Credits counter
 - Deploy button (glows cyan)
 
-#### Left Panel
+#### Left Panel (3-column layout: Sidebar | Chat | Preview)
+- **Project Sidebar** (`ProjectSidebar.jsx`): 188px left panel — "Nouveau projet" button, Active Tasks section (animated dot), Historique section (past tasks with timestamps)
 - **Chat Panel** (`ChatPanel.jsx`): Message thread with user/AI bubbles, typing indicator, follow-up input
 - **Agent Panel** (`AgentPanel.jsx`): Timeline with Planner → Architect → Coder → Debugger; each shows status (waiting/active/done) with animated indicators and log snippets
 

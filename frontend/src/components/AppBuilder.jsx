@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import TopBar from "./TopBar";
-import Sidebar from "./Sidebar";
 import ChatPanel from "./ChatPanel";
 import EmergentPreview from "./EmergentPreview";
 import CostPreviewModal from "./CostPreviewModal";
 import ShareModal from "./ShareModal";
+import ProjectSidebar from "./ProjectSidebar";
 import { AGENT_STEPS, CODE_BY_PROJECT, CHAT_RESPONSES, MOCK_LOGS } from "../data/mockData";
 
 const AGENT_META = {
@@ -51,7 +51,6 @@ export default function AppBuilder({ initialPrompt, onReset, externalTasks, onTa
   const [activeTab, setActiveTab] = useState("preview");
   const [previewReady, setPreviewReady] = useState(false);
   const [showShare, setShowShare] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeTaskId, setActiveTaskId] = useState(null);
   const [tasks, setTasks] = useState(externalTasks || loadHistory());
 
@@ -200,30 +199,43 @@ export default function AppBuilder({ initialPrompt, onReset, externalTasks, onTa
     setCurrentCode(CODE_BY_PROJECT[task.projectType] || "");
   };
 
+  const handleCloseTask = (taskId) => {
+    setTasks(prev => {
+      const updated = prev.filter(t => t.id !== taskId);
+      saveHistory(updated);
+      onTasksChange?.(updated);
+      if (taskId === activeTaskId) {
+        if (updated.length > 0) handleSelectTask(updated[0]);
+        else handleReset();
+      }
+      return updated;
+    });
+  };
+
   return (
     <div className="flex flex-col overflow-hidden" style={{ height: "100vh", background: "#0a0a0a" }}>
       <TopBar
         isGenerating={isGenerating}
         onDeploy={handleDeploy}
         onShare={() => setShowShare(true)}
+        onHome={handleReset}
         projectName={projectName}
       />
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar
+        {/* Sidebar — tasks & history */}
+        <ProjectSidebar
           tasks={tasks}
           activeTaskId={activeTaskId}
+          isGenerating={isGenerating}
           onSelectTask={handleSelectTask}
+          onCloseTask={handleCloseTask}
           onNewTask={handleNewTask}
-          onHome={handleReset}
-          collapsed={sidebarCollapsed}
-          onToggleCollapse={() => setSidebarCollapsed(c => !c)}
         />
 
         {/* Chat */}
-        <div className="flex flex-col overflow-hidden flex-shrink-0"
-          style={{ width: "calc(50% - 105px)", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="flex flex-col overflow-hidden"
+          style={{ flex: 1, minWidth: 0, borderRight: "1px solid rgba(255,255,255,0.06)" }}>
           <ChatPanel
             messages={messages}
             isTyping={isTyping}
@@ -234,7 +246,7 @@ export default function AppBuilder({ initialPrompt, onReset, externalTasks, onTa
         </div>
 
         {/* Preview */}
-        <div className="flex flex-col flex-1 overflow-hidden">
+        <div className="flex flex-col overflow-hidden" style={{ width: "46%", flexShrink: 0 }}>
           <EmergentPreview
             projectType={projectType}
             isGenerating={isGenerating}
