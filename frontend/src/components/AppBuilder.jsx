@@ -36,7 +36,7 @@ function saveHistory(tasks) {
   try { localStorage.setItem("sonar-tasks", JSON.stringify(tasks.slice(0, 20))); } catch {}
 }
 
-export default function AppBuilder({ initialPrompt, initialTask, onReset, externalTasks, onTasksChange, isDark = false }) {
+export default function AppBuilder({ initialPrompt, initialTask, onReset, externalTasks, onTasksChange, isDark = false, user }) {
   const [selectedModel] = useState(window.__sonarInitModel || "gpt-4o");
   const [mode] = useState(window.__sonarInitMode || "S-1");
   const [messages, setMessages] = useState([]);
@@ -236,6 +236,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
         onHome={handleReset}
         projectName={projectName}
         isDark={isDark}
+        user={user}
       />
 
       <div className="flex flex-1 overflow-hidden">

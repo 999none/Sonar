@@ -230,9 +230,10 @@ function CodeView({ code, terminalLogs }) {
 }
 
 // ── Coder.com codespace modal ──
-function CoderModal({ onClose, projectName }) {
+function CoderModal({ onClose, projectName, isDark = false }) {
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedPwd, setCopiedPwd] = useState(false);
+  const dk = isDark;
 
   const url = `https://coder.sonar.sh/workspaces/${projectName || "my-app"}`;
   const password = "snr-" + Math.random().toString(36).slice(2, 10).toUpperCase();
@@ -249,7 +250,10 @@ function CoderModal({ onClose, projectName }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="absolute inset-0 z-50 flex items-center justify-center"
-      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)" }}
+      style={{
+        background: dk ? "rgba(0,0,0,0.75)" : "rgba(100,140,210,0.3)",
+        backdropFilter: "blur(6px)",
+      }}
       onClick={onClose}
     >
       <motion.div
@@ -261,70 +265,83 @@ function CoderModal({ onClose, projectName }) {
         className="w-full mx-6 rounded-2xl overflow-hidden"
         style={{
           maxWidth: "420px",
-          background: "#0d1117",
-          border: "1px solid rgba(255,255,255,0.1)",
-          boxShadow: "0 32px 64px rgba(0,0,0,0.7)",
+          background: dk ? "#0d1117" : "linear-gradient(160deg, rgba(248,252,255,0.99) 0%, rgba(255,255,255,1) 100%)",
+          border: dk ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(80,140,220,0.18)",
+          boxShadow: dk ? "0 32px 64px rgba(0,0,0,0.7)" : "0 32px 64px rgba(20,60,140,0.15)",
         }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+          style={{ borderBottom: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,140,220,0.12)" }}>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center"
               style={{ background: "rgba(6,182,212,0.1)", border: "1px solid rgba(6,182,212,0.2)" }}>
               <Code2 style={{ width: 15, height: 15, color: "#06b6d4" }} />
             </div>
             <div>
-              <p className="text-sm font-semibold text-white">Codespace</p>
-              <p style={{ fontSize: "11px", color: "rgba(100,116,139,0.7)" }}>Powered by coder.com</p>
+              <p className="text-sm font-semibold" style={{ color: dk ? "#fff" : "#0a1a3e" }}>Codespace</p>
+              <p style={{ fontSize: "11px", color: dk ? "rgba(100,116,139,0.7)" : "rgba(40,70,130,0.5)" }}>Powered by coder.com</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg transition-colors hover:bg-white/5">
-            <X style={{ width: 14, height: 14, color: "#64748b" }} />
+          <button onClick={onClose} className="p-1.5 rounded-lg transition-colors"
+            style={{ color: dk ? "#64748b" : "rgba(40,70,130,0.4)" }}
+            onMouseEnter={e => e.currentTarget.style.background = dk ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"}
+            onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+            <X style={{ width: 14, height: 14 }} />
           </button>
         </div>
 
         {/* Body */}
         <div className="p-5 space-y-4">
-          <p style={{ fontSize: "13px", color: "rgba(180,195,215,0.7)", lineHeight: 1.6 }}>
+          <p style={{ fontSize: "13px", color: dk ? "rgba(180,195,215,0.7)" : "rgba(30,60,120,0.6)", lineHeight: 1.6 }}>
             Your codespace is ready. Open the link below in your browser and enter the password to access the full VS Code environment.
           </p>
 
           {/* URL */}
           <div>
-            <p style={{ fontSize: "11px", color: "rgba(100,116,139,0.8)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Workspace URL</p>
+            <p style={{ fontSize: "11px", color: dk ? "rgba(100,116,139,0.8)" : "rgba(40,70,130,0.5)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Workspace URL</p>
             <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
-              style={{ background: "#060c14", border: "1px solid rgba(255,255,255,0.07)" }}>
+              style={{
+                background: dk ? "#060c14" : "rgba(0,0,0,0.03)",
+                border: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,140,220,0.12)",
+              }}>
               <span className="flex-1 text-xs truncate" style={{ color: "#06b6d4", fontFamily: "'JetBrains Mono',monospace" }}>
                 {url}
               </span>
               <button onClick={() => copy(url, setCopiedUrl)}
-                className="flex-shrink-0 p-1 rounded transition-colors hover:bg-white/5">
+                className="flex-shrink-0 p-1 rounded transition-colors"
+                onMouseEnter={e => e.currentTarget.style.background = dk ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                 {copiedUrl
                   ? <Check style={{ width: 12, height: 12, color: "#4ade80" }} />
-                  : <Copy style={{ width: 12, height: 12, color: "#64748b" }} />}
+                  : <Copy style={{ width: 12, height: 12, color: dk ? "#64748b" : "rgba(40,70,130,0.4)" }} />}
               </button>
             </div>
           </div>
 
           {/* Password */}
           <div>
-            <p style={{ fontSize: "11px", color: "rgba(100,116,139,0.8)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Password</p>
+            <p style={{ fontSize: "11px", color: dk ? "rgba(100,116,139,0.8)" : "rgba(40,70,130,0.5)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>Password</p>
             <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
-              style={{ background: "#060c14", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <span className="flex-1 text-xs tracking-widest" style={{ color: "#e2e8f0", fontFamily: "'JetBrains Mono',monospace" }}>
+              style={{
+                background: dk ? "#060c14" : "rgba(0,0,0,0.03)",
+                border: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,140,220,0.12)",
+              }}>
+              <span className="flex-1 text-xs tracking-widest" style={{ color: dk ? "#e2e8f0" : "#0a1a3e", fontFamily: "'JetBrains Mono',monospace" }}>
                 {password}
               </span>
               <button onClick={() => copy(password, setCopiedPwd)}
-                className="flex-shrink-0 p-1 rounded transition-colors hover:bg-white/5">
+                className="flex-shrink-0 p-1 rounded transition-colors"
+                onMouseEnter={e => e.currentTarget.style.background = dk ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                 {copiedPwd
                   ? <Check style={{ width: 12, height: 12, color: "#4ade80" }} />
-                  : <Copy style={{ width: 12, height: 12, color: "#64748b" }} />}
+                  : <Copy style={{ width: 12, height: 12, color: dk ? "#64748b" : "rgba(40,70,130,0.4)" }} />}
               </button>
             </div>
           </div>
 
-          <p style={{ fontSize: "11px", color: "rgba(100,116,139,0.5)", lineHeight: 1.5 }}>
+          <p style={{ fontSize: "11px", color: dk ? "rgba(100,116,139,0.5)" : "rgba(40,70,130,0.35)", lineHeight: 1.5 }}>
             The codespace integration with coder.com will be set up later. This is a preview of the future experience.
           </p>
         </div>
@@ -428,7 +445,7 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
         {/* Coder Modal */}
         <AnimatePresence>
           {showCoderModal && (
-            <CoderModal onClose={() => setShowCoderModal(false)} projectName={projectName} />
+            <CoderModal onClose={() => setShowCoderModal(false)} projectName={projectName} isDark={isDark} />
           )}
         </AnimatePresence>
       </div>

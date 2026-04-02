@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock, LogOut, Settings, Globe, Github, Sun, Moon, Plug } from "lucide-react";
+import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock, LogOut, Settings, Globe, Github, Sun, Moon, Paperclip } from "lucide-react";
 import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
 import LoginModal from "./LoginModal";
@@ -666,14 +666,14 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
             >
               <div className="flex items-center gap-1.5">
 
-                {/* Integration button */}
+                {/* Integration button (icon only) */}
                 <button
                   data-testid="landing-btn-integration"
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full transition-all"
+                  className="flex items-center justify-center rounded-full transition-all"
+                  title="Intégration"
                   style={{
+                    width: 32, height: 32,
                     fontSize: "11px",
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 500,
                     color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
                     background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
                     border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)",
@@ -689,18 +689,17 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                     e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
                   }}
                 >
-                  <Plug style={{ width: 12, height: 12 }} />
-                  Intégration
+                  <Paperclip style={{ width: 14, height: 14 }} />
                 </button>
 
-                {/* Github button */}
+                {/* Github button (icon only) */}
                 <button
                   data-testid="landing-btn-github"
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full transition-all"
+                  className="flex items-center justify-center rounded-full transition-all"
+                  title="Github"
                   style={{
+                    width: 32, height: 32,
                     fontSize: "11px",
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 500,
                     color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
                     background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
                     border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)",
@@ -716,8 +715,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                     e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
                   }}
                 >
-                  <Github style={{ width: 12, height: 12 }} />
-                  Github
+                  <Github style={{ width: 14, height: 14 }} />
                 </button>
 
                 <span style={{ color: T.text3, fontSize: "12px" }}>·</span>

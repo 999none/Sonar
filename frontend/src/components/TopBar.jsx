@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Rocket, Share2, LayoutGrid, Zap } from "lucide-react";
 
-export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projectName, isDark = false }) {
+export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projectName, isDark = false, user }) {
   const [deployed, setDeployed] = useState(false);
   const dk = isDark;
 
@@ -11,6 +11,8 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
     onDeploy();
     setTimeout(() => setDeployed(false), 3000);
   };
+
+  const initials = (user?.name || user?.email || "U").slice(0, 2).toUpperCase();
 
   return (
     <div
@@ -34,7 +36,7 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
         <span style={{ fontSize: "13px", fontFamily: "'Manrope', sans-serif", fontWeight: 500 }}>Home</span>
       </button>
 
-      {/* Project name — center */}
+      {/* Center — Project name + generating status */}
       <div className="flex-1 flex items-center justify-center gap-2">
         {projectName && projectName !== "untitled-app" && (
           <>
@@ -57,7 +59,7 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
         )}
       </div>
 
-      {/* Share + Deploy */}
+      {/* Right — Share + Deploy + Avatar */}
       <div className="flex items-center gap-2 px-3 flex-shrink-0" style={{ borderLeft: dk ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(80,140,220,0.12)" }}>
         <motion.button
           data-testid="share-button"
@@ -95,6 +97,22 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
           <Rocket style={{ width: 13, height: 13 }} />
           {deployed ? "Deployed!" : "Deploy"}
         </motion.button>
+
+        {/* User avatar */}
+        {user && (
+          <div
+            className="flex items-center justify-center flex-shrink-0 ml-1"
+            style={{
+              width: 30, height: 30, borderRadius: "50%",
+              background: "linear-gradient(135deg, #7c3aed, #a855f7)",
+              boxShadow: "0 2px 8px rgba(124,58,237,0.3)",
+            }}
+          >
+            <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: "10px", color: "#fff", textTransform: "uppercase" }}>
+              {initials}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
