@@ -234,18 +234,6 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           sonar
         </span>
         <div className="flex items-center gap-7">
-          <a href="#" className="text-sm transition-colors" style={{ color: "rgba(255,255,255,0.45)" }}
-            onMouseEnter={e => e.target.style.color="rgba(255,255,255,0.85)"}
-            onMouseLeave={e => e.target.style.color="rgba(255,255,255,0.45)"}>
-            Docs
-          </a>
-          <a href="#" className="text-sm transition-colors" style={{ color: "rgba(255,255,255,0.45)" }}
-            onMouseEnter={e => e.target.style.color="rgba(255,255,255,0.85)"}
-            onMouseLeave={e => e.target.style.color="rgba(255,255,255,0.45)"}>
-            Pricing
-          </a>
-
-          {user ? (
             /* ── Avatar + logout ── */
             <div className="flex items-center gap-3">
               <div
