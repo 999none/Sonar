@@ -241,10 +241,10 @@ export default function AppBuilder({ initialPrompt, onReset }) {
             />
           </div>
 
-          {/* Agents - bottom 40% */}
+          {/* Agents - bottom section with fixed height */}
           <div
             className="flex flex-col overflow-hidden flex-shrink-0"
-            style={{ height: "300px", borderTop: "1px solid rgba(30,41,59,0.7)" }}
+            style={{ height: "320px", borderTop: "1px solid rgba(30,41,59,0.7)" }}
           >
             <AgentPanel agentStatuses={agentStatuses} agentLogs={agentLogs} />
           </div>
