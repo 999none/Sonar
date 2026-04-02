@@ -78,6 +78,23 @@ export default function LandingPage({ onStart }) {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
   };
 
+  const handleFocus = () => {
+    setIsFocused(true);
+    // Clear the animated placeholder text so user starts fresh
+    setInputValue("");
+    setCharIndex(0);
+    setIsDeleting(false);
+  };
+
+  const handleBlur = () => {
+    if (!inputValue.trim()) {
+      setIsFocused(false);
+      // Resume animation from start
+      setCharIndex(0);
+      setIsDeleting(false);
+    }
+  };
+
   const handleSuggestion = (template) => {
     setIsFocused(true);
     setInputValue(template.prompt);
@@ -234,9 +251,9 @@ export default function LandingPage({ onStart }) {
               ref={inputRef}
               data-testid="landing-idea-input"
               value={inputValue}
-              onChange={e => { setInputValue(e.target.value); setIsFocused(true); }}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => { if (!inputValue) setIsFocused(false); }}
+              onChange={e => setInputValue(e.target.value)}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               onKeyDown={handleKeyDown}
               placeholder=""
               rows={3}
