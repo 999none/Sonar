@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock, LogOut, Settings, Globe, Github, Sun, Moon } from "lucide-react";
+import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock, LogOut, Settings, Globe, Github, Sun, Moon, Plug } from "lucide-react";
 import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
 import LoginModal from "./LoginModal";
@@ -675,9 +675,13 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                     style={{
                       fontSize: "11px",
                       fontFamily: "'DM Sans', sans-serif",
-                      color: modeOpen ? "#06b6d4" : "rgba(110,130,165,0.9)",
-                      background: modeOpen ? "rgba(6,182,212,0.08)" : "rgba(255,255,255,0.04)",
-                      border: modeOpen ? "1px solid rgba(6,182,212,0.25)" : "1px solid rgba(255,255,255,0.06)",
+                      color: modeOpen ? "#06b6d4" : (isDark ? "rgba(110,130,165,0.9)" : "rgba(30,60,120,0.7)"),
+                      background: modeOpen
+                        ? "rgba(6,182,212,0.08)"
+                        : (isDark ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.35)"),
+                      border: modeOpen
+                        ? "1px solid rgba(6,182,212,0.25)"
+                        : (isDark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(255,255,255,0.4)"),
                     }}
                   >
                     <span className="font-semibold">{selectedMode}</span>
@@ -693,11 +697,15 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                         className="absolute bottom-full mb-2 left-0 rounded-2xl overflow-hidden z-50"
                         style={{
                           width: "200px",
-                          background: "linear-gradient(160deg, rgba(16,26,60,0.96) 0%, rgba(6,9,20,0.98) 100%)",
+                          background: isDark
+                            ? "linear-gradient(160deg, rgba(16,26,60,0.96) 0%, rgba(6,9,20,0.98) 100%)"
+                            : "linear-gradient(160deg, rgba(255,255,255,0.96) 0%, rgba(240,248,255,0.98) 100%)",
                           backdropFilter: "blur(24px)",
                           WebkitBackdropFilter: "blur(24px)",
-                          border: "1px solid rgba(255,255,255,0.1)",
-                          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 20px 50px rgba(0,0,0,0.75)",
+                          border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(100,160,230,0.2)",
+                          boxShadow: isDark
+                            ? "inset 0 1px 0 rgba(255,255,255,0.08), 0 20px 50px rgba(0,0,0,0.75)"
+                            : "inset 0 1px 0 rgba(255,255,255,0.8), 0 20px 50px rgba(20,60,140,0.15)",
                         }}
                       >
                         {Object.entries(MODE_INFO).map(([key, info]) => (
@@ -707,12 +715,12 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                             onClick={() => { setSelectedMode(key); setModeOpen(false); }}
                             className="w-full flex items-start justify-between px-4 py-3 transition-colors text-left"
                             style={{ background: selectedMode === key ? "rgba(6,182,212,0.07)" : "transparent" }}
-                            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
+                            onMouseEnter={e => e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)"}
                             onMouseLeave={e => e.currentTarget.style.background = selectedMode === key ? "rgba(6,182,212,0.07)" : "transparent"}
                           >
                             <div>
-                              <p className="font-semibold" style={{ fontSize: "12px", color: selectedMode === key ? "#06b6d4" : "#e2e8f0" }}>{info.label}</p>
-                              <p style={{ fontSize: "11px", color: "rgba(100,120,160,0.8)", marginTop: "1px" }}>{info.desc}</p>
+                              <p className="font-semibold" style={{ fontSize: "12px", color: selectedMode === key ? "#06b6d4" : (isDark ? "#e2e8f0" : "#1e3264") }}>{info.label}</p>
+                              <p style={{ fontSize: "11px", color: isDark ? "rgba(100,120,160,0.8)" : "rgba(40,70,130,0.55)", marginTop: "1px" }}>{info.desc}</p>
                             </div>
                             {selectedMode === key && <Check style={{ width: "12px", height: "12px", color: "#06b6d4", marginTop: "2px", flexShrink: 0 }} />}
                           </button>
@@ -722,7 +730,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                   </AnimatePresence>
                 </div>
 
-                <span style={{ color: "rgba(50,70,100,0.7)", fontSize: "12px" }}>·</span>
+                <span style={{ color: T.text3, fontSize: "12px" }}>·</span>
 
                 {/* Model selector */}
                 <div ref={modelRef} className="relative">
@@ -733,9 +741,13 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                     style={{
                       fontSize: "11px",
                       fontFamily: "'DM Sans', sans-serif",
-                      color: modelOpen ? "#06b6d4" : "rgba(110,130,165,0.9)",
-                      background: modelOpen ? "rgba(6,182,212,0.08)" : "rgba(255,255,255,0.04)",
-                      border: modelOpen ? "1px solid rgba(6,182,212,0.25)" : "1px solid rgba(255,255,255,0.06)",
+                      color: modelOpen ? "#06b6d4" : (isDark ? "rgba(110,130,165,0.9)" : "rgba(30,60,120,0.7)"),
+                      background: modelOpen
+                        ? "rgba(6,182,212,0.08)"
+                        : (isDark ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.35)"),
+                      border: modelOpen
+                        ? "1px solid rgba(6,182,212,0.25)"
+                        : (isDark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(255,255,255,0.4)"),
                     }}
                   >
                     <ModelIcon provider={currentModel.provider} size={13} />
@@ -752,14 +764,18 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                         className="absolute bottom-full mb-2 left-0 rounded-2xl overflow-hidden z-50"
                         style={{
                           width: "185px",
-                          background: "linear-gradient(160deg, rgba(16,26,60,0.96) 0%, rgba(6,9,20,0.98) 100%)",
+                          background: isDark
+                            ? "linear-gradient(160deg, rgba(16,26,60,0.96) 0%, rgba(6,9,20,0.98) 100%)"
+                            : "linear-gradient(160deg, rgba(255,255,255,0.96) 0%, rgba(240,248,255,0.98) 100%)",
                           backdropFilter: "blur(24px)",
                           WebkitBackdropFilter: "blur(24px)",
-                          border: "1px solid rgba(255,255,255,0.1)",
-                          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 20px 50px rgba(0,0,0,0.75)",
+                          border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(100,160,230,0.2)",
+                          boxShadow: isDark
+                            ? "inset 0 1px 0 rgba(255,255,255,0.08), 0 20px 50px rgba(0,0,0,0.75)"
+                            : "inset 0 1px 0 rgba(255,255,255,0.8), 0 20px 50px rgba(20,60,140,0.15)",
                         }}
                       >
-                        <p style={{ fontSize: "10px", color: "rgba(80,110,150,0.8)", padding: "10px 14px 6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Model</p>
+                        <p style={{ fontSize: "10px", color: isDark ? "rgba(80,110,150,0.8)" : "rgba(40,70,130,0.5)", padding: "10px 14px 6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Model</p>
                         {MODELS.map(m => (
                           <button
                             key={m.id}
@@ -767,12 +783,12 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                             onClick={() => { setSelectedModel(m.id); setModelOpen(false); }}
                             className="w-full flex items-center justify-between px-4 py-2.5 transition-colors"
                             style={{ background: selectedModel === m.id ? "rgba(6,182,212,0.07)" : "transparent" }}
-                            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
+                            onMouseEnter={e => e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)"}
                             onMouseLeave={e => e.currentTarget.style.background = selectedModel === m.id ? "rgba(6,182,212,0.07)" : "transparent"}
                           >
                             <div className="flex items-center gap-2.5">
                               <ModelIcon provider={m.provider} size={15} />
-                              <span style={{ fontSize: "12px", color: selectedModel === m.id ? "#06b6d4" : "#e2e8f0" }}>{m.label}</span>
+                              <span style={{ fontSize: "12px", color: selectedModel === m.id ? "#06b6d4" : (isDark ? "#e2e8f0" : "#1e3264") }}>{m.label}</span>
                             </div>
                             {selectedModel === m.id && <Check style={{ width: "12px", height: "12px", color: "#06b6d4", flexShrink: 0 }} />}
                           </button>
@@ -782,15 +798,61 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                   </AnimatePresence>
                 </div>
 
-                <span style={{ color: "rgba(50,70,100,0.7)", fontSize: "12px" }}>·</span>
+                <span style={{ color: T.text3, fontSize: "12px" }}>·</span>
 
-                {/* Cost estimate — updates with mode */}
-                <span
-                  data-testid="landing-cost-estimate"
-                  style={{ fontSize: "11px", color: "rgba(110,130,165,0.8)", fontFamily: "'DM Sans', sans-serif" }}
+                {/* Integration button */}
+                <button
+                  data-testid="landing-btn-integration"
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full transition-all"
+                  style={{
+                    fontSize: "11px",
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 500,
+                    color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
+                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
+                    border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)",
+                    backdropFilter: "blur(8px)",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.75)";
+                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.18)" : "rgba(100,160,240,0.35)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)";
+                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
+                  }}
                 >
-                  Est. ~{estimatedCost}
-                </span>
+                  <Plug style={{ width: 12, height: 12 }} />
+                  Intégration
+                </button>
+
+                {/* Github button */}
+                <button
+                  data-testid="landing-btn-github"
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full transition-all"
+                  style={{
+                    fontSize: "11px",
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 500,
+                    color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
+                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
+                    border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)",
+                    backdropFilter: "blur(8px)",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.75)";
+                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.18)" : "rgba(100,160,240,0.35)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)";
+                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
+                  }}
+                >
+                  <Github style={{ width: 12, height: 12 }} />
+                  Github
+                </button>
               </div>
 
               {/* Build button */}

@@ -20,7 +20,7 @@ function SonarApp() {
   const [initialPrompt, setInitialPrompt] = useState("");
   const [initialTask, setInitialTask] = useState(null);
   const [user, setUser] = useState(null);
-  const [isDark, setIsDark] = useState(true); // { name, email } when logged in
+  const [isDark, setIsDark] = useState(false); // Light mode (sky/water) by default
   const [tasks, setTasks] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("sonar-tasks") || "null");
