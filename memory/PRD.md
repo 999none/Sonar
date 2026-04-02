@@ -23,38 +23,27 @@ A fully functional, production-looking frontend mock of an AI-powered app builde
 - Inline "Projets Récents" grid (3 columns, below the chat input, no background)
 - Top nav: sonar logo, Docs/Pricing links, Sign in button
 
-### 2. Scrollable Landing Sections (`LandingSections.jsx`)
-Sections below the fold (scroll down from hero):
+### 2. Auth Page (`AuthPage.jsx`) — route `auth` view
+Full-viewport 2-panel layout:
 
-#### Stats Section
-- 4 animated counter stats: 120K+ apps, 49k devs, 99.9% uptime, 10¢ avg cost
-- Horizontal layout with subtle dividers
+#### Left panel (46%): Form
+- "sonar" logo top-left (click → back to home)
+- Sign up / Sign in toggle (pill style)
+- Continue with Google button (full width)
+- GitHub | Discord buttons (50/50)
+- "or continue with email" divider
+- Fields: Full name (signup only, animated in/out), Email, Password
+- "Create account" / "Sign in" button (purple gradient, large)
+- "Already have an account? Sign in" link
+- Terms & Privacy legal text
 
-#### Demo Section
-- "Voyez-le en action / De l'idée au code, en temps réel."
-- Fully animated fake browser window showing the app builder:
-  - Left: Chat panel with user message + agent steps (check/spinner icons)
-  - Right: Code editor tab with streaming code animation + syntax highlighting
-  - Browser chrome: traffic lights, URL bar (lock icon), E-1 + Deploy buttons
+#### Right panel (54%): Branding
+- Dark blue navy gradient background + scan lines
+- Giant "sonar" text (Sora 900)
+- "The future is here"
+- "Create your own app without coding a line."
 
-#### Value Props Section ("Pourquoi les devs choisissent Sonar")
-- 3 horizontal cards (Vitesse / Production / Contrôle)
-- Each with icon, eyebrow label, bold h3, descriptive text, glow blob on hover
-
-#### Testimonials Section ("Ce qu'ils disent")
-- "Des équipes qui livrent deux fois plus vite."
-- 3 cards: Jordan M. (Indie Hacker), Sarah C. (Product Designer), Thomas K. (CTO @ Startup)
-- Avatar with initials, name, handle
-
-#### CTA Section
-- "Votre prochaine app commence ici."
-- "Commencer gratuitement" (cyan gradient) + "Voir sur GitHub" (ghost)
-- Radial glow behind the card
-
-#### Footer
-- sonar brand + tagline
-- 4 link columns: Produit, Ressources, Société, Légal
-- Bottom bar: copyright + "Propulsé par l'IA"
+**Navigation:** "Sign in" nav button → auth view. Logo click → back to home.
 
 ### 3. Cost Preview Modal (`CostPreviewModal.jsx`)
 - Shows before generation starts

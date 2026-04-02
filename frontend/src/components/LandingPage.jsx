@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock } from "lucide-react";
 import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
-import LandingSections from "./LandingSections";
 
 function relativeTime(ts) {
   if (!ts) return "";
@@ -88,7 +87,7 @@ const TYPING_PROMPTS = [
   "Build a blog platform with markdown support",
 ];
 
-export default function LandingPage({ onStart, tasks = [], onSelectTask, onCloseTask }) {
+export default function LandingPage({ onStart, tasks = [], onSelectTask, onCloseTask, onShowAuth }) {
   const [inputValue, setInputValue] = useState("");
   const [typingIndex, setTypingIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
@@ -229,6 +228,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           <button
             data-testid="nav-sign-in"
             className="text-sm px-5 py-2 rounded-lg transition-all"
+            onClick={() => onShowAuth && onShowAuth()}
             style={{
               color: "rgba(255,255,255,0.6)",
               border: "1px solid rgba(255,255,255,0.12)",
@@ -585,9 +585,6 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           </motion.div>
         )}
       </div>
-
-      {/* ── Landing sections (scroll down) ── */}
-      <LandingSections />
 
     </div>
   );

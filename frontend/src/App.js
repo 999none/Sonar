@@ -2,6 +2,7 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./components/LandingPage";
 import AppBuilder from "./components/AppBuilder";
+import AuthPage from "./components/AuthPage";
 import "./App.css";
 
 const DEMO_TASKS = [
@@ -17,8 +18,7 @@ function saveHistory(tasks) {
 function SonarApp() {
   const [view, setView] = useState("landing");
   const [initialPrompt, setInitialPrompt] = useState("");
-  const [initialTask, setInitialTask] = useState(null);
-  const [tasks, setTasks] = useState(() => {
+  const [initialTask, setInitialTask] = useState(null);  const [tasks, setTasks] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("sonar-tasks") || "null");
       if (saved && saved.length > 0) return saved;
@@ -54,6 +54,10 @@ function SonarApp() {
     setView("landing");
   };
 
+  if (view === "auth") {
+    return <AuthPage onBack={() => setView("landing")} />;
+  }
+
   if (view === "builder") {
     return (
       <AppBuilder
@@ -72,6 +76,7 @@ function SonarApp() {
       tasks={tasks}
       onSelectTask={handleSelectTaskFromHome}
       onCloseTask={handleCloseTaskFromHome}
+      onShowAuth={() => setView("auth")}
     />
   );
 }
