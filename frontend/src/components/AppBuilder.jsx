@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import TopBar from "./TopBar";
+import Sidebar from "./Sidebar";
 import ChatPanel from "./ChatPanel";
-import CodeEditor from "./CodeEditor";
 import EmergentPreview from "./EmergentPreview";
 import CostPreviewModal from "./CostPreviewModal";
+import ShareModal from "./ShareModal";
 import { AGENT_STEPS, CODE_BY_PROJECT, CHAT_RESPONSES, MOCK_LOGS } from "../data/mockData";
 
 const AGENT_META = {
@@ -28,96 +29,93 @@ function getProjectName(type) {
 
 function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-export default function AppBuilder({ initialPrompt, onReset }) {
-  const [selectedModel, setSelectedModel] = useState(window.__sonarInitModel || "gpt-4o");
-  const [mode, setMode] = useState(window.__sonarInitMode || "E-1");
-  const [credits, setCredits] = useState(1240);
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem("sonar-tasks") || "[]"); } catch { return []; }
+}
+function saveHistory(tasks) {
+  try { localStorage.setItem("sonar-tasks", JSON.stringify(tasks.slice(0, 20))); } catch {}
+}
+
+export default function AppBuilder({ initialPrompt, onReset, externalTasks, onTasksChange }) {
+  const [selectedModel] = useState(window.__sonarInitModel || "gpt-4o");
+  const [mode] = useState(window.__sonarInitMode || "E-1");
   const [messages, setMessages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [currentCode, setCurrentCode] = useState("");
   const [projectType, setProjectType] = useState(null);
   const [terminalLogs, setTerminalLogs] = useState([]);
-  const [timeElapsed, setTimeElapsed] = useState(0);
-  const [estimatedCost, setEstimatedCost] = useState("$0.00");
   const [showCostModal, setShowCostModal] = useState(false);
   const [pendingPrompt, setPendingPrompt] = useState("");
   const [projectName, setProjectName] = useState("untitled-app");
-  const [activeTab, setActiveTab] = useState("preview"); // "preview" | "code"
+  const [activeTab, setActiveTab] = useState("preview");
   const [previewReady, setPreviewReady] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [activeTaskId, setActiveTaskId] = useState(null);
+  const [tasks, setTasks] = useState(externalTasks || loadHistory());
 
   const timerRef = useRef(null);
   const hasStarted = useRef(false);
 
   const addMsg = (msg) => setMessages(prev => [...prev, msg]);
 
+  const pushTask = (id, type, name, prompt) => {
+    const newTask = { id, projectType: type, projectName: name, prompt, timestamp: Date.now() };
+    setTasks(prev => {
+      const updated = [newTask, ...prev.filter(t => t.id !== id)];
+      saveHistory(updated);
+      onTasksChange?.(updated);
+      return updated;
+    });
+    setActiveTaskId(id);
+  };
+
   const startGeneration = useCallback((prompt) => {
     const type = detectProjectType(prompt);
+    const name = getProjectName(type);
+    const id = `task-${Date.now()}`;
+
     setProjectType(type);
-    setProjectName(getProjectName(type));
+    setProjectName(name);
     setIsGenerating(true);
     setIsTyping(false);
     setCurrentCode("");
     setTerminalLogs([]);
-    setTimeElapsed(0);
-    setEstimatedCost("$0.00");
     setPreviewReady(false);
     setMessages([]);
+    setActiveTab("preview");
+    pushTask(id, type, name, prompt);
 
     if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setTimeElapsed(t => {
-        const next = t + 1;
-        setEstimatedCost(`$${(next * 0.002).toFixed(3)}`);
-        return next;
-      });
-    }, 1000);
-
-    runFlow(type, prompt);
+    runFlow(type, name, prompt);
   }, []);
 
-  const runFlow = async (type, prompt) => {
+  const runFlow = async (type, name, prompt) => {
     const responses = CHAT_RESPONSES[type] || CHAT_RESPONSES.todo;
-
-    // User message
     addMsg({ role: "user", content: prompt });
     await delay(700);
-
-    // Welcome assistant message
     setIsTyping(true);
     await delay(1000);
     setIsTyping(false);
     addMsg({ role: "assistant", content: responses[0].content });
     await delay(500);
 
-    // Agent steps inline in chat
     for (let i = 0; i < AGENT_STEPS.length; i++) {
       const step = AGENT_STEPS[i];
       const meta = AGENT_META[step.id];
-
-      // Agent "working" system message
       addMsg({ role: "agent", agentId: step.id, label: meta.label, status: "working", steps: [] });
       await delay(400);
-
-      // Feed steps into the agent message progressively
       for (let j = 0; j < meta.steps.length; j++) {
         await delay(500);
         setMessages(prev => prev.map(m =>
-          m.role === "agent" && m.agentId === step.id
-            ? { ...m, steps: [...m.steps, meta.steps[j]] }
-            : m
+          m.role === "agent" && m.agentId === step.id ? { ...m, steps: [...m.steps, meta.steps[j]] } : m
         ));
       }
-
       await delay(400);
-      // Mark done
       setMessages(prev => prev.map(m =>
-        m.role === "agent" && m.agentId === step.id
-          ? { ...m, status: "done" }
-          : m
+        m.role === "agent" && m.agentId === step.id ? { ...m, status: "done" } : m
       ));
-
-      // Assistant response after architect
       if (i === 1 && responses[1]) {
         await delay(600);
         setIsTyping(true);
@@ -127,30 +125,21 @@ export default function AppBuilder({ initialPrompt, onReset }) {
       }
     }
 
-    // Code generation
     setCurrentCode(CODE_BY_PROJECT[type] || CODE_BY_PROJECT.todo);
-
-    // Terminal logs
     await delay(400);
     for (let i = 0; i < MOCK_LOGS.length; i++) {
       await delay(110);
       setTerminalLogs(prev => [...prev, MOCK_LOGS[i]]);
     }
-
-    // Preview ready
     setPreviewReady(true);
     setActiveTab("preview");
-
-    // Final message
     await delay(500);
     setIsTyping(true);
     await delay(1000);
     setIsTyping(false);
     addMsg({ role: "assistant", content: responses[responses.length - 1].content });
-
     if (timerRef.current) clearInterval(timerRef.current);
     setIsGenerating(false);
-    setCredits(c => c - Math.floor(Math.random() * 15 + 5));
   };
 
   useEffect(() => {
@@ -178,13 +167,10 @@ export default function AppBuilder({ initialPrompt, onReset }) {
   };
 
   const handleDeploy = () => {
-    setTerminalLogs(prev => [
-      ...prev,
+    setTerminalLogs(prev => [...prev,
       "$ sonar deploy --env=production",
       "Packaging artifacts...",
-      "Uploading to edge network...",
       "✓ Deployed to https://my-app.sonar.sh",
-      "✓ Live in 1.2s",
     ]);
   };
 
@@ -194,22 +180,50 @@ export default function AppBuilder({ initialPrompt, onReset }) {
     onReset();
   };
 
+  const handleNewTask = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    hasStarted.current = false;
+    onReset();
+  };
+
+  const handleSelectTask = (task) => {
+    setActiveTaskId(task.id);
+    setProjectName(task.projectName);
+    setProjectType(task.projectType);
+    setPreviewReady(true);
+    setActiveTab("preview");
+    setMessages([
+      { role: "user", content: task.prompt },
+      { role: "assistant", content: `Here's your ${task.projectName} — loaded from history.` },
+    ]);
+    setIsGenerating(false);
+    setCurrentCode(CODE_BY_PROJECT[task.projectType] || "");
+  };
+
   return (
     <div className="flex flex-col overflow-hidden" style={{ height: "100vh", background: "#0a0a0a" }}>
       <TopBar
         isGenerating={isGenerating}
         onDeploy={handleDeploy}
+        onShare={() => setShowShare(true)}
         projectName={projectName}
       />
 
-      {/* 2-panel layout like Emergent */}
       <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <Sidebar
+          tasks={tasks}
+          activeTaskId={activeTaskId}
+          onSelectTask={handleSelectTask}
+          onNewTask={handleNewTask}
+          onHome={handleReset}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(c => !c)}
+        />
 
-        {/* LEFT — Full chat */}
-        <div
-          className="flex flex-col overflow-hidden flex-shrink-0"
-          style={{ width: "50%", borderRight: "1px solid rgba(255,255,255,0.06)" }}
-        >
+        {/* Chat */}
+        <div className="flex flex-col overflow-hidden flex-shrink-0"
+          style={{ width: "calc(50% - 105px)", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
           <ChatPanel
             messages={messages}
             isTyping={isTyping}
@@ -219,7 +233,7 @@ export default function AppBuilder({ initialPrompt, onReset }) {
           />
         </div>
 
-        {/* RIGHT — Preview / Code tabs */}
+        {/* Preview */}
         <div className="flex flex-col flex-1 overflow-hidden">
           <EmergentPreview
             projectType={projectType}
@@ -241,6 +255,12 @@ export default function AppBuilder({ initialPrompt, onReset }) {
         prompt={pendingPrompt}
         selectedModel={selectedModel}
         mode={mode}
+      />
+
+      <ShareModal
+        isOpen={showShare}
+        onClose={() => setShowShare(false)}
+        projectName={projectName}
       />
     </div>
   );

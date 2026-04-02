@@ -7,11 +7,13 @@ import "./App.css";
 function SonarApp() {
   const [view, setView] = useState("landing");
   const [initialPrompt, setInitialPrompt] = useState("");
+  const [tasks, setTasks] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("sonar-tasks") || "[]"); } catch { return []; }
+  });
 
   const handleStart = (prompt, model, mode) => {
     setInitialPrompt(prompt);
     setView("builder");
-    // Pass model/mode as state
     window.__sonarInitModel = model || "gpt-4o";
     window.__sonarInitMode = mode || "E-1";
   };
@@ -22,7 +24,14 @@ function SonarApp() {
   };
 
   if (view === "builder") {
-    return <AppBuilder initialPrompt={initialPrompt} onReset={handleReset} />;
+    return (
+      <AppBuilder
+        initialPrompt={initialPrompt}
+        onReset={handleReset}
+        externalTasks={tasks}
+        onTasksChange={setTasks}
+      />
+    );
   }
 
   return <LandingPage onStart={handleStart} />;
