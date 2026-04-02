@@ -52,6 +52,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
   const [previewReady, setPreviewReady] = useState(false);
   const [showPreviewPanel, setShowPreviewPanel] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [showCoderFromTopBar, setShowCoderFromTopBar] = useState(false);
   const [activeTaskId, setActiveTaskId] = useState(null);
   const [tasks, setTasks] = useState(externalTasks || loadHistory());
 
@@ -237,6 +238,9 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
         projectName={projectName}
         isDark={isDark}
         user={user}
+        showPreview={showPreviewPanel}
+        onTogglePreview={() => setShowPreviewPanel(p => !p)}
+        onOpenCode={() => { setShowPreviewPanel(true); setShowCoderFromTopBar(true); }}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -281,6 +285,8 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
                 projectName={projectName}
                 isDark={isDark}
                 onClose={() => setShowPreviewPanel(false)}
+                openCoderExternal={showCoderFromTopBar}
+                onCoderExternalClosed={() => setShowCoderFromTopBar(false)}
               />
             </motion.div>
           )}

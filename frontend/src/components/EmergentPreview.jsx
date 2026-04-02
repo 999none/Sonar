@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, RefreshCw, ExternalLink, Code2, Eye, Terminal, Copy, Check, ExternalLink as OpenIcon } from "lucide-react";
 
@@ -364,11 +364,23 @@ function CoderModal({ onClose, projectName, isDark = false }) {
   );
 }
 
-export default function EmergentPreview({ projectType, isGenerating, previewReady, activeTab, onTabChange, code, terminalLogs, projectName, isDark = false, onClose }) {
+export default function EmergentPreview({ projectType, isGenerating, previewReady, activeTab, onTabChange, code, terminalLogs, projectName, isDark = false, onClose, openCoderExternal, onCoderExternalClosed }) {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showCoderModal, setShowCoderModal] = useState(false);
   const PreviewComp = PREVIEWS[projectType];
   const dk = isDark;
+
+  // Open coder modal from external trigger (TopBar Code button)
+  useEffect(() => {
+    if (openCoderExternal) {
+      setShowCoderModal(true);
+    }
+  }, [openCoderExternal]);
+
+  const handleCloseCoder = () => {
+    setShowCoderModal(false);
+    if (onCoderExternalClosed) onCoderExternalClosed();
+  };
 
   // Open coder modal when "Code" tab is clicked
   const handleTabChange = (id) => {
@@ -469,7 +481,7 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
         {/* Coder Modal */}
         <AnimatePresence>
           {showCoderModal && (
-            <CoderModal onClose={() => setShowCoderModal(false)} projectName={projectName} isDark={isDark} />
+            <CoderModal onClose={handleCloseCoder} projectName={projectName} isDark={isDark} />
           )}
         </AnimatePresence>
       </div>

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Rocket, Share2, LayoutGrid, Zap } from "lucide-react";
+import { Rocket, Share2, LayoutGrid, Zap, Eye, Code2 } from "lucide-react";
 
-export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projectName, isDark = false, user }) {
+export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projectName, isDark = false, user, showPreview, onTogglePreview, onOpenCode }) {
   const [deployed, setDeployed] = useState(false);
   const dk = isDark;
 
@@ -13,6 +13,27 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
   };
 
   const initials = (user?.name || user?.email || "U").slice(0, 2).toUpperCase();
+
+  const tabStyle = (active) => ({
+    display: "flex", alignItems: "center", gap: 5,
+    padding: "5px 12px",
+    borderRadius: "8px",
+    border: active
+      ? (dk ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(255,255,255,0.6)")
+      : (dk ? "1px solid transparent" : "1px solid transparent"),
+    background: active
+      ? (dk ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.6)")
+      : "transparent",
+    boxShadow: active && !dk ? "0 1px 4px rgba(20,80,160,0.06)" : "none",
+    color: active
+      ? (dk ? "#e2e8f0" : "#0a1a3e")
+      : (dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.45)"),
+    fontSize: "12px",
+    fontFamily: "'Manrope', sans-serif",
+    fontWeight: 500,
+    cursor: "pointer",
+    transition: "all 0.15s",
+  });
 
   return (
     <div
@@ -37,6 +58,30 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
         <LayoutGrid style={{ width: 14, height: 14 }} />
         <span style={{ fontSize: "13px", fontFamily: "'Manrope', sans-serif", fontWeight: 500 }}>Home</span>
       </button>
+
+      {/* Preview & Code tabs */}
+      <div className="flex items-center gap-1 px-3 relative z-10">
+        <button
+          data-testid="topbar-preview-btn"
+          onClick={onTogglePreview}
+          style={tabStyle(showPreview)}
+          onMouseEnter={e => { if (!showPreview) { e.currentTarget.style.background = dk ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.4)"; e.currentTarget.style.color = dk ? "#c8d5e4" : "#1e3264"; }}}
+          onMouseLeave={e => { if (!showPreview) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.45)"; }}}
+        >
+          <Eye style={{ width: 12, height: 12 }} />
+          Preview
+        </button>
+        <button
+          data-testid="topbar-code-btn"
+          onClick={onOpenCode}
+          style={tabStyle(false)}
+          onMouseEnter={e => { e.currentTarget.style.background = dk ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.4)"; e.currentTarget.style.color = dk ? "#c8d5e4" : "#1e3264"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.45)"; }}
+        >
+          <Code2 style={{ width: 12, height: 12 }} />
+          Code
+        </button>
+      </div>
 
       {/* Center — absolute positioned for true centering */}
       {projectName && projectName !== "untitled-app" && (
@@ -110,7 +155,7 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
           {deployed ? "Deployed!" : "Deploy"}
         </motion.button>
 
-        {/* User avatar — sky blue gradient */}
+        {/* User avatar */}
         {user && (
           <div
             className="flex items-center justify-center flex-shrink-0 ml-1"
