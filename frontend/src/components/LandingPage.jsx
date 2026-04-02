@@ -1,9 +1,114 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock, LogOut } from "lucide-react";
+import { ArrowRight, ChevronRight, ChevronDown, Check, X, Clock, LogOut, Settings, Globe, Github, Sun, Moon } from "lucide-react";
 import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
 import LoginModal from "./LoginModal";
+
+// ── Profile dropdown ──────────────────────────────────────────────────────────
+function ProfileMenu({ user, onLogout, onClose }) {
+  const items = [
+    { icon: Settings, label: "Paramètres de compte",  color: null },
+    { icon: Globe,    label: "Langues",                color: null, suffix: "FR" },
+    { icon: Github,   label: "Se connecter à GitHub",  color: null },
+  ];
+
+  return (
+    <motion.div
+      data-testid="profile-menu"
+      initial={{ opacity: 0, scale: 0.95, y: -6 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, y: -6 }}
+      transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+      style={{
+        position: "absolute",
+        top: "calc(100% + 10px)",
+        right: 0,
+        width: 230,
+        background: "linear-gradient(160deg, rgba(16,26,65,0.97) 0%, rgba(6,8,22,0.99) 100%)",
+        backdropFilter: "blur(40px)",
+        WebkitBackdropFilter: "blur(40px)",
+        border: "1px solid rgba(255,255,255,0.11)",
+        borderRadius: "18px",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), 0 24px 60px rgba(0,0,0,0.75)",
+        overflow: "hidden",
+        zIndex: 200,
+      }}
+    >
+      {/* User info header */}
+      <div style={{ padding: "15px 16px 13px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: "50%",
+            background: "linear-gradient(135deg, #7c3aed, #a855f7)",
+            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+          }}>
+            <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: "11px", color: "#fff", textTransform: "uppercase" }}>
+              {(user.name || user.email || "U").slice(0, 2)}
+            </span>
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: "13px", color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {user.name || "Utilisateur"}
+            </p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(140,165,200,0.55)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {user.email}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Menu items */}
+      <div style={{ padding: "6px" }}>
+        {items.map(({ icon: Icon, label, color, suffix }) => (
+          <button
+            key={label}
+            onClick={onClose}
+            style={{
+              width: "100%", display: "flex", alignItems: "center", gap: 10,
+              padding: "9px 12px", borderRadius: "10px", border: "none",
+              background: "transparent", cursor: "pointer", transition: "background 0.13s",
+              textAlign: "left",
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.07)"}
+            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+          >
+            <Icon style={{ width: 15, height: 15, color: "rgba(160,185,220,0.6)", flexShrink: 0 }} />
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(215,225,240,0.85)", flex: 1 }}>
+              {label}
+            </span>
+            {suffix && (
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "rgba(120,145,180,0.5)", background: "rgba(255,255,255,0.06)", padding: "2px 7px", borderRadius: "6px" }}>
+                {suffix}
+              </span>
+            )}
+          </button>
+        ))}
+
+        {/* Divider */}
+        <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "5px 8px" }} />
+
+        {/* Logout */}
+        <button
+          data-testid="profile-menu-logout"
+          onClick={() => { onClose(); onLogout(); }}
+          style={{
+            width: "100%", display: "flex", alignItems: "center", gap: 10,
+            padding: "9px 12px", borderRadius: "10px", border: "none",
+            background: "transparent", cursor: "pointer", transition: "background 0.13s",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = "rgba(248,113,113,0.1)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+        >
+          <LogOut style={{ width: 15, height: 15, color: "#f87171", flexShrink: 0 }} />
+          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#f87171" }}>
+            Déconnexion
+          </span>
+        </button>
+      </div>
+    </motion.div>
+  );
+}
 
 function relativeTime(ts) {
   if (!ts) return "";
@@ -101,6 +206,22 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
   const [isDeleting, setIsDeleting] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+  const profileRef = useRef(null);
+
+  // Close profile menu on outside click
+  useEffect(() => {
+    if (!showProfileMenu) return;
+    const handler = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setShowProfileMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showProfileMenu]);
+
   // Options state
   const [selectedMode, setSelectedMode] = useState("E-1");
   const [selectedModel, setSelectedModel] = useState("gpt-4o");
@@ -235,39 +356,69 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         </span>
         <div className="flex items-center gap-7">
           {user ? (
-            /* ── Avatar + logout ── */
-            <div className="flex items-center gap-3">
-              <div
-                data-testid="nav-user-avatar"
-                style={{
-                  width: 32, height: 32, borderRadius: "50%",
-                  background: "linear-gradient(135deg, #7c3aed, #a855f7)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  flexShrink: 0,
-                }}
-              >
-                <span style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: "11px", color: "#fff", textTransform: "uppercase" }}>
-                  {(user.name || user.email || "U").slice(0, 2)}
-                </span>
-              </div>
-              <span style={{ fontSize: "13px", fontFamily: "'DM Sans', sans-serif", color: "rgba(200,215,235,0.75)", maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {user.name || user.email}
-              </span>
+            /* ── Avatar + theme toggle + profile dropdown ── */
+            <div className="flex items-center gap-2">
+
+              {/* Day / Night toggle */}
               <button
-                data-testid="nav-logout"
-                onClick={onLogout}
-                title="Se déconnecter"
+                data-testid="theme-toggle"
+                onClick={() => setIsDark(d => !d)}
+                title={isDark ? "Mode clair" : "Mode sombre"}
                 style={{
+                  width: 32, height: 32, borderRadius: "9px", border: "1px solid rgba(255,255,255,0.1)",
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+                  backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  width: 28, height: 28, borderRadius: "7px", border: "none",
-                  background: "rgba(255,255,255,0.05)", cursor: "pointer",
-                  color: "rgba(255,255,255,0.4)", transition: "all 0.15s",
+                  cursor: "pointer", transition: "all 0.15s",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.07)",
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,80,80,0.15)"; e.currentTarget.style.color = "#f87171"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
               >
-                <LogOut style={{ width: 13, height: 13 }} />
+                <AnimatePresence mode="wait">
+                  {isDark ? (
+                    <motion.span key="moon" initial={{ rotate: -30, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 30, opacity: 0 }} transition={{ duration: 0.18 }}>
+                      <Moon style={{ width: 14, height: 14, color: "rgba(200,220,255,0.75)" }} />
+                    </motion.span>
+                  ) : (
+                    <motion.span key="sun" initial={{ rotate: 30, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -30, opacity: 0 }} transition={{ duration: 0.18 }}>
+                      <Sun style={{ width: 14, height: 14, color: "rgba(255,200,80,0.9)" }} />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </button>
+
+              {/* Avatar — opens dropdown */}
+              <div ref={profileRef} style={{ position: "relative" }}>
+                <button
+                  data-testid="nav-user-avatar"
+                  onClick={() => setShowProfileMenu(v => !v)}
+                  style={{
+                    width: 32, height: 32, borderRadius: "50%",
+                    background: "linear-gradient(135deg, #7c3aed, #a855f7)",
+                    border: showProfileMenu ? "2px solid rgba(167,139,250,0.6)" : "2px solid transparent",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    cursor: "pointer", transition: "border-color 0.15s",
+                    boxShadow: showProfileMenu ? "0 0 0 3px rgba(167,139,250,0.15)" : "none",
+                    padding: 0,
+                  }}
+                >
+                  <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: "11px", color: "#fff", textTransform: "uppercase" }}>
+                    {(user.name || user.email || "U").slice(0, 2)}
+                  </span>
+                </button>
+
+                {/* Dropdown */}
+                <AnimatePresence>
+                  {showProfileMenu && (
+                    <ProfileMenu
+                      user={user}
+                      onLogout={onLogout}
+                      onClose={() => setShowProfileMenu(false)}
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           ) : (
             <button
