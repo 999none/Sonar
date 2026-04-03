@@ -5,6 +5,7 @@ import ChatPanel from "./ChatPanel";
 import EmergentPreview from "./EmergentPreview";
 import CostPreviewModal from "./CostPreviewModal";
 import ShareModal from "./ShareModal";
+import DeployPanel from "./DeployPanel";
 import { AGENT_STEPS, CODE_BY_PROJECT, CHAT_RESPONSES, MOCK_LOGS } from "../data/mockData";
 
 const AGENT_META = {
@@ -53,6 +54,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
   const [previewReady, setPreviewReady] = useState(false);
   const [showPreviewPanel, setShowPreviewPanel] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [showDeploy, setShowDeploy] = useState(false);
   const [showCoderFromTopBar, setShowCoderFromTopBar] = useState(false);
   const [activeTaskId, setActiveTaskId] = useState(null);
   const [tasks, setTasks] = useState(externalTasks || loadHistory());
@@ -181,13 +183,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
     }, 1500);
   };
 
-  const handleDeploy = () => {
-    setTerminalLogs(prev => [...prev,
-      "$ sonar deploy --env=production",
-      "Packaging artifacts...",
-      "✓ Deployed to https://my-app.sonar.sh",
-    ]);
-  };
+  const handleDeploy = () => setShowDeploy(true);
 
   const handleReset = () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -308,6 +304,13 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
       <ShareModal
         isOpen={showShare}
         onClose={() => setShowShare(false)}
+        projectName={projectName}
+        isDark={isDark}
+      />
+
+      <DeployPanel
+        isOpen={showDeploy}
+        onClose={() => setShowDeploy(false)}
         projectName={projectName}
         isDark={isDark}
       />
