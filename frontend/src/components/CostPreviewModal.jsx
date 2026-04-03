@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight, Check, Paperclip } from "lucide-react";
+import { X, ArrowRight, Check } from "lucide-react";
 import { MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
 
@@ -94,70 +94,82 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
               </button>
             </div>
 
-            {/* Model icon */}
+            {/* Model icon + Agent type badge side by side */}
             <div className="flex flex-col items-center px-6 pb-2 pt-1">
+
+              {/* Row: logo + big S-1/S-2 */}
               <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
+                initial={{ scale: 0.85, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.05, duration: 0.35, type: "spring", bounce: 0.4 }}
-                className="flex items-center justify-center mb-4"
-                style={{
-                  width: 100, height: 100,
-                  borderRadius: "24px",
+                style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: 16 }}
+              >
+                {/* AI logo box */}
+                <div style={{
+                  width: 92, height: 92,
+                  borderRadius: "22px",
                   background: dk ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
                   border: dk ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(80,140,220,0.15)",
-                }}
-              >
-                <ModelBigIcon provider={model.provider} size={60} />
+                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                }}>
+                  <ModelBigIcon provider={model.provider} size={56} />
+                </div>
+
+                {/* Divider */}
+                <div style={{
+                  width: 1, height: 60, flexShrink: 0,
+                  background: dk ? "rgba(255,255,255,0.08)" : "rgba(80,140,220,0.15)",
+                }} />
+
+                {/* Big S-1 / S-2 */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "4px" }}>
+                  <span style={{
+                    fontSize: "44px",
+                    fontWeight: 800,
+                    fontFamily: "'Cabinet Grotesk', 'Manrope', sans-serif",
+                    letterSpacing: "-0.03em",
+                    lineHeight: 1,
+                    background: mode === "S-2"
+                      ? "linear-gradient(135deg, #a78bfa, #7c3aed)"
+                      : "linear-gradient(135deg, #06b6d4, #0ea5e9)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}>
+                    {mode}
+                  </span>
+                  <span style={{
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    fontFamily: "'Manrope', sans-serif",
+                    letterSpacing: "0.05em",
+                    color: mode === "S-2"
+                      ? (dk ? "rgba(167,139,250,0.7)" : "rgba(109,40,217,0.55)")
+                      : (dk ? "rgba(6,182,212,0.7)" : "rgba(6,182,212,0.75)"),
+                    textTransform: "uppercase",
+                  }}>
+                    {mode === "S-2" ? "Production-grade" : "Prototype-ready"}
+                  </span>
+                </div>
               </motion.div>
 
+              {/* Model name + provider */}
               <p className="font-bold text-xl mb-1"
                 style={{ color: dk ? "#fff" : "#0a1a3e", fontFamily: "'Cabinet Grotesk',sans-serif", letterSpacing: "-0.01em" }}>
                 {model.label}
               </p>
-              <p style={{ fontSize: "12px", color: dk ? "rgba(100,116,139,0.7)" : "rgba(40,70,130,0.5)", fontFamily: "'Manrope',sans-serif", marginBottom: 14 }}>
+              <p style={{ fontSize: "12px", color: dk ? "rgba(100,116,139,0.7)" : "rgba(40,70,130,0.5)", fontFamily: "'Manrope',sans-serif", marginBottom: 18 }}>
                 {model.provider === "openai" ? "OpenAI" : model.provider === "anthropic" ? "Anthropic" : "Google DeepMind"}
               </p>
 
-              {/* Agent Type Badge */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.12, duration: 0.25, type: "spring", bounce: 0.4 }}
-                style={{ marginBottom: 20 }}
-              >
-                <span style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "5px",
-                  padding: "3px 11px",
-                  borderRadius: "20px",
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  fontFamily: "'Manrope',sans-serif",
-                  letterSpacing: "0.04em",
-                  background: mode === "S-2"
-                    ? (dk ? "rgba(139,92,246,0.18)" : "rgba(139,92,246,0.1)")
-                    : (dk ? "rgba(6,182,212,0.18)" : "rgba(6,182,212,0.1)"),
-                  border: mode === "S-2"
-                    ? "1px solid rgba(139,92,246,0.35)"
-                    : "1px solid rgba(6,182,212,0.3)",
-                  color: mode === "S-2" ? "#a78bfa" : "#06b6d4",
-                }}>
-                  <span style={{
-                    width: 6, height: 6, borderRadius: "50%",
-                    background: mode === "S-2" ? "#a78bfa" : "#06b6d4",
-                    display: "inline-block",
-                  }} />
-                  {mode === "S-2" ? "S-2 · Deep · Production-grade" : "S-1 · Fast · Prototype-ready"}
-                </span>
-              </motion.div>
-
               {/* Prompt pill */}
-              <div className="w-full px-4 py-2.5 rounded-xl mb-3"
+              <div className="w-full px-4 py-2.5 rounded-xl"
                 style={{
                   background: dk ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
                   border: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,140,220,0.12)",
+                  marginBottom: attachedFiles.length > 0 ? 0 : 20,
+                  borderRadius: attachedFiles.length > 0 ? "12px 12px 0 0" : "12px",
+                  borderBottom: attachedFiles.length > 0 ? "none" : undefined,
                 }}>
                 <p className="text-xs leading-relaxed line-clamp-2"
                   style={{ color: dk ? "rgba(180,195,215,0.7)" : "rgba(30,60,120,0.6)", fontFamily: "'Manrope',sans-serif" }}>
@@ -165,71 +177,104 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
                 </p>
               </div>
 
-              {/* Attached Files */}
+              {/* Attached Files — same style as home */}
               {attachedFiles.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.18, duration: 0.22 }}
-                  className="w-full mb-5"
+                  className="w-full"
+                  style={{
+                    padding: "12px 14px",
+                    background: dk ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.6)",
+                    border: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,140,220,0.12)",
+                    borderTop: "none",
+                    borderRadius: "0 0 12px 12px",
+                    marginBottom: 20,
+                  }}
                 >
-                  <p style={{
-                    fontSize: "10px",
-                    fontFamily: "'Manrope',sans-serif",
-                    fontWeight: 600,
-                    letterSpacing: "0.06em",
-                    color: dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.4)",
-                    marginBottom: "7px",
-                    textTransform: "uppercase",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px",
-                  }}>
-                    <Paperclip style={{ width: 10, height: 10 }} />
-                    {attachedFiles.length} fichier{attachedFiles.length > 1 ? "s" : ""} joint{attachedFiles.length > 1 ? "s" : ""}
-                  </p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                    {attachedFiles.map((file, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, scale: 0.88 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.2 + idx * 0.04, duration: 0.2 }}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          padding: "4px 9px",
-                          borderRadius: "8px",
-                          background: dk ? "rgba(255,255,255,0.05)" : "rgba(14,165,233,0.07)",
-                          border: dk ? "1px solid rgba(255,255,255,0.09)" : "1px solid rgba(14,165,233,0.2)",
-                          maxWidth: "160px",
-                        }}
-                      >
-                        <span style={{ fontSize: "11px" }}>{getFileIcon(file)}</span>
-                        <div style={{ overflow: "hidden" }}>
-                          <p style={{
-                            fontSize: "10px",
-                            fontFamily: "'Manrope',sans-serif",
-                            fontWeight: 600,
-                            color: dk ? "rgba(200,215,235,0.85)" : "rgba(20,50,110,0.75)",
-                            whiteSpace: "nowrap",
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                    {attachedFiles.map((file, idx) => {
+                      const isImage = file.type.startsWith("image/");
+                      const isVideo = file.type.startsWith("video/");
+                      const previewUrl = isImage ? URL.createObjectURL(file) : null;
+                      return (
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.2 + idx * 0.05, duration: 0.2 }}
+                          style={{
+                            position: "relative",
+                            width: "76px",
+                            borderRadius: "10px",
                             overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            maxWidth: "110px",
+                            background: dk ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.06)",
+                            border: dk ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(80,120,200,0.18)",
+                          }}
+                        >
+                          {/* Thumbnail */}
+                          <div style={{
+                            width: "100%",
+                            height: "76px",
+                            background: previewUrl
+                              ? `url(${previewUrl}) center/cover`
+                              : (dk ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)"),
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            position: "relative",
                           }}>
-                            {file.name}
-                          </p>
-                          <p style={{
-                            fontSize: "9px",
-                            fontFamily: "'Manrope',sans-serif",
-                            color: dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.4)",
+                            {!previewUrl && (
+                              <span style={{
+                                fontSize: isVideo ? "26px" : "22px",
+                                color: isVideo ? "#ef4444" : (dk ? "rgba(200,220,245,0.6)" : "rgba(40,70,130,0.5)"),
+                                background: isVideo ? "rgba(239,68,68,0.15)" : (dk ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"),
+                                borderRadius: isVideo ? "8px" : "0",
+                                width: isVideo ? "38px" : "auto",
+                                height: isVideo ? "38px" : "auto",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                padding: isVideo ? "0" : "4px",
+                              }}>
+                                {getFileIcon(file)}
+                              </span>
+                            )}
+                            {isVideo && previewUrl && (
+                              <div style={{
+                                position: "absolute", inset: 0,
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                background: "rgba(0,0,0,0.3)",
+                              }}>
+                                <div style={{
+                                  width: "28px", height: "28px", borderRadius: "6px",
+                                  background: "#ef4444", display: "flex",
+                                  alignItems: "center", justifyContent: "center",
+                                  color: "#fff", fontSize: "12px",
+                                }}>▶</div>
+                              </div>
+                            )}
+                          </div>
+                          {/* File info */}
+                          <div style={{
+                            padding: "5px 6px",
+                            background: dk ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.08)",
                           }}>
-                            {formatFileSize(file.size)}
-                          </p>
-                        </div>
-                      </motion.div>
-                    ))}
+                            <p style={{
+                              fontFamily: "'DM Sans', sans-serif",
+                              fontSize: "9px", fontWeight: 500,
+                              color: dk ? "rgba(220,235,250,0.9)" : "#0a1a3e",
+                              whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                              marginBottom: "1px",
+                            }}>{file.name}</p>
+                            <p style={{
+                              fontFamily: "'DM Sans', sans-serif",
+                              fontSize: "8px",
+                              color: dk ? "rgba(160,185,220,0.5)" : "rgba(40,70,130,0.5)",
+                            }}>{formatFileSize(file.size)}</p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 </motion.div>
               )}
