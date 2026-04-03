@@ -2,7 +2,7 @@ import { memo } from "react";
 import { motion } from "framer-motion";
 
 /* ─── Cloud shape (pure CSS ellipse + blur) ─── */
-function Cloud({ top, width, height, opacity, speed, delay, blur }) {
+function Cloud({ top, width, height, opacity, speed, delay, blur, initialOffset = 0.5 }) {
   return (
     <div
       style={{
@@ -14,6 +14,7 @@ function Cloud({ top, width, height, opacity, speed, delay, blur }) {
         background: `radial-gradient(ellipse at 50% 60%, rgba(255,255,255,${opacity}) 0%, rgba(255,255,255,${opacity * 0.6}) 40%, rgba(255,255,255,${opacity * 0.2}) 65%, transparent 80%)`,
         filter: `blur(${blur}px)`,
         animation: `cloud-drift-${speed} ${delay}s linear infinite`,
+        animationDelay: `-${delay * initialOffset}s`,
         pointerEvents: "none",
         willChange: "transform",
       }}
@@ -126,20 +127,20 @@ function SkyWaterOverlay() {
 
       {/* ── Cloud layers ── */}
       {/* Layer 1 – big puffy cumulus (slow, distant) */}
-      <Cloud top="4%"  width="480px" height="120px" opacity={0.85} speed={1} delay={90}  blur={12} />
-      <Cloud top="12%" width="550px" height="140px" opacity={0.75} speed={2} delay={120} blur={16} />
-      <Cloud top="20%" width="420px" height="110px" opacity={0.7}  speed={1} delay={100} blur={13} />
+      <Cloud top="4%"  width="480px" height="120px" opacity={0.85} speed={1} delay={90}  blur={12} initialOffset={0.15} />
+      <Cloud top="12%" width="550px" height="140px" opacity={0.75} speed={2} delay={120} blur={16} initialOffset={0.55} />
+      <Cloud top="20%" width="420px" height="110px" opacity={0.7}  speed={1} delay={100} blur={13} initialOffset={0.38} />
       
       {/* Layer 2 – medium fluffy clouds (medium speed) */}
-      <Cloud top="8%"  width="350px" height="95px"  opacity={0.8}  speed={2} delay={70}  blur={10} />
-      <Cloud top="28%" width="400px" height="105px" opacity={0.65} speed={3} delay={75}  blur={11} />
-      <Cloud top="16%" width="300px" height="80px"  opacity={0.7}  speed={1} delay={55}  blur={9}  />
+      <Cloud top="8%"  width="350px" height="95px"  opacity={0.8}  speed={2} delay={70}  blur={10} initialOffset={0.72} />
+      <Cloud top="28%" width="400px" height="105px" opacity={0.65} speed={3} delay={75}  blur={11} initialOffset={0.28} />
+      <Cloud top="16%" width="300px" height="80px"  opacity={0.7}  speed={1} delay={55}  blur={9}  initialOffset={0.62} />
       
       {/* Layer 3 – closer wisps and small puffs (faster) */}
-      <Cloud top="33%" width="260px" height="70px"  opacity={0.55} speed={3} delay={50}  blur={7} />
-      <Cloud top="38%" width="320px" height="80px"  opacity={0.5}  speed={2} delay={60}  blur={8} />
-      <Cloud top="6%"  width="220px" height="60px"  opacity={0.45} speed={3} delay={40}  blur={6} />
-      <Cloud top="42%" width="180px" height="50px"  opacity={0.4}  speed={1} delay={45}  blur={7} />
+      <Cloud top="33%" width="260px" height="70px"  opacity={0.55} speed={3} delay={50}  blur={7}  initialOffset={0.45} />
+      <Cloud top="38%" width="320px" height="80px"  opacity={0.5}  speed={2} delay={60}  blur={8}  initialOffset={0.80} />
+      <Cloud top="6%"  width="220px" height="60px"  opacity={0.45} speed={3} delay={40}  blur={6}  initialOffset={0.20} />
+      <Cloud top="42%" width="180px" height="50px"  opacity={0.4}  speed={1} delay={45}  blur={7}  initialOffset={0.90} />
 
       {/* ── Horizon line – gentle haze ── */}
       <div
@@ -173,9 +174,9 @@ function SkyWaterOverlay() {
 
       {/* ── Reflected cloud shapes (flipped, faded — water mirror) ── */}
       <div style={{ position: "absolute", top: "57%", left: 0, right: 0, bottom: 0, opacity: 0.2, transform: "scaleY(-1)", pointerEvents: "none", overflow: "hidden" }}>
-        <Cloud top="3%"  width="480px" height="120px" opacity={0.5}  speed={1} delay={90}  blur={20} />
-        <Cloud top="10%" width="550px" height="140px" opacity={0.4}  speed={2} delay={120} blur={24} />
-        <Cloud top="18%" width="420px" height="110px" opacity={0.35} speed={1} delay={100} blur={22} />
+        <Cloud top="3%"  width="480px" height="120px" opacity={0.5}  speed={1} delay={90}  blur={20} initialOffset={0.15} />
+        <Cloud top="10%" width="550px" height="140px" opacity={0.4}  speed={2} delay={120} blur={24} initialOffset={0.55} />
+        <Cloud top="18%" width="420px" height="110px" opacity={0.35} speed={1} delay={100} blur={22} initialOffset={0.38} />
       </div>
 
       {/* ── Sun reflection on water ── */}
