@@ -520,7 +520,7 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
         <AnimatePresence mode="wait">
           {isGenerating || !previewReady ? (
             <motion.div key="spinning" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-              <GreenPulseLoading projectName={projectName} />
+              <SpinningUpState projectName={projectName} />
             </motion.div>
           ) : PreviewComp ? (
             <motion.div key={`${projectType}-${refreshKey}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
