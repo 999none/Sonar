@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, RefreshCw, ExternalLink, Code2, Eye, Terminal, Copy, Check, ExternalLink as OpenIcon, ArrowRight } from "lucide-react";
+import SkyWaterOverlay from "./SkyWaterOverlay";
 
 const SONAR_ICON = "https://customer-assets.emergentagent.com/job_emergent-mock-2/artifacts/bocxbvjv_66af99839e55f1ee29f117ac.png";
 
@@ -458,23 +459,48 @@ function GreenPulseLoading({ projectName }) {
 }
 
 // ── Spinning up loading state ──
-function SpinningUpState({ projectName }) {
+function SpinningUpState({ projectName, isDark = true }) {
+  const dk = isDark;
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-6">
-      <MatrixBg />
+    <div
+      className="flex flex-col items-center justify-center h-full gap-6 relative overflow-hidden"
+      style={{
+        background: dk
+          ? "transparent"
+          : "transparent", // SkyWaterOverlay handles the bg in light mode
+      }}
+    >
+      {/* Background */}
+      {dk ? <MatrixBg /> : <SkyWaterOverlay />}
+
       <div className="relative z-10 flex flex-col items-center gap-5">
         {/* Sonar logo glowing */}
         <motion.div
-          animate={{ boxShadow: ["0 0 20px rgba(6,182,212,0.3)", "0 0 50px rgba(6,182,212,0.6)", "0 0 20px rgba(6,182,212,0.3)"] }}
+          animate={{
+            boxShadow: dk
+              ? ["0 0 20px rgba(6,182,212,0.3)", "0 0 50px rgba(6,182,212,0.6)", "0 0 20px rgba(6,182,212,0.3)"]
+              : ["0 0 20px rgba(6,182,212,0.25)", "0 0 44px rgba(6,182,212,0.5)", "0 0 20px rgba(6,182,212,0.25)"],
+          }}
           transition={{ duration: 2, repeat: Infinity }}
           className="w-20 h-20 rounded-full flex items-center justify-center"
-          style={{ background: "rgba(6,182,212,0.1)", border: "2px solid rgba(6,182,212,0.35)" }}
+          style={{
+            background: dk ? "rgba(6,182,212,0.1)" : "rgba(255,255,255,0.55)",
+            border: dk ? "2px solid rgba(6,182,212,0.35)" : "2px solid rgba(6,182,212,0.3)",
+            backdropFilter: dk ? "none" : "blur(10px)",
+          }}
         >
           <img src={SONAR_ICON} alt="Sonar" width={42} height={42} style={{ objectFit: "contain" }} />
         </motion.div>
 
         <div className="text-center">
-          <p style={{ color: "rgba(180,200,220,0.7)", fontSize: "13px", fontFamily: "'DM Sans', sans-serif", fontWeight: 400, letterSpacing: "0.01em", marginBottom: 4 }}>
+          <p style={{
+            color: dk ? "rgba(180,200,220,0.7)" : "rgba(20,60,130,0.65)",
+            fontSize: "13px",
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 400,
+            letterSpacing: "0.01em",
+            marginBottom: 4,
+          }}>
             One-click deploy with custom domains
           </p>
         </div>
@@ -485,18 +511,20 @@ function SpinningUpState({ projectName }) {
           transition={{ duration: 1.5, repeat: Infinity }}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl"
           style={{
-            background: "rgba(6,182,212,0.15)",
-            border: "1px solid rgba(6,182,212,0.35)",
-            color: "#06b6d4",
+            background: dk ? "rgba(6,182,212,0.15)" : "rgba(255,255,255,0.55)",
+            border: dk ? "1px solid rgba(6,182,212,0.35)" : "1px solid rgba(6,182,212,0.3)",
+            backdropFilter: dk ? "none" : "blur(12px)",
+            color: dk ? "#06b6d4" : "#0284c7",
             fontSize: "13px",
             fontFamily: "'Plus Jakarta Sans', sans-serif",
             fontWeight: 600,
             letterSpacing: "-0.01em",
+            boxShadow: dk ? "none" : "0 4px 16px rgba(6,182,212,0.15)",
           }}
         >
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
             className="w-3.5 h-3.5 rounded-full border-2"
-            style={{ borderColor: "rgba(6,182,212,0.3)", borderTopColor: "#06b6d4" }}
+            style={{ borderColor: dk ? "rgba(6,182,212,0.3)" : "rgba(6,182,212,0.25)", borderTopColor: dk ? "#06b6d4" : "#0284c7" }}
           />
           Spinning up the Preview
         </motion.div>
@@ -811,7 +839,7 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
   };
 
   return (
-    <div className="flex flex-col h-full relative" style={{ background: dk ? "#060c14" : "rgba(215,235,252,0.5)", backdropFilter: dk ? "none" : "blur(8px)" }}>
+    <div className="flex flex-col h-full relative" style={{ background: dk ? "#060c14" : "transparent" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2.5 flex-shrink-0"
         style={{
@@ -877,7 +905,7 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
         <AnimatePresence mode="wait">
           {isGenerating || !previewReady ? (
             <motion.div key="spinning" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-              <SpinningUpState projectName={projectName} />
+              <SpinningUpState projectName={projectName} isDark={isDark} />
             </motion.div>
           ) : PreviewComp ? (
             <motion.div key={`${projectType}-${refreshKey}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
@@ -885,13 +913,23 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
               <PreviewComp key={refreshKey} />
             </motion.div>
           ) : (
-            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex items-center justify-center">
-              <MatrixBg />
+            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex items-center justify-center relative overflow-hidden">
+              {dk ? <MatrixBg /> : <SkyWaterOverlay />}
               <div className="relative z-10 flex flex-col items-center gap-4 text-center">
-                <div style={{ width:60, height:60, borderRadius:"50%", background:"rgba(6,182,212,0.08)", border:"1px solid rgba(6,182,212,0.15)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <img src={SONAR_ICON} alt="" width={32} height={32} style={{ objectFit:"contain", opacity:0.5 }} />
+                <div style={{
+                  width: 60, height: 60, borderRadius: "50%",
+                  background: dk ? "rgba(6,182,212,0.08)" : "rgba(255,255,255,0.55)",
+                  border: dk ? "1px solid rgba(6,182,212,0.15)" : "1px solid rgba(6,182,212,0.25)",
+                  backdropFilter: dk ? "none" : "blur(10px)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <img src={SONAR_ICON} alt="" width={32} height={32} style={{ objectFit: "contain", opacity: 0.5 }} />
                 </div>
-                <p style={{ fontSize:13, color:"rgba(100,120,150,0.6)", fontFamily:"'Manrope',sans-serif" }}>Start building to see the preview</p>
+                <p style={{
+                  fontSize: 13,
+                  color: dk ? "rgba(100,120,150,0.6)" : "rgba(20,60,130,0.5)",
+                  fontFamily: "'DM Sans', sans-serif",
+                }}>Start building to see the preview</p>
               </div>
             </motion.div>
           )}
