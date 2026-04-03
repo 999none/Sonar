@@ -5,6 +5,7 @@ import { PROJECT_TEMPLATES, MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
 import LoginModal from "./LoginModal";
 import SettingsModal from "./SettingsModal";
+import GitHubModal from "./GitHubModal";
 import SkyWaterOverlay from "./SkyWaterOverlay";
 
 // ── Profile dropdown ──────────────────────────────────────────────────────────
@@ -336,6 +337,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
   const [profilePhoto, setProfilePhoto] = useState(() => {
     return localStorage.getItem("sonar-profile-photo") || null;
   });
+  const [showGitHubModal, setShowGitHubModal] = useState(false);
   const T = THEMES[isDark ? "dark" : "light"];
 
   const handleProfilePhotoChange = (photoUrl) => {
@@ -492,6 +494,14 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         profilePhoto={profilePhoto}
         onProfilePhotoChange={handleProfilePhotoChange}
       />
+      
+      {/* GitHub modal */}
+      <GitHubModal
+        open={showGitHubModal}
+        onClose={() => setShowGitHubModal(false)}
+        isDark={isDark}
+      />
+      
       {/* Sky & Water overlay for light mode */}
       {!isDark ? null : null}
       {!isDark && <SkyWaterOverlay />}
@@ -989,13 +999,15 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                   )}
                 </button>
 
-                {/* Github button (icon only) */}
+                {/* Github button with dropdown arrow */}
                 <button
                   data-testid="landing-btn-github"
-                  className="flex items-center justify-center rounded-full transition-all"
+                  onClick={() => setShowGitHubModal(true)}
+                  className="flex items-center gap-1 rounded-full transition-all"
                   title="Github"
                   style={{
-                    width: 32, height: 32,
+                    height: 32,
+                    padding: "0 10px",
                     fontSize: "11px",
                     color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
                     background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
@@ -1013,6 +1025,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                   }}
                 >
                   <Github style={{ width: 14, height: 14 }} />
+                  <ChevronDown style={{ width: 10, height: 10 }} />
                 </button>
 
                 <span style={{ color: T.text3, fontSize: "12px" }}>·</span>
