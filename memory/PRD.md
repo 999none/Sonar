@@ -1,101 +1,25 @@
-# Sonar – AI App Builder Mock (PRD)
+# Sonar — AI App Builder
 
 ## Overview
-A fully functional, production-looking frontend mock of an AI-powered app builder platform called "Sonar". Pure frontend, no backend required. All data is mocked/simulated.
+Sonar is an AI app builder (clone d'Emergent) that lets users create apps without coding.
 
-## Architecture
-- **Framework**: React 19 + Tailwind CSS + Framer Motion
-- **Routing**: React Router DOM (single SPA route)
-- **Animation**: Framer Motion (useInView, Counter, motion divs)
-- **Icons**: Lucide React
-- **Fonts**: Bunny Fonts (Sora 900 for logo/numbers, Space Grotesk 700 for titles, Manrope for UI)
-- **State**: Local React state (no Redux/Zustand needed)
-- **Backend**: None (pure frontend mock)
+## Stack
+- Frontend: React 18, TailwindCSS, Framer Motion, Lucide Icons, Radix UI, Axios
+- Backend: FastAPI (Python), MongoDB (Motor async)
+- Auth: JWT (PyJWT), bcrypt password hashing
 
-## Pages / Views
+## Completed Phases
 
-### 1. Home / Landing Hero (`LandingPage.jsx`)
-- Giant "sonar" headline (Sora, clamp 7rem→18rem) with navy glow
-- "The future is here" subtitle
-- Animated typing input (cycles through 5 example prompts)
-- Mode selector (E-1 / E-2) + Model selector (GPT-4o / Claude / Gemini) + Cost estimate
-- Suggestion pills: Todo App, Analytics Dashboard, E-Commerce Store
-- Inline "Projets Récents" grid (3 columns, below the chat input, no background)
-- Top nav: sonar logo, Docs/Pricing links, Sign in button
+### Phase 1 — Authentication (DONE)
+- **Backend**: POST /api/auth/register, POST /api/auth/login, GET /api/auth/me
+- **Frontend**: AuthContext.jsx (global auth state), AuthPage.jsx (real API calls), JWT session persistence
+- User model: { id UUID, name, email, password_hash, created_at, avatar_url }
+- JWT expires after 72 hours, stored in localStorage as "sonar-token"
+- Axios used for API calls (to bypass visual-edits fetch interceptor)
 
-### 2. Auth Page (`AuthPage.jsx`) — route `auth` view
-Full-viewport 2-panel layout:
-
-#### Left panel (46%): Form
-- "sonar" logo top-left (click → back to home)
-- Sign up / Sign in toggle (pill style)
-- Continue with Google button (full width)
-- GitHub | Discord buttons (50/50)
-- "or continue with email" divider
-- Fields: Full name (signup only, animated in/out), Email, Password
-- "Create account" / "Sign in" button (purple gradient, large)
-- "Already have an account? Sign in" link
-- Terms & Privacy legal text
-
-#### Right panel (54%): Branding
-- Dark blue navy gradient background + scan lines
-- Giant "sonar" text (Sora 900)
-- "The future is here"
-- "Create your own app without coding a line."
-
-**Navigation:** "Sign in" nav button → auth view. Logo click → back to home.
-
-### 3. Cost Preview Modal (`CostPreviewModal.jsx`)
-- Shows before generation starts
-- Displays: Est. Time, Est. Cost, Tokens Used, Output Quality
-- Cancel / Generate buttons
-
-### 4. App Builder Workspace (`AppBuilder.jsx`)
-Full IDE-like layout with:
-- **TopBar** (`TopBar.jsx`): sonar logo breadcrumb, model selector, E-1/E-2 toggle, time/cost/credits, Deploy button
-- **Chat Panel** (`ChatPanel.jsx`): messages + agent timeline with animated statuses
-- **Code Editor** (`CodeEditor.jsx`): VS Code dark theme, file tabs, streaming code
-- **Preview Panel** (`EmergentPreview.jsx`): Browser chrome, responsive viewport toggle, live previews
-- **Share Modal** (`ShareModal.jsx`)
-
-## Mock Data (`mockData.js`)
-- 3 project types: Todo App, Analytics Dashboard, E-Commerce Store
-- Full React code for each
-- Chat response sequences, agent log messages, build terminal output
-- 3 AI model definitions (GPT-4o, Claude Sonnet, Gemini Pro)
-
-## Implementation Status
-
-### ✅ Done
-- Landing page hero + typing animation
-- Model/mode selectors (E-1, E-2 / GPT-4o, Claude, Gemini)
-- Inline recent projects grid
-- Bunny Fonts integration (Sora, Space Grotesk, Manrope)
-- Scrollable page (overflow fixed in App.css)
-- Stats section with animated counters
-- Live demo mockup (streaming code + agent steps)
-- Value props section (3 cards with glow)
-- Testimonials section
-- CTA final section
-- Footer
-- Cost preview modal
-- App builder workspace (full layout)
-- Agent timeline with animated status
-- Code streaming with syntax highlighting
-- Live interactive previews (all 3 types)
-- Terminal/logs streaming
-- Deploy flow
-
-### P1 – Next
-- Mobile responsive layout
-- coder.com codespace integration (user said "on mettra en place après")
-
-### P2 – Future (some done)
-- ~~Dark/light theme toggle~~ ✅ Done (2026-04-02)
-- Share/export generated code
-- Onboarding tutorial overlay
-- Real-time collaboration simulation
-
-## Dates
-- Initial build: 2026-04-02
-- Landing sections redesign (remove Features/HowItWorks/Pricing, add Demo+Stats+Testimonials+CTA): 2026-04-02
+## Remaining Phases
+- Phase 2: Projects persistent in MongoDB
+- Phase 3: Real AI generation via LLM
+- Phase 4: Agent system configuration
+- Phase 5: Deploy & Share
+- Phase 6: Preview iframe sandbox
