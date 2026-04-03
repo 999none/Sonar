@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, RefreshCw, ExternalLink, Code2, Eye, Terminal, Copy, Check, ExternalLink as OpenIcon } from "lucide-react";
+import { X, RefreshCw, ExternalLink, Code2, Eye, Terminal, Copy, Check, ExternalLink as OpenIcon, ArrowRight } from "lucide-react";
 
 const SONAR_ICON = "https://customer-assets.emergentagent.com/job_emergent-mock-2/artifacts/bocxbvjv_66af99839e55f1ee29f117ac.png";
 
