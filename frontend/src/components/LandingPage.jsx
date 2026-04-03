@@ -347,8 +347,8 @@ function ModelIcon({ provider, size = 15 }) {
 }
 
 const MODE_INFO = {
-  "S-1": { label: "S-1", desc: "Fast · Prototype-ready", cost: { todo: "$0.08", dashboard: "$0.12", ecommerce: "$0.16", default: "$0.09" } },
-  "S-2": { label: "S-2", desc: "Deep · Production-grade", cost: { todo: "$0.14", dashboard: "$0.19", ecommerce: "$0.24", default: "$0.18" } },
+  "S-1": { label: "S-1", desc: "S-1  •  Stable", cost: { todo: "$0.08", dashboard: "$0.12", ecommerce: "$0.16", default: "$0.09" }, tooltip: "L'agent analyse en profondeur, valide chaque étape et livre un résultat stable." },
+  "S-2": { label: "S-2", desc: "S-2  •  Tenace", cost: { todo: "$0.14", dashboard: "$0.19", ecommerce: "$0.24", default: "$0.18" }, tooltip: "L'agent insiste, essaie plusieurs approches et ne s'arrête que quand c'est vraiment bon." },
 };
 
 const TYPING_PROMPTS = [
@@ -1120,7 +1120,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                         transition={{ duration: 0.15 }}
                         className="absolute bottom-full mb-2 left-0 rounded-2xl overflow-hidden z-50"
                         style={{
-                          width: "200px",
+                          width: "280px",
                           background: isDark
                             ? "linear-gradient(160deg, rgba(16,26,60,0.96) 0%, rgba(6,9,20,0.98) 100%)"
                             : "linear-gradient(160deg, rgba(255,255,255,0.96) 0%, rgba(240,248,255,0.98) 100%)",
@@ -1139,14 +1139,15 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                             onClick={() => { setSelectedMode(key); setModeOpen(false); }}
                             className="w-full flex items-start justify-between px-4 py-3 transition-colors text-left"
                             style={{ background: selectedMode === key ? "rgba(6,182,212,0.07)" : "transparent" }}
+                            title={info.tooltip}
                             onMouseEnter={e => e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)"}
                             onMouseLeave={e => e.currentTarget.style.background = selectedMode === key ? "rgba(6,182,212,0.07)" : "transparent"}
                           >
                             <div>
-                              <p className="font-semibold" style={{ fontSize: "12px", color: selectedMode === key ? "#06b6d4" : (isDark ? "#e2e8f0" : "#1e3264") }}>{info.label}</p>
-                              <p style={{ fontSize: "11px", color: isDark ? "rgba(100,120,160,0.8)" : "rgba(40,70,130,0.55)", marginTop: "1px" }}>{info.desc}</p>
+                              <p className="font-semibold" style={{ fontSize: "12px", color: selectedMode === key ? (key === "S-2" ? "#a78bfa" : "#06b6d4") : (isDark ? "#e2e8f0" : "#1e3264") }}>{info.desc}</p>
+                              <p style={{ fontSize: "10px", color: isDark ? "rgba(100,120,160,0.6)" : "rgba(40,70,130,0.45)", marginTop: "3px", lineHeight: 1.4 }}>{info.tooltip}</p>
                             </div>
-                            {selectedMode === key && <Check style={{ width: "12px", height: "12px", color: "#06b6d4", marginTop: "2px", flexShrink: 0 }} />}
+                            {selectedMode === key && <Check style={{ width: "12px", height: "12px", color: key === "S-2" ? "#a78bfa" : "#06b6d4", marginTop: "2px", flexShrink: 0 }} />}
                           </button>
                         ))}
                       </motion.div>

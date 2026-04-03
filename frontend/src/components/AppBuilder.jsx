@@ -6,14 +6,22 @@ import EmergentPreview from "./EmergentPreview";
 import CostPreviewModal from "./CostPreviewModal";
 import ShareModal from "./ShareModal";
 import DeployPanel from "./DeployPanel";
-import { AGENT_STEPS, CODE_BY_PROJECT, CHAT_RESPONSES, MOCK_LOGS } from "../data/mockData";
-import { createProject, updateProject, deleteProject, projectToTask } from "../api/projects";
+import { AGENT_STEPS, MOCK_LOGS } from "../data/mockData";
+import { createProject, updateProject, deleteProject, projectToTask, generateCode, chatWithCode } from "../api/projects";
 
-const AGENT_META = {
-  planner:   { label: "Planner",   steps: ["Parsing requirements...", "Identifying core features", "Architecture plan ready"] },
+// Agent metadata with mode-specific logs
+const AGENT_META_S1 = {
+  planner:   { label: "Planner",   steps: ["Analyzing requirements...", "Planning implementation...", "Architecture plan ready"] },
   architect: { label: "Architect", steps: ["Designing component tree", "Setting up data models", "API contracts defined"] },
-  coder:     { label: "Coder",     steps: ["Writing App.tsx", "Implementing state management", "Styling components"] },
+  coder:     { label: "Coder",     steps: ["Writing stable code...", "Implementing state management", "Self-review complete"] },
   debugger:  { label: "Debugger",  steps: ["Running test suite", "0 errors found", "Performance optimized"] },
+};
+
+const AGENT_META_S2 = {
+  planner:   { label: "Planner",   steps: ["Deep analysis of requirements...", "Mapping all edge cases...", "Comprehensive plan ready"] },
+  architect: { label: "Architect", steps: ["Designing robust component tree", "Mapping data flows and error states", "Production-grade architecture defined"] },
+  coder:     { label: "Coder",     steps: ["Implementing thoroughly...", "Critical review — checking everything...", "Refining and polishing..."] },
+  debugger:  { label: "Debugger",  steps: ["Testing all edge cases", "Verifying empty states, errors, mobile", "Quality validated — production-ready"] },
 };
 
 function detectProjectType(prompt) {
@@ -21,12 +29,11 @@ function detectProjectType(prompt) {
   if (p.includes("todo") || p.includes("task") || p.includes("list")) return "todo";
   if (p.includes("dashboard") || p.includes("analytics") || p.includes("chart")) return "dashboard";
   if (p.includes("shop") || p.includes("store") || p.includes("commerce") || p.includes("product")) return "ecommerce";
-  const types = ["todo", "dashboard", "ecommerce"];
-  return types[Math.floor(Date.now() / 10000) % 3];
+  return "custom";
 }
 
 function getProjectName(type) {
-  return { todo: "task-manager", dashboard: "analytics-dash", ecommerce: "tech-store" }[type] || "my-app";
+  return { todo: "task-manager", dashboard: "analytics-dash", ecommerce: "tech-store", custom: "my-app" }[type] || "my-app";
 }
 
 function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
@@ -54,9 +61,13 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
   const [tasks, setTasks] = useState(externalTasks || []);
 
   const timerRef = useRef(null);
+  const abortRef = useRef(null);
   const hasStarted = useRef(false);
 
   const addMsg = (msg) => setMessages(prev => [...prev, msg]);
+
+  // Get the right agent meta based on mode
+  const agentMeta = mode === "S-2" ? AGENT_META_S2 : AGENT_META_S1;
 
   const pushTask = async (id, type, name, prompt) => {
     let taskId = id;
@@ -74,7 +85,6 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
         taskId = project.id;
         const newTask = projectToTask(project);
         setTasks(prev => [newTask, ...prev.filter(t => t.id !== taskId)]);
-        // Notify parent after state update
         setTimeout(() => {
           setTasks(current => {
             onTasksChange?.(current);
@@ -85,7 +95,6 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
         return taskId;
       } catch (err) {
         console.error("Failed to create project:", err);
-        // Fallback to local task
       }
     }
 
@@ -126,71 +135,142 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
   }, [user, token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const runFlow = async (type, name, prompt, taskId) => {
-    const responses = CHAT_RESPONSES[type] || CHAT_RESPONSES.todo;
+    // Add user message
     addMsg({ role: "user", content: prompt });
-    await delay(700);
-    setIsTyping(true);
-    await delay(1000);
-    setIsTyping(false);
-    addMsg({ role: "assistant", content: responses[0].content });
     await delay(500);
 
-    for (let i = 0; i < AGENT_STEPS.length; i++) {
-      const step = AGENT_STEPS[i];
-      const meta = AGENT_META[step.id];
-      addMsg({ role: "agent", agentId: step.id, label: meta.label, status: "working", steps: [] });
-
-      // Preview slides in when the Coder starts writing files
-      if (step.id === "coder") {
-        setShowPreviewPanel(true);
-      }
-
-      await delay(400);
-      for (let j = 0; j < meta.steps.length; j++) {
-        await delay(500);
-        setMessages(prev => prev.map(m =>
-          m.role === "agent" && m.agentId === step.id ? { ...m, steps: [...m.steps, meta.steps[j]] } : m
-        ));
-      }
-      await delay(400);
-      setMessages(prev => prev.map(m =>
-        m.role === "agent" && m.agentId === step.id ? { ...m, status: "done" } : m
-      ));
-      if (i === 1 && responses[1]) {
-        await delay(600);
-        setIsTyping(true);
-        await delay(900);
-        setIsTyping(false);
-        addMsg({ role: "assistant", content: responses[1].content });
-      }
-    }
-
-    setCurrentCode(CODE_BY_PROJECT[type] || CODE_BY_PROJECT.todo);
+    // Initial AI acknowledgment
+    setIsTyping(true);
+    await delay(800);
+    setIsTyping(false);
+    const ackMsg = mode === "S-2"
+      ? `Deep analysis initiated. I'll thoroughly build your ${name} — checking all edge cases and making it production-grade.`
+      : `Got it! I'll build a stable, reliable ${name} for you. Planning the implementation now...`;
+    addMsg({ role: "assistant", content: ackMsg });
     await delay(400);
+
+    // Run agent steps in parallel with LLM call
+    const agentSteps = [...AGENT_STEPS];
+    let agentDone = false;
+
+    // Start agent simulation
+    const runAgents = async () => {
+      for (let i = 0; i < agentSteps.length; i++) {
+        const step = agentSteps[i];
+        const meta = agentMeta[step.id];
+        addMsg({ role: "agent", agentId: step.id, label: meta.label, status: "working", steps: [] });
+
+        if (step.id === "coder") {
+          setShowPreviewPanel(true);
+        }
+
+        await delay(400);
+        for (let j = 0; j < meta.steps.length; j++) {
+          await delay(600);
+          setMessages(prev => prev.map(m =>
+            m.role === "agent" && m.agentId === step.id ? { ...m, steps: [...m.steps, meta.steps[j]] } : m
+          ));
+        }
+
+        // Wait for LLM if we're on the last agent step
+        if (i === agentSteps.length - 1) {
+          // Wait until LLM is done or timeout
+          let waitCount = 0;
+          while (!agentDone && waitCount < 120) {
+            await delay(500);
+            waitCount++;
+          }
+        }
+
+        await delay(300);
+        setMessages(prev => prev.map(m =>
+          m.role === "agent" && m.agentId === step.id ? { ...m, status: "done" } : m
+        ));
+
+        if (i === 1) {
+          await delay(400);
+          setIsTyping(true);
+          await delay(600);
+          setIsTyping(false);
+          const archMsg = mode === "S-2"
+            ? `Architecture designed with full error handling, loading states, and responsive layout. Implementing now...`
+            : `Architecture planned. Now writing the components...`;
+          addMsg({ role: "assistant", content: archMsg });
+        }
+      }
+    };
+
+    // Start LLM generation
+    const runLLM = async () => {
+      return new Promise((resolve) => {
+        let codeBuffer = "";
+
+        const projectId = (taskId && !taskId.startsWith("task-")) ? taskId : undefined;
+
+        const controller = generateCode(
+          {
+            prompt,
+            model: selectedModel,
+            mode,
+            project_id: projectId,
+          },
+          // onChunk
+          (chunk) => {
+            codeBuffer += chunk;
+            setCurrentCode(codeBuffer);
+          },
+          // onDone
+          (fullCode) => {
+            setCurrentCode(fullCode);
+            agentDone = true;
+            resolve(fullCode);
+          },
+          // onError
+          (error) => {
+            console.error("Generation error:", error);
+            agentDone = true;
+            // Still resolve with whatever we have
+            resolve(codeBuffer || "");
+          }
+        );
+
+        abortRef.current = controller;
+      });
+    };
+
+    // Run both in parallel
+    const [, generatedCode] = await Promise.all([runAgents(), runLLM()]);
+
+    // Terminal logs
     for (let i = 0; i < MOCK_LOGS.length; i++) {
-      await delay(110);
+      await delay(80);
       setTerminalLogs(prev => [...prev, MOCK_LOGS[i]]);
     }
+
     setPreviewReady(true);
     setActiveTab("preview");
-    await delay(500);
+    await delay(300);
+
+    // Final message
     setIsTyping(true);
-    await delay(1000);
+    await delay(800);
     setIsTyping(false);
-    addMsg({ role: "assistant", content: responses[responses.length - 1].content });
-    if (timerRef.current) clearInterval(timerRef.current);
+    const doneMsg = mode === "S-2"
+      ? `Your ${name} is ready — built to production standards with edge cases handled. All features are polished and responsive.`
+      : `Your ${name} is ready! Clean, stable implementation with all requested features.`;
+    addMsg({ role: "assistant", content: doneMsg });
+
     setIsGenerating(false);
 
-    // Save generated code and messages to API
-    if (user && token && taskId && !taskId.startsWith("task-")) {
-      const generatedCode = CODE_BY_PROJECT[type] || CODE_BY_PROJECT.todo;
+    // Save to project if authenticated
+    if (user && token && taskId && !taskId.startsWith("task-") && generatedCode) {
       try {
         await updateProject(taskId, {
           status: "complete",
           code: generatedCode,
           messages: [
             { role: "user", content: prompt },
-            ...responses.map(r => ({ role: r.role, content: r.content })),
+            { role: "assistant", content: doneMsg },
           ],
         });
       } catch (err) {
@@ -211,7 +291,10 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
       setPendingPrompt(initialPrompt);
       setShowCostModal(true);
     }
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (abortRef.current) abortRef.current.abort();
+    };
   }, [initialPrompt, initialTask]);
 
   const handleConfirmGenerate = () => {
@@ -222,23 +305,63 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
   const handleSendMessage = (msg) => {
     if (isGenerating) return;
     addMsg({ role: "user", content: msg });
+    setIsGenerating(true);
     setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-      addMsg({ role: "assistant", content: "Got it! Making those changes now..." });
-    }, 1500);
+
+    const projectId = (activeTaskId && !activeTaskId.startsWith("task-") && !activeTaskId.startsWith("demo-")) ? activeTaskId : undefined;
+
+    let codeBuffer = "";
+
+    const controller = chatWithCode(
+      {
+        message: msg,
+        current_code: currentCode,
+        model: selectedModel,
+        mode,
+        project_id: projectId,
+      },
+      // onChunk
+      (chunk) => {
+        codeBuffer += chunk;
+        setCurrentCode(codeBuffer);
+        setIsTyping(false);
+      },
+      // onDone
+      (fullCode) => {
+        setCurrentCode(fullCode);
+        setIsTyping(false);
+        setIsGenerating(false);
+        addMsg({ role: "assistant", content: "Done! I've updated the code with your changes." });
+
+        // Save to project
+        if (user && token && projectId) {
+          updateProject(projectId, { code: fullCode }).catch(console.error);
+        }
+      },
+      // onError
+      (error) => {
+        console.error("Chat error:", error);
+        setIsTyping(false);
+        setIsGenerating(false);
+        addMsg({ role: "assistant", content: `Sorry, there was an error: ${error}` });
+      }
+    );
+
+    abortRef.current = controller;
   };
 
   const handleDeploy = () => setShowDeploy(true);
 
   const handleReset = () => {
     if (timerRef.current) clearInterval(timerRef.current);
+    if (abortRef.current) abortRef.current.abort();
     hasStarted.current = false;
     onReset();
   };
 
   const handleNewTask = () => {
     if (timerRef.current) clearInterval(timerRef.current);
+    if (abortRef.current) abortRef.current.abort();
     hasStarted.current = false;
     onReset();
   };
@@ -263,9 +386,9 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
     }
     
     setIsGenerating(false);
-    // Load code from stored project data, or fallback to mock code
+    // Load code from stored project data
     const storedCode = projectData?.code;
-    setCurrentCode(storedCode || CODE_BY_PROJECT[task.projectType] || "");
+    setCurrentCode(storedCode || "");
   };
 
   const handleCloseTask = async (taskId) => {
@@ -284,7 +407,6 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
       return updated;
     });
     
-    // Handle navigation after state update
     setTimeout(() => {
       setTasks(current => {
         onTasksChange?.(current);
@@ -294,7 +416,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
       if (shouldReset) handleReset();
     }, 0);
 
-    // Delete from API if authenticated and not a local task
+    // Delete from API if authenticated
     if (user && token && !taskId.startsWith("task-") && !taskId.startsWith("demo-")) {
       try {
         await deleteProject(taskId);

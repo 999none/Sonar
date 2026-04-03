@@ -148,7 +148,7 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
                       : (dk ? "rgba(6,182,212,0.7)" : "rgba(6,182,212,0.75)"),
                     textTransform: "uppercase",
                   }}>
-                    {mode === "S-2" ? "Production-grade" : "Prototype-ready"}
+                    {mode === "S-2" ? "Profond · Tenace" : "Stable · Approfondi"}
                   </span>
                 </div>
               </motion.div>

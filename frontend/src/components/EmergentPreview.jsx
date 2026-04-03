@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, RefreshCw, ExternalLink, Code2, Eye, Terminal, Copy, Check, ExternalLink as OpenIcon, ArrowRight } from "lucide-react";
 import SkyWaterOverlay from "./SkyWaterOverlay";
+import PreviewFrame from "./PreviewFrame";
 
 const SONAR_ICON = "https://customer-assets.emergentagent.com/job_emergent-mock-2/artifacts/bocxbvjv_66af99839e55f1ee29f117ac.png";
 
@@ -677,7 +678,7 @@ function CodeView({ code, terminalLogs }) {
 }
 
 // ── Coder.com codespace modal ──
-function CoderModal({ onClose, projectName, isDark = false }) {
+function CoderModal({ onClose, projectName, isDark = false, code = "" }) {
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedPwd, setCopiedPwd] = useState(false);
   const dk = isDark;
@@ -814,8 +815,10 @@ function CoderModal({ onClose, projectName, isDark = false }) {
 export default function EmergentPreview({ projectType, isGenerating, previewReady, activeTab, onTabChange, code, terminalLogs, projectName, isDark = false, onClose, openCoderExternal, onCoderExternalClosed }) {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showCoderModal, setShowCoderModal] = useState(false);
-  const PreviewComp = PREVIEWS[projectType];
   const dk = isDark;
+
+  // Determine if we have AI-generated code (not mock)
+  const hasGeneratedCode = code && code.length > 50;
 
   // Open coder modal from external trigger (TopBar Code button)
   useEffect(() => {
@@ -903,14 +906,53 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
       {/* Body */}
       <div className="flex-1 overflow-hidden relative">
         <AnimatePresence mode="wait">
-          {isGenerating || !previewReady ? (
+          {isGenerating && !previewReady ? (
             <motion.div key="spinning" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-              <SpinningUpState projectName={projectName} isDark={isDark} />
+              {hasGeneratedCode ? (
+                <div className="h-full relative">
+                  <PreviewFrame code={code} refreshKey={refreshKey} />
+                  {/* Generating overlay */}
+                  <div style={{
+                    position: "absolute",
+                    bottom: 12,
+                    left: 12,
+                    right: 12,
+                    padding: "8px 14px",
+                    borderRadius: 10,
+                    background: "rgba(6,182,212,0.1)",
+                    border: "1px solid rgba(6,182,212,0.25)",
+                    backdropFilter: "blur(8px)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                  }}>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      style={{
+                        width: 14, height: 14, borderRadius: "50%",
+                        border: "2px solid rgba(6,182,212,0.3)",
+                        borderTopColor: "#06b6d4",
+                      }}
+                    />
+                    <span style={{ fontSize: 12, color: "#06b6d4", fontFamily: "'DM Sans', sans-serif" }}>
+                      Generating...
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <SpinningUpState projectName={projectName} isDark={isDark} />
+              )}
             </motion.div>
-          ) : PreviewComp ? (
+          ) : previewReady && hasGeneratedCode ? (
+            <motion.div key={`ai-preview-${refreshKey}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
+              className="h-full overflow-auto">
+              <PreviewFrame code={code} refreshKey={refreshKey} />
+            </motion.div>
+          ) : previewReady && PREVIEWS[projectType] ? (
             <motion.div key={`${projectType}-${refreshKey}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
               className="h-full overflow-auto">
-              <PreviewComp key={refreshKey} />
+              {(() => { const PreviewComp = PREVIEWS[projectType]; return <PreviewComp key={refreshKey} />; })()}
             </motion.div>
           ) : (
             <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex items-center justify-center relative overflow-hidden">
@@ -938,7 +980,7 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
         {/* Coder Modal */}
         <AnimatePresence>
           {showCoderModal && (
-            <CoderModal onClose={handleCloseCoder} projectName={projectName} isDark={isDark} />
+            <CoderModal onClose={handleCloseCoder} projectName={projectName} isDark={isDark} code={code} />
           )}
         </AnimatePresence>
       </div>
