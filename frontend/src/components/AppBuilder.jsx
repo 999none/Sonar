@@ -7,6 +7,7 @@ import CostPreviewModal from "./CostPreviewModal";
 import ShareModal from "./ShareModal";
 import DeployPanel from "./DeployPanel";
 import { AGENT_STEPS, CODE_BY_PROJECT, CHAT_RESPONSES, MOCK_LOGS } from "../data/mockData";
+import { createProject, updateProject, deleteProject, projectToTask } from "../api/projects";
 
 const AGENT_META = {
   planner:   { label: "Planner",   steps: ["Parsing requirements...", "Identifying core features", "Architecture plan ready"] },
@@ -30,14 +31,7 @@ function getProjectName(type) {
 
 function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-function loadHistory() {
-  try { return JSON.parse(localStorage.getItem("sonar-tasks") || "[]"); } catch { return []; }
-}
-function saveHistory(tasks) {
-  try { localStorage.setItem("sonar-tasks", JSON.stringify(tasks.slice(0, 20))); } catch {}
-}
-
-export default function AppBuilder({ initialPrompt, initialTask, onReset, externalTasks, onTasksChange, isDark = false, user }) {
+export default function AppBuilder({ initialPrompt, initialTask, onReset, externalTasks, onTasksChange, isDark = false, user, token }) {
   const [selectedModel] = useState(window.__sonarInitModel || "gpt-4o");
   const [mode] = useState(window.__sonarInitMode || "S-1");
   const [initFiles] = useState(window.__sonarInitFiles || []);
@@ -57,28 +51,56 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
   const [showDeploy, setShowDeploy] = useState(false);
   const [showCoderFromTopBar, setShowCoderFromTopBar] = useState(false);
   const [activeTaskId, setActiveTaskId] = useState(null);
-  const [tasks, setTasks] = useState(externalTasks || loadHistory());
+  const [tasks, setTasks] = useState(externalTasks || []);
 
   const timerRef = useRef(null);
   const hasStarted = useRef(false);
 
   const addMsg = (msg) => setMessages(prev => [...prev, msg]);
 
-  const pushTask = (id, type, name, prompt) => {
-    const newTask = { id, projectType: type, projectName: name, prompt, timestamp: Date.now() };
+  const pushTask = async (id, type, name, prompt) => {
+    let taskId = id;
+
+    // If user is authenticated, create project via API
+    if (user && token) {
+      try {
+        const project = await createProject({
+          name,
+          prompt,
+          type,
+          model: selectedModel,
+          mode,
+        });
+        taskId = project.id;
+        const newTask = projectToTask(project);
+        setTasks(prev => {
+          const updated = [newTask, ...prev.filter(t => t.id !== taskId)];
+          onTasksChange?.(updated);
+          return updated;
+        });
+        setActiveTaskId(taskId);
+        return taskId;
+      } catch (err) {
+        console.error("Failed to create project:", err);
+        // Fallback to local task
+      }
+    }
+
+    // Fallback for unauthenticated users
+    const newTask = { id: taskId, projectType: type, projectName: name, prompt, timestamp: Date.now() };
     setTasks(prev => {
-      const updated = [newTask, ...prev.filter(t => t.id !== id)];
-      saveHistory(updated);
+      const updated = [newTask, ...prev.filter(t => t.id !== taskId)];
       onTasksChange?.(updated);
       return updated;
     });
-    setActiveTaskId(id);
+    setActiveTaskId(taskId);
+    return taskId;
   };
 
-  const startGeneration = useCallback((prompt) => {
+  const startGeneration = useCallback(async (prompt) => {
     const type = detectProjectType(prompt);
     const name = getProjectName(type);
-    const id = `task-${Date.now()}`;
+    const localId = `task-${Date.now()}`;
 
     setProjectType(type);
     setProjectName(name);
@@ -90,13 +112,15 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
     setShowPreviewPanel(false);
     setMessages([]);
     setActiveTab("preview");
-    pushTask(id, type, name, prompt);
+
+    // Create project (API or local)
+    const taskId = await pushTask(localId, type, name, prompt);
 
     if (timerRef.current) clearInterval(timerRef.current);
-    runFlow(type, name, prompt);
-  }, []);
+    runFlow(type, name, prompt, taskId);
+  }, [user, token]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const runFlow = async (type, name, prompt) => {
+  const runFlow = async (type, name, prompt, taskId) => {
     const responses = CHAT_RESPONSES[type] || CHAT_RESPONSES.todo;
     addMsg({ role: "user", content: prompt });
     await delay(700);
@@ -151,6 +175,23 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
     addMsg({ role: "assistant", content: responses[responses.length - 1].content });
     if (timerRef.current) clearInterval(timerRef.current);
     setIsGenerating(false);
+
+    // Save generated code and messages to API
+    if (user && token && taskId && !taskId.startsWith("task-")) {
+      const generatedCode = CODE_BY_PROJECT[type] || CODE_BY_PROJECT.todo;
+      try {
+        await updateProject(taskId, {
+          status: "complete",
+          code: generatedCode,
+          messages: [
+            { role: "user", content: prompt },
+            ...responses.map(r => ({ role: r.role, content: r.content })),
+          ],
+        });
+      } catch (err) {
+        console.error("Failed to update project:", err);
+      }
+    }
   };
 
   useEffect(() => {
@@ -204,18 +245,27 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
     setPreviewReady(true);
     setShowPreviewPanel(true);
     setActiveTab("preview");
-    setMessages([
-      { role: "user", content: task.prompt },
-      { role: "assistant", content: `Here's your ${task.projectName} — loaded from history.` },
-    ]);
+    
+    // Load messages from stored project data if available
+    const projectData = task._project;
+    if (projectData && projectData.messages && projectData.messages.length > 0) {
+      setMessages(projectData.messages);
+    } else {
+      setMessages([
+        { role: "user", content: task.prompt },
+        { role: "assistant", content: `Here's your ${task.projectName} — loaded from history.` },
+      ]);
+    }
+    
     setIsGenerating(false);
-    setCurrentCode(CODE_BY_PROJECT[task.projectType] || "");
+    // Load code from stored project data, or fallback to mock code
+    const storedCode = projectData?.code;
+    setCurrentCode(storedCode || CODE_BY_PROJECT[task.projectType] || "");
   };
 
-  const handleCloseTask = (taskId) => {
+  const handleCloseTask = async (taskId) => {
     setTasks(prev => {
       const updated = prev.filter(t => t.id !== taskId);
-      saveHistory(updated);
       onTasksChange?.(updated);
       if (taskId === activeTaskId) {
         if (updated.length > 0) handleSelectTask(updated[0]);
@@ -223,6 +273,15 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
       }
       return updated;
     });
+
+    // Delete from API if authenticated and not a local task
+    if (user && token && !taskId.startsWith("task-") && !taskId.startsWith("demo-")) {
+      try {
+        await deleteProject(taskId);
+      } catch (err) {
+        console.error("Failed to delete project:", err);
+      }
+    }
   };
 
   return (

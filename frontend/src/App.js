@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { fetchProjects, projectToTask, deleteProject, setAuthToken } from "./api/projects";
 import LandingPage from "./components/LandingPage";
 import AppBuilder from "./components/AppBuilder";
 import AuthPage from "./components/AuthPage";
@@ -12,18 +13,48 @@ const DEMO_TASKS = [
   { id: "demo-3", projectType: "ecommerce", projectName: "tech-store", prompt: "Build a modern e-commerce store with product grid, cart, and checkout flow", timestamp: Date.now() - 7200000 },
 ];
 
-function saveHistory(tasks) {
-  try { localStorage.setItem("sonar-tasks", JSON.stringify(tasks.slice(0, 20))); } catch {}
-}
-
 function SonarApp() {
   const [view, setView] = useState("landing");
   const [initialPrompt, setInitialPrompt] = useState("");
   const [initialTask, setInitialTask] = useState(null);
-  const { user, logout, loading } = useAuth();
+  const { user, token, logout, loading } = useAuth();
   const [isDark, setIsDark] = useState(() => {
     try { return localStorage.getItem("sonar-theme") === "dark"; } catch { return false; }
   });
+
+  const [tasks, setTasks] = useState([]);
+  const [tasksLoading, setTasksLoading] = useState(false);
+
+  // Set auth token for API calls whenever token changes
+  useEffect(() => {
+    setAuthToken(token);
+  }, [token]);
+
+  // Load projects from API when user is logged in, or show demo tasks
+  useEffect(() => {
+    if (loading) return;
+
+    if (user && token) {
+      loadProjectsFromAPI();
+    } else {
+      // Not logged in — show demo tasks
+      setTasks(DEMO_TASKS);
+    }
+  }, [user, token, loading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadProjectsFromAPI = useCallback(async () => {
+    setTasksLoading(true);
+    try {
+      const projects = await fetchProjects();
+      const apiTasks = projects.map(projectToTask);
+      setTasks(apiTasks.length > 0 ? apiTasks : []);
+    } catch (err) {
+      console.error("Failed to load projects:", err);
+      setTasks([]);
+    } finally {
+      setTasksLoading(false);
+    }
+  }, []);
 
   const handleToggleTheme = () => {
     setIsDark(prev => {
@@ -32,14 +63,6 @@ function SonarApp() {
       return next;
     });
   };
-  const [tasks, setTasks] = useState(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("sonar-tasks") || "null");
-      if (saved && saved.length > 0) return saved;
-      saveHistory(DEMO_TASKS);
-      return DEMO_TASKS;
-    } catch { return DEMO_TASKS; }
-  });
 
   const handleStart = (prompt, model, mode, attachedFiles = []) => {
     setInitialTask(null);
@@ -56,16 +79,34 @@ function SonarApp() {
     setView("builder");
   };
 
-  const handleCloseTaskFromHome = (taskId) => {
-    const updated = tasks.filter(t => t.id !== taskId);
-    setTasks(updated);
-    saveHistory(updated);
+  const handleCloseTaskFromHome = async (taskId) => {
+    // Optimistic update
+    setTasks(prev => prev.filter(t => t.id !== taskId));
+
+    // Delete from API if authenticated and not a demo task
+    if (user && token && !taskId.startsWith("demo-")) {
+      try {
+        await deleteProject(taskId);
+      } catch (err) {
+        console.error("Failed to delete project:", err);
+        // Reload from API on error
+        loadProjectsFromAPI();
+      }
+    }
   };
 
   const handleReset = () => {
     setInitialPrompt("");
     setInitialTask(null);
     setView("landing");
+    // Refresh projects list from API
+    if (user && token) {
+      loadProjectsFromAPI();
+    }
+  };
+
+  const handleTasksChange = (updatedTasks) => {
+    setTasks(updatedTasks);
   };
 
   // Show loading screen while restoring auth session
@@ -103,9 +144,10 @@ function SonarApp() {
         initialTask={initialTask}
         onReset={handleReset}
         externalTasks={tasks}
-        onTasksChange={setTasks}
+        onTasksChange={handleTasksChange}
         isDark={isDark}
         user={user}
+        token={token}
       />
     );
   }
