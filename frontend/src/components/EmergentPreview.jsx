@@ -39,6 +39,198 @@ function MatrixBg() {
   );
 }
 
+// ── Generation Preview (avant génération) ──
+function GenerationPreview({ prompt, modelName = "ChatGPT", provider = "OpenAI", onGenerate, onCancel, isDark = true }) {
+  const [loadingSteps, setLoadingSteps] = useState([
+    { id: 1, text: "Loading cloud environment", done: true },
+    { id: 2, text: "Allocating resources", done: true },
+    { id: 3, text: "Configuring environment", done: true },
+    { id: 4, text: "Starting agents", done: true },
+  ]);
+
+  const colors = {
+    bg: isDark ? "rgba(10,15,30,0.95)" : "rgba(248,252,255,0.98)",
+    cardBg: isDark ? "rgba(20,30,50,0.6)" : "rgba(255,255,255,0.7)",
+    border: isDark ? "rgba(255,255,255,0.08)" : "rgba(80,120,200,0.15)",
+    text: isDark ? "#fff" : "#0a1a3e",
+    textSub: isDark ? "rgba(180,200,230,0.6)" : "rgba(40,70,130,0.6)",
+    promptBg: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+    promptBorder: isDark ? "rgba(255,255,255,0.08)" : "rgba(80,120,200,0.12)",
+    stepText: isDark ? "#10b981" : "#059669",
+    checkBg: isDark ? "rgba(16,185,129,0.15)" : "rgba(5,150,105,0.12)",
+  };
+
+  return (
+    <div style={{
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "40px",
+      background: colors.bg,
+      backdropFilter: "blur(20px)",
+    }}>
+      <div style={{
+        width: "100%",
+        maxWidth: "600px",
+        background: colors.cardBg,
+        backdropFilter: "blur(40px)",
+        border: colors.border,
+        borderRadius: "24px",
+        padding: "40px",
+        boxShadow: isDark 
+          ? "0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)"
+          : "0 20px 60px rgba(40,80,180,0.12), inset 0 1px 0 rgba(255,255,255,0.95)",
+      }}>
+        
+        {/* Model logo + name */}
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{
+            width: 96,
+            height: 96,
+            margin: "0 auto 20px",
+            borderRadius: "24px",
+            background: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
+            border: colors.border,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+            <div style={{
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: "48px",
+              fontWeight: 900,
+              background: "linear-gradient(135deg, #7dd3fc, #0ea5e9)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}>
+              S
+            </div>
+          </div>
+          
+          <h2 style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: "28px",
+            fontWeight: 700,
+            color: colors.text,
+            marginBottom: 8,
+            letterSpacing: "-0.02em",
+          }}>
+            {modelName}
+          </h2>
+          
+          <p style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "14px",
+            color: colors.textSub,
+          }}>
+            {provider}
+          </p>
+        </div>
+
+        {/* Prompt display */}
+        <div style={{
+          padding: "16px 20px",
+          borderRadius: "16px",
+          background: colors.promptBg,
+          border: colors.promptBorder,
+          marginBottom: 32,
+        }}>
+          <p style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "14px",
+            color: colors.textSub,
+            lineHeight: 1.6,
+          }}>
+            {prompt || "Build a todo app with priorit..."}
+          </p>
+        </div>
+
+        {/* Loading steps */}
+        <div style={{ marginBottom: 32 }}>
+          {loadingSteps.map(step => (
+            <div key={step.id} style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              marginBottom: 12,
+            }}>
+              <div style={{
+                width: 20,
+                height: 20,
+                borderRadius: "50%",
+                background: colors.checkBg,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+                <Check style={{ width: 12, height: 12, color: colors.stepText }} />
+              </div>
+              <span style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "14px",
+                fontWeight: 500,
+                color: colors.stepText,
+              }}>
+                {step.text}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Buttons */}
+        <div style={{ display: "flex", gap: 12 }}>
+          <button
+            onClick={onCancel}
+            style={{
+              flex: 1,
+              padding: "14px 24px",
+              borderRadius: "12px",
+              border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(80,120,200,0.15)",
+              background: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
+              color: colors.textSub,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: "14px",
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all 0.15s",
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}
+            onMouseLeave={e => e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)"}
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={onGenerate}
+            style={{
+              flex: 1,
+              padding: "14px 24px",
+              borderRadius: "12px",
+              border: "none",
+              background: "linear-gradient(90deg, #38bdf8, #0ea5e9)",
+              color: "#000",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: "14px",
+              fontWeight: 700,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              boxShadow: "0 4px 16px rgba(14,165,233,0.3)",
+            }}
+          >
+            Generate
+            <ArrowRight style={{ width: 16, height: 16 }} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Green pulse loading state (nouveau design) ──
 function GreenPulseLoading({ projectName }) {
   return (
@@ -102,10 +294,44 @@ function GreenPulseLoading({ projectName }) {
 }
 
 // ── Spinning up loading state (ancien design - conservé pour compatibilité) ──
-function SpinningUpState({ projectName }) {
+function SpinningUpState({ projectName, isDark = true }) {
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-6">
-      <MatrixBg />
+    <div className="flex flex-col items-center justify-center h-full gap-6" style={{ position: "relative" }}>
+      {/* Background ciel/eau pour mode clair */}
+      {!isDark && (
+        <div style={{
+          position: "absolute",
+          inset: 0,
+          overflow: "hidden",
+          background: "linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #B0E7FF 100%)",
+        }}>
+          {/* Sun */}
+          <div style={{
+            position: "absolute",
+            top: "15%",
+            right: "20%",
+            width: "120px",
+            height: "120px",
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(255,223,100,0.9) 0%, rgba(255,200,50,0.4) 70%, transparent 100%)",
+            animation: "float 6s ease-in-out infinite",
+          }} />
+          
+          {/* Water reflection */}
+          <div style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "50%",
+            background: "linear-gradient(to bottom, rgba(135,206,235,0.3) 0%, rgba(100,180,220,0.5) 100%)",
+            animation: "waterShimmer 3s ease-in-out infinite",
+          }} />
+        </div>
+      )}
+      
+      {isDark && <MatrixBg />}
+      
       <div className="relative z-10 flex flex-col items-center gap-5">
         {/* Sonar logo glowing */}
         <motion.div
@@ -118,7 +344,7 @@ function SpinningUpState({ projectName }) {
         </motion.div>
 
         <div className="text-center">
-          <p style={{ color: "rgba(180,200,220,0.7)", fontSize: "13px", fontFamily: "'Manrope',sans-serif", marginBottom: 4 }}>
+          <p style={{ color: isDark ? "rgba(180,200,220,0.7)" : "rgba(30,60,120,0.8)", fontSize: "13px", fontFamily: "'Manrope',sans-serif", marginBottom: 4 }}>
             One-click deploy with custom domains
           </p>
         </div>
@@ -520,7 +746,7 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
         <AnimatePresence mode="wait">
           {isGenerating || !previewReady ? (
             <motion.div key="spinning" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-              <SpinningUpState projectName={projectName} />
+              <SpinningUpState projectName={projectName} isDark={isDark} />
             </motion.div>
           ) : PreviewComp ? (
             <motion.div key={`${projectType}-${refreshKey}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
