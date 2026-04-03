@@ -284,7 +284,7 @@ test_plan:
 
 agent_communication:
     - agent: "main"
-      message: "Phase 2 complete. Backend project CRUD fully working. Frontend integrated with API - projects persist in MongoDB for authenticated users, demo tasks shown for unauthenticated users. Auth error handling confirmed working (axios pattern). Please run final E2E tests: 1) Register new user 2) Verify no projects section when logged in with no projects 3) Create a project via Build flow 4) Return home and verify project appears in 'Projets récents' 5) Verify auth error messages. Backend URL: http://localhost:8001, Frontend URL: https://04c2693c-419f-4cd5-b3d5-c2cdf200d0e1.preview.emergentagent.com"
+      message: "Phase 2 complete. Backend project CRUD fully working. Frontend integrated with API - projects persist in MongoDB for authenticated users, demo tasks shown for unauthenticated users. Auth error handling confirmed working (axios pattern). Please run final E2E tests: 1) Register new user 2) Verify no projects section when logged in with no projects 3) Create a project via Build flow 4) Return home and verify project appears in 'Projets récents' 5) Verify auth error messages. Backend URL: http://localhost:8001, Frontend URL: https://agent-behavior-phase.preview.emergentagent.com"
     - agent: "testing"
       message: "✅ BACKEND TESTING COMPLETE: All 5 project CRUD endpoints working perfectly. Tested 18 scenarios including auth, error handling, ownership verification. Auth error messages correct (401 for wrong password, 409 for duplicate email). All backend APIs ready for frontend integration."
     - agent: "testing"

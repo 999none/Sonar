@@ -12,7 +12,7 @@ from datetime import datetime
 import uuid
 
 # Get backend URL from environment
-BACKEND_URL = "https://app-studio-519.preview.emergentagent.com/api"
+BACKEND_URL = "https://agent-behavior-phase.preview.emergentagent.com/api"
 
 class SonarIntegrationTester:
     def __init__(self):

@@ -8,7 +8,7 @@ import json
 import sys
 
 # Backend URL from existing test configuration
-BASE_URL = "https://app-studio-519.preview.emergentagent.com/api"
+BASE_URL = "https://agent-behavior-phase.preview.emergentagent.com/api"
 
 def quick_validation_test():
     """Run the exact test scenarios from review request"""
