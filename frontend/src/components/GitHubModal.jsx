@@ -8,8 +8,9 @@ export default function GitHubModal({ open, onClose, isDark = true }) {
   const [selectedBranch, setSelectedBranch] = useState("");
   const [showRepoDropdown, setShowRepoDropdown] = useState(false);
   const [showBranchDropdown, setShowBranchDropdown] = useState(false);
-  const [isGithubConnected, setIsGithubConnected] = useState(true); // Simule connexion GitHub
+  const [isGithubConnected, setIsGithubConnected] = useState(false); // État déconnecté par défaut
   const [orgExpanded, setOrgExpanded] = useState(false);
+  const [repoInputValue, setRepoInputValue] = useState(""); // Pour le lien manuel
 
   // Mock data - À remplacer par de vraies données GitHub plus tard
   const connectedOrgs = [
@@ -421,26 +422,58 @@ export default function GitHubModal({ open, onClose, isDark = true }) {
                     </div>
 
                     <div style={{ position: "relative" }}>
-                      <button
-                        onClick={() => setShowRepoDropdown(v => !v)}
-                        style={{
-                          width: "100%",
-                          padding: "12px 16px",
-                          borderRadius: "12px",
-                          background: colors.orgBg,
-                          border: colors.orgBorder,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          cursor: "pointer",
-                          fontFamily: "'DM Sans', sans-serif",
-                          fontSize: "13px",
-                          color: selectedRepo || colors.tabText,
-                        }}
-                      >
-                        <span>{selectedRepo || "Sélectionner un dépôt"}</span>
-                        <ChevronDown style={{ width: 14, height: 14 }} />
-                      </button>
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        borderRadius: "12px",
+                        background: colors.orgBg,
+                        border: colors.orgBorder,
+                        overflow: "hidden",
+                      }}>
+                        {/* Input pour coller un lien */}
+                        <input
+                          type="text"
+                          placeholder="Coller un lien de repo ou sélectionner"
+                          value={repoInputValue || selectedRepo}
+                          onChange={(e) => {
+                            setRepoInputValue(e.target.value);
+                            setSelectedRepo("");
+                          }}
+                          style={{
+                            flex: 1,
+                            padding: "12px 16px",
+                            border: "none",
+                            background: "transparent",
+                            outline: "none",
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontSize: "13px",
+                            color: colors.orgText,
+                          }}
+                        />
+                        
+                        {/* Bouton flèche pour ouvrir dropdown */}
+                        <button
+                          onClick={() => setShowRepoDropdown(v => !v)}
+                          style={{
+                            padding: "12px 14px",
+                            border: "none",
+                            background: "transparent",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderLeft: colors.orgBorder,
+                          }}
+                        >
+                          <ChevronDown style={{ 
+                            width: 14, 
+                            height: 14, 
+                            color: colors.sectionTitle,
+                            transform: showRepoDropdown ? "rotate(180deg)" : "rotate(0deg)",
+                            transition: "transform 0.2s",
+                          }} />
+                        </button>
+                      </div>
 
                       <AnimatePresence>
                         {showRepoDropdown && (
@@ -464,7 +497,11 @@ export default function GitHubModal({ open, onClose, isDark = true }) {
                             {repos.map((repo, i) => (
                               <button
                                 key={repo.id}
-                                onClick={() => { setSelectedRepo(repo.name); setShowRepoDropdown(false); }}
+                                onClick={() => { 
+                                  setSelectedRepo(repo.name); 
+                                  setRepoInputValue("");
+                                  setShowRepoDropdown(false); 
+                                }}
                                 style={{
                                   width: "100%",
                                   padding: "10px 14px",
