@@ -10,10 +10,19 @@ import SkyWaterOverlay from "./SkyWaterOverlay";
 // ── Profile dropdown ──────────────────────────────────────────────────────────
 function ProfileMenu({ user, onLogout, onClose, onOpenSettings, isDark = true }) {
   const items = [
-    { icon: Settings, label: "Paramètres de compte",  color: null },
-    { icon: Globe,    label: "Langues",                color: null, suffix: "FR" },
-    { icon: Github,   label: "Se connecter à GitHub",  color: null },
+    { icon: Settings, label: "Paramètres de compte",  action: "settings", suffix: null },
+    { icon: Globe,    label: "Langues",                action: "preferences", suffix: "FR" },
+    { icon: Github,   label: "Se connecter à GitHub",  action: null, suffix: null },
   ];
+
+  const handleItemClick = (action) => {
+    onClose();
+    if (action === "settings") {
+      onOpenSettings();
+    } else if (action === "preferences") {
+      onOpenSettings("preferences");
+    }
+  };
 
   const dk = isDark;
   return (
@@ -67,10 +76,10 @@ function ProfileMenu({ user, onLogout, onClose, onOpenSettings, isDark = true })
 
       {/* Menu items */}
       <div style={{ padding: "6px" }}>
-        {items.map(({ icon: Icon, label, color, suffix }) => (
+        {items.map(({ icon: Icon, label, action, suffix }) => (
           <button
             key={label}
-            onClick={() => label === "Paramètres de compte" ? onOpenSettings() : onClose()}
+            onClick={() => handleItemClick(action)}
             style={{
               width: "100%", display: "flex", alignItems: "center", gap: 10,
               padding: "9px 12px", borderRadius: "10px", border: "none",
@@ -317,7 +326,10 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [settingsInitialTab, setSettingsInitialTab] = useState("account");
   const profileRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const [attachedFiles, setAttachedFiles] = useState([]);
   const T = THEMES[isDark ? "dark" : "light"];
 
   // Close profile menu on outside click
@@ -435,6 +447,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         user={user}
         isDark={isDark}
         onToggleTheme={onToggleTheme}
+        initialTab={settingsInitialTab}
       />
       {/* Sky & Water overlay for light mode */}
       {!isDark ? null : null}
@@ -551,7 +564,11 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                       user={user}
                       onLogout={onLogout}
                       onClose={() => setShowProfileMenu(false)}
-                      onOpenSettings={() => { setShowProfileMenu(false); setShowSettings(true); }}
+                      onOpenSettings={(tab = "account") => { 
+                        setShowProfileMenu(false); 
+                        setSettingsInitialTab(tab);
+                        setShowSettings(true); 
+                      }}
                       isDark={isDark}
                     />
                   )}
@@ -708,30 +725,59 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
             >
               <div className="flex items-center gap-1.5">
 
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  style={{ display: "none" }}
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    setAttachedFiles(prev => [...prev, ...files]);
+                    console.log("Fichiers attachés:", files.map(f => f.name));
+                  }}
+                />
+
                 {/* Integration button (icon only) */}
                 <button
                   data-testid="landing-btn-integration"
-                  className="flex items-center justify-center rounded-full transition-all"
-                  title="Intégration"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center justify-center rounded-full transition-all relative"
+                  title={`Intégration${attachedFiles.length > 0 ? ` (${attachedFiles.length})` : ''}`}
                   style={{
                     width: 32, height: 32,
                     fontSize: "11px",
-                    color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
-                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
-                    border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)",
+                    color: attachedFiles.length > 0 ? "#0ea5e9" : (isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)"),
+                    background: attachedFiles.length > 0 ? "rgba(14,165,233,0.15)" : (isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)"),
+                    border: attachedFiles.length > 0 ? "1px solid rgba(14,165,233,0.3)" : (isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)"),
                     backdropFilter: "blur(8px)",
                     cursor: "pointer",
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.75)";
-                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.18)" : "rgba(100,160,240,0.35)";
+                    e.currentTarget.style.background = attachedFiles.length > 0 ? "rgba(14,165,233,0.25)" : (isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.75)");
+                    e.currentTarget.style.borderColor = attachedFiles.length > 0 ? "rgba(14,165,233,0.4)" : (isDark ? "rgba(255,255,255,0.18)" : "rgba(100,160,240,0.35)");
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)";
-                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
+                    e.currentTarget.style.background = attachedFiles.length > 0 ? "rgba(14,165,233,0.15)" : (isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)");
+                    e.currentTarget.style.borderColor = attachedFiles.length > 0 ? "rgba(14,165,233,0.3)" : (isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)");
                   }}
                 >
                   <Paperclip style={{ width: 14, height: 14 }} />
+                  {attachedFiles.length > 0 && (
+                    <span style={{
+                      position: "absolute",
+                      top: -4, right: -4,
+                      width: 16, height: 16,
+                      borderRadius: "50%",
+                      background: "#0ea5e9",
+                      color: "#fff",
+                      fontSize: "9px",
+                      fontWeight: 700,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      {attachedFiles.length}
+                    </span>
+                  )}
                 </button>
 
                 {/* Github button (icon only) */}

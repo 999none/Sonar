@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, User, Bell, Sliders, Github, ChevronDown, Check, Sun, Moon, Globe, LogOut } from "lucide-react";
+import { X, User, Bell, Sliders, Github, ChevronDown, Check, Sun, Moon, Globe, LogOut, Edit2, Upload } from "lucide-react";
 
 const LANGS = ["Français", "English", "Español", "Deutsch", "日本語", "中文"];
 
@@ -152,15 +152,32 @@ const TABS = [
   { id: "github", label: "Github", icon: Github },
 ];
 
-export default function SettingsModal({ open, onClose, user, isDark, onToggleTheme }) {
-  const [activeTab, setActiveTab] = useState("account");
+export default function SettingsModal({ open, onClose, user, isDark, onToggleTheme, initialTab = "account" }) {
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [lang, setLang] = useState("Français");
   const [showLangPicker, setShowLangPicker] = useState(false);
   const [notifApp, setNotifApp] = useState(true);
   const [notifEmail, setNotifEmail] = useState(false);
   const [githubConnected, setGithubConnected] = useState(false);
   
+  // Editable account fields
+  const [editingName, setEditingName] = useState(false);
+  const [userName, setUserName] = useState(user?.name || "");
+  const fileInputRef = useRef(null);
+  
   const t = TH[isDark ? "dark" : "light"];
+
+  // Update activeTab when initialTab changes
+  useEffect(() => {
+    if (open) {
+      setActiveTab(initialTab);
+    }
+  }, [open, initialTab]);
+
+  // Sync userName with user prop
+  useEffect(() => {
+    setUserName(user?.name || "");
+  }, [user]);
 
   // Close on Escape
   useEffect(() => {
@@ -345,9 +362,44 @@ export default function SettingsModal({ open, onClose, user, isDark, onToggleThe
                             {initials}
                           </span>
                         </div>
-                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: t.fieldLabel }}>
-                          Cette image sera affichée publiquement
-                        </p>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: t.fieldLabel, marginBottom: 8 }}>
+                            Cette image sera affichée publiquement
+                          </p>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                console.log("Photo sélectionnée:", file.name);
+                                // Here you would upload the file
+                              }
+                            }}
+                          />
+                          <button
+                            onClick={() => fileInputRef.current?.click()}
+                            style={{
+                              padding: "6px 14px",
+                              borderRadius: "8px",
+                              border: t.btnSecondaryBorder,
+                              background: t.btnSecondaryBg,
+                              color: t.btnSecondaryText,
+                              fontFamily: "'DM Sans', sans-serif",
+                              fontSize: "12px", fontWeight: 500,
+                              cursor: "pointer",
+                              transition: "all 0.15s",
+                              display: "flex", alignItems: "center", gap: 6,
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = t.btnSecondaryHoverBg}
+                            onMouseLeave={e => e.currentTarget.style.background = t.btnSecondaryBg}
+                          >
+                            <Upload style={{ width: 12, height: 12 }} />
+                            Changer la photo
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -361,10 +413,68 @@ export default function SettingsModal({ open, onClose, user, isDark, onToggleThe
                         borderRadius: "12px",
                         background: t.fieldBg,
                         border: t.fieldBorder,
+                        display: "flex", alignItems: "center", gap: 12,
                       }}>
-                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: t.fieldValue }}>
-                          {user?.name || "Non défini"}
-                        </p>
+                        {editingName ? (
+                          <>
+                            <input
+                              type="text"
+                              value={userName}
+                              onChange={(e) => setUserName(e.target.value)}
+                              autoFocus
+                              style={{
+                                flex: 1,
+                                background: "transparent",
+                                border: "none",
+                                outline: "none",
+                                fontFamily: "'DM Sans', sans-serif",
+                                fontSize: "13px",
+                                color: t.fieldValue,
+                              }}
+                            />
+                            <button
+                              onClick={() => {
+                                setEditingName(false);
+                                console.log("Nom sauvegardé:", userName);
+                                // Here you would save the name
+                              }}
+                              style={{
+                                padding: "4px 12px",
+                                borderRadius: "6px",
+                                border: "none",
+                                background: t.btnPrimaryBg,
+                                color: t.btnPrimaryText,
+                                fontFamily: "'DM Sans', sans-serif",
+                                fontSize: "11px", fontWeight: 600,
+                                cursor: "pointer",
+                              }}
+                            >
+                              Sauvegarder
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <p style={{ flex: 1, fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: t.fieldValue }}>
+                              {userName || "Non défini"}
+                            </p>
+                            <button
+                              onClick={() => setEditingName(true)}
+                              style={{
+                                padding: "4px 8px",
+                                borderRadius: "6px",
+                                border: t.btnSecondaryBorder,
+                                background: t.btnSecondaryBg,
+                                cursor: "pointer",
+                                display: "flex", alignItems: "center",
+                                transition: "all 0.15s",
+                              }}
+                              onMouseEnter={e => e.currentTarget.style.background = t.btnSecondaryHoverBg}
+                              onMouseLeave={e => e.currentTarget.style.background = t.btnSecondaryBg}
+                            >
+                              <Edit2 style={{ width: 12, height: 12, color: t.btnSecondaryText }} />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
 
