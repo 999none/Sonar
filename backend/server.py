@@ -12,7 +12,6 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import jwt
 from passlib.context import CryptContext
-from passlib.hash import bcrypt
 import re
 
 
@@ -100,7 +99,7 @@ def verify_token(token: str) -> dict:
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.JWTError:
+    except jwt.PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 def hash_password(password: str) -> str:
