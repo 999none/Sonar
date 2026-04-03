@@ -333,66 +333,72 @@ export default function GitHubModal({ open, onClose, isDark = true }) {
                                 animate={{ opacity: 1, height: "auto" }}
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.2 }}
-                                style={{
-                                  marginTop: 8,
-                                  padding: "12px 16px",
-                                  borderRadius: "12px",
-                                  background: dk ? "rgba(14,165,233,0.08)" : "rgba(14,165,233,0.06)",
-                                  border: dk ? "1px solid rgba(14,165,233,0.2)" : "1px solid rgba(14,165,233,0.15)",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                }}
+                                style={{ overflow: "hidden" }}
                               >
-                                <div>
-                                  <p style={{
+                                {/* Organisation details */}
+                                <div
+                                  style={{
+                                    marginTop: 8,
+                                    padding: "12px 16px",
+                                    borderRadius: "12px",
+                                    background: dk ? "rgba(14,165,233,0.08)" : "rgba(14,165,233,0.06)",
+                                    border: dk ? "1px solid rgba(14,165,233,0.2)" : "1px solid rgba(14,165,233,0.15)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <div>
+                                    <p style={{
+                                      fontFamily: "'DM Sans', sans-serif",
+                                      fontSize: "13px",
+                                      fontWeight: 600,
+                                      color: "#38bdf8",
+                                      marginBottom: 2,
+                                    }}>
+                                      {org.name}
+                                    </p>
+                                    <p style={{
+                                      fontFamily: "'DM Sans', sans-serif",
+                                      fontSize: "11px",
+                                      color: dk ? "rgba(140,160,200,0.6)" : "rgba(40,70,130,0.6)",
+                                    }}>
+                                      {org.role}
+                                    </p>
+                                  </div>
+                                  <Check style={{ width: 16, height: 16, color: "#38bdf8" }} />
+                                </div>
+
+                                {/* Bouton ajouter organisation (dans le dropdown) */}
+                                <button
+                                  style={{
+                                    width: "100%",
+                                    padding: "12px 16px",
+                                    marginTop: 8,
+                                    borderRadius: "12px",
+                                    border: "none",
+                                    background: "transparent",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 8,
+                                    cursor: "pointer",
                                     fontFamily: "'DM Sans', sans-serif",
                                     fontSize: "13px",
-                                    fontWeight: 600,
-                                    color: "#38bdf8",
-                                    marginBottom: 2,
-                                  }}>
-                                    {org.name}
-                                  </p>
-                                  <p style={{
-                                    fontFamily: "'DM Sans', sans-serif",
-                                    fontSize: "11px",
-                                    color: dk ? "rgba(140,160,200,0.6)" : "rgba(40,70,130,0.6)",
-                                  }}>
-                                    {org.role}
-                                  </p>
-                                </div>
-                                <Check style={{ width: 16, height: 16, color: "#38bdf8" }} />
+                                    fontWeight: 500,
+                                    color: "#10b981",
+                                    transition: "all 0.15s",
+                                  }}
+                                  onMouseEnter={e => e.currentTarget.style.background = colors.orgBg}
+                                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                                >
+                                  <Plus style={{ width: 14, height: 14 }} />
+                                  Ajouter de nouvelles organisations GitHub
+                                </button>
                               </motion.div>
                             )}
                           </AnimatePresence>
                         </div>
                       ))}
-
-                      {/* Bouton ajouter organisation */}
-                      <button
-                        style={{
-                          width: "100%",
-                          padding: "12px 16px",
-                          borderRadius: "12px",
-                          border: colors.orgBorder,
-                          background: "transparent",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                          cursor: "pointer",
-                          fontFamily: "'DM Sans', sans-serif",
-                          fontSize: "13px",
-                          fontWeight: 500,
-                          color: "#10b981",
-                          transition: "all 0.15s",
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.background = colors.orgBg}
-                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                      >
-                        <Plus style={{ width: 14, height: 14 }} />
-                        Ajouter de nouvelles organisations GitHub
-                      </button>
                     </>
                   )}
                 </div>
