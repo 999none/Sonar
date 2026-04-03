@@ -141,63 +141,78 @@ backend:
 
   - task: "POST /api/projects - Create project"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Implementing project CRUD endpoints. POST creates a new project linked to authenticated user."
+        - working: true
+          agent: "testing"
+          comment: "All scenarios passed: create with full data, create with minimal data (defaults applied), auth required (403 without token). Response structure correct with all required fields."
 
   - task: "GET /api/projects - List user projects"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Lists all projects for the authenticated user, sorted by updated_at desc."
+        - working: true
+          agent: "testing"
+          comment: "All scenarios passed: lists user projects correctly, auth required (403 without token), returns array format."
 
   - task: "GET /api/projects/:id - Get single project"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Returns a single project by ID, verifies user ownership."
+        - working: true
+          agent: "testing"
+          comment: "All scenarios passed: retrieves project by ID correctly, 404 for wrong ID, auth required (403 without token), ownership verification working."
 
   - task: "PATCH /api/projects/:id - Update project"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Updates project fields (name, code, status, messages). Verifies user ownership."
+        - working: true
+          agent: "testing"
+          comment: "All scenarios passed: updates single field (name), updates multiple fields (status, code), 404 for wrong ID, auth required (403 without token), ownership verification working."
 
   - task: "DELETE /api/projects/:id - Delete project"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Deletes project by ID, verifies user ownership."
+        - working: true
+          agent: "testing"
+          comment: "All scenarios passed: deletes project successfully with {\"deleted\": true} response, 404 for wrong/deleted ID, auth required (403 without token), ownership verification working."
 
 frontend:
   - task: "AuthContext - global auth state management"
@@ -262,8 +277,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Backend project CRUD endpoints"
-    - "AuthContext error handling verification"
     - "Frontend projects API integration"
   stuck_tasks: []
   test_all: false
@@ -272,3 +285,5 @@ test_plan:
 agent_communication:
     - agent: "main"
       message: "Phase 2 implementation: Added project CRUD backend endpoints and frontend integration. Also verified that auth error handling works correctly with axios (the fetch bug was already fixed). Please test: 1) All 5 project CRUD endpoints (POST, GET list, GET by id, PATCH, DELETE) with auth. 2) Verify auth error messages display correctly (register with duplicate email, login with wrong password). 3) Frontend project loading from API."
+    - agent: "testing"
+      message: "✅ BACKEND TESTING COMPLETE: All 5 project CRUD endpoints working perfectly. Tested 18 scenarios including auth, error handling, ownership verification. Auth error messages correct (401 for wrong password, 409 for duplicate email). All backend APIs ready for frontend integration."
