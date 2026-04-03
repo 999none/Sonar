@@ -152,7 +152,7 @@ const TABS = [
   { id: "github", label: "Github", icon: Github },
 ];
 
-export default function SettingsModal({ open, onClose, user, isDark, onToggleTheme, initialTab = "account" }) {
+export default function SettingsModal({ open, onClose, user, isDark, onToggleTheme, initialTab = "account", profilePhoto, onProfilePhotoChange }) {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [lang, setLang] = useState("Français");
   const [showLangPicker, setShowLangPicker] = useState(false);
@@ -178,6 +178,17 @@ export default function SettingsModal({ open, onClose, user, isDark, onToggleThe
   useEffect(() => {
     setUserName(user?.name || "");
   }, [user]);
+
+  const handleProfilePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onProfilePhotoChange(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Close on Escape
   useEffect(() => {
@@ -354,13 +365,16 @@ export default function SettingsModal({ open, onClose, user, isDark, onToggleThe
                       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                         <div style={{
                           width: 64, height: 64, borderRadius: "50%",
-                          background: t.avatarBg,
+                          background: profilePhoto ? `url(${profilePhoto}) center/cover` : t.avatarBg,
                           display: "flex", alignItems: "center", justifyContent: "center",
                           boxShadow: "0 4px 16px rgba(14,165,233,0.25)",
+                          overflow: "hidden",
                         }}>
-                          <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: "20px", color: "#fff" }}>
-                            {initials}
-                          </span>
+                          {!profilePhoto && (
+                            <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: "20px", color: "#fff" }}>
+                              {initials}
+                            </span>
+                          )}
                         </div>
                         <div style={{ flex: 1 }}>
                           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: t.fieldLabel, marginBottom: 8 }}>
@@ -371,13 +385,7 @@ export default function SettingsModal({ open, onClose, user, isDark, onToggleThe
                             type="file"
                             accept="image/*"
                             style={{ display: "none" }}
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                console.log("Photo sélectionnée:", file.name);
-                                // Here you would upload the file
-                              }
-                            }}
+                            onChange={handleProfilePhotoUpload}
                           />
                           <button
                             onClick={() => fileInputRef.current?.click()}

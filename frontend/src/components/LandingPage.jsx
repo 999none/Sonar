@@ -8,7 +8,7 @@ import SettingsModal from "./SettingsModal";
 import SkyWaterOverlay from "./SkyWaterOverlay";
 
 // ── Profile dropdown ──────────────────────────────────────────────────────────
-function ProfileMenu({ user, onLogout, onClose, onOpenSettings, isDark = true }) {
+function ProfileMenu({ user, onLogout, onClose, onOpenSettings, isDark = true, profilePhoto }) {
   const items = [
     { icon: Settings, label: "Paramètres de compte",  action: "settings", suffix: null },
     { icon: Globe,    label: "Langues",                action: "preferences", suffix: "FR" },
@@ -56,12 +56,15 @@ function ProfileMenu({ user, onLogout, onClose, onOpenSettings, isDark = true })
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{
             width: 34, height: 34, borderRadius: "50%",
-            background: "linear-gradient(135deg, #7dd3fc, #38bdf8, #0ea5e9)",
+            background: profilePhoto ? `url(${profilePhoto}) center/cover` : "linear-gradient(135deg, #7dd3fc, #38bdf8, #0ea5e9)",
             display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+            overflow: "hidden",
           }}>
-            <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: "11px", color: "#fff", textTransform: "uppercase" }}>
-              {(user.name || user.email || "U").slice(0, 2)}
-            </span>
+            {!profilePhoto && (
+              <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: "11px", color: "#fff", textTransform: "uppercase" }}>
+                {(user.name || user.email || "U").slice(0, 2)}
+              </span>
+            )}
           </div>
           <div style={{ minWidth: 0 }}>
             <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, fontSize: "13px", color: dk ? "#fff" : "#0a1a3e", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -330,7 +333,45 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
   const profileRef = useRef(null);
   const fileInputRef = useRef(null);
   const [attachedFiles, setAttachedFiles] = useState([]);
+  const [profilePhoto, setProfilePhoto] = useState(() => {
+    return localStorage.getItem("sonar-profile-photo") || null;
+  });
   const T = THEMES[isDark ? "dark" : "light"];
+
+  const handleProfilePhotoChange = (photoUrl) => {
+    setProfilePhoto(photoUrl);
+    if (photoUrl) {
+      localStorage.setItem("sonar-profile-photo", photoUrl);
+    } else {
+      localStorage.removeItem("sonar-profile-photo");
+    }
+  };
+
+  const handleRemoveFile = (index) => {
+    setAttachedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const getFilePreview = (file) => {
+    if (file.type.startsWith('image/')) {
+      return URL.createObjectURL(file);
+    }
+    return null;
+  };
+
+  const getFileIcon = (file) => {
+    if (file.type.startsWith('video/')) return '▶';
+    if (file.type.startsWith('audio/')) return '♪';
+    if (file.type.includes('pdf')) return '📄';
+    if (file.type.includes('zip') || file.type.includes('compressed')) return '📦';
+    if (file.type.includes('text') || file.name.endsWith('.js') || file.name.endsWith('.jsx') || file.name.endsWith('.ts')) return '{ }';
+    return '📎';
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
 
   // Close profile menu on outside click
   useEffect(() => {
@@ -448,6 +489,8 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
         isDark={isDark}
         onToggleTheme={onToggleTheme}
         initialTab={settingsInitialTab}
+        profilePhoto={profilePhoto}
+        onProfilePhotoChange={handleProfilePhotoChange}
       />
       {/* Sky & Water overlay for light mode */}
       {!isDark ? null : null}
@@ -544,17 +587,20 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                   onClick={() => setShowProfileMenu(v => !v)}
                   style={{
                     width: 32, height: 32, borderRadius: "50%",
-                    background: "linear-gradient(135deg, #7dd3fc, #38bdf8, #0ea5e9)",
+                    background: profilePhoto ? `url(${profilePhoto}) center/cover` : "linear-gradient(135deg, #7dd3fc, #38bdf8, #0ea5e9)",
                     border: showProfileMenu ? "2px solid rgba(14,165,233,0.6)" : "2px solid transparent",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     cursor: "pointer", transition: "border-color 0.15s",
                     boxShadow: showProfileMenu ? "0 0 0 3px rgba(14,165,233,0.15)" : "none",
                     padding: 0,
+                    overflow: "hidden",
                   }}
                 >
-                  <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: "11px", color: "#fff", textTransform: "uppercase" }}>
-                    {(user.name || user.email || "U").slice(0, 2)}
-                  </span>
+                  {!profilePhoto && (
+                    <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 900, fontSize: "11px", color: "#fff", textTransform: "uppercase" }}>
+                      {(user.name || user.email || "U").slice(0, 2)}
+                    </span>
+                  )}
                 </button>
 
                 {/* Dropdown */}
@@ -570,6 +616,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                         setShowSettings(true); 
                       }}
                       isDark={isDark}
+                      profilePhoto={profilePhoto}
                     />
                   )}
                 </AnimatePresence>
@@ -659,6 +706,165 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
             Create your own app without coding a line.
           </p>
         </motion.div>
+
+        {/* File Previews — shown when files are attached */}
+        <AnimatePresence>
+          {attachedFiles.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: -10, height: 0 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full px-6 mt-4"
+              style={{ maxWidth: "680px" }}
+            >
+              <div style={{
+                display: "flex",
+                gap: "12px",
+                flexWrap: "wrap",
+                padding: "16px",
+                background: isDark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.6)",
+                backdropFilter: "blur(20px)",
+                border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(255,255,255,0.5)",
+                borderRadius: "16px",
+              }}>
+                {attachedFiles.map((file, index) => {
+                  const preview = getFilePreview(file);
+                  const isVideo = file.type.startsWith('video/');
+                  
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                      style={{
+                        position: "relative",
+                        width: "120px",
+                        background: isDark ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.05)",
+                        borderRadius: "12px",
+                        overflow: "hidden",
+                        border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(80,120,200,0.15)",
+                      }}
+                    >
+                      {/* Preview thumbnail */}
+                      <div style={{
+                        width: "100%",
+                        height: "120px",
+                        background: preview 
+                          ? `url(${preview}) center/cover` 
+                          : (isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.08)"),
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        position: "relative",
+                      }}>
+                        {!preview && (
+                          <span style={{
+                            fontSize: isVideo ? "32px" : "28px",
+                            color: isVideo ? "#ef4444" : (isDark ? "rgba(200,220,245,0.6)" : "rgba(40,70,130,0.5)"),
+                            background: isVideo ? "rgba(239,68,68,0.15)" : (isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"),
+                            width: isVideo ? "50px" : "auto",
+                            height: isVideo ? "50px" : "auto",
+                            borderRadius: isVideo ? "12px" : "0",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: isVideo ? "0" : "8px",
+                          }}>
+                            {getFileIcon(file)}
+                          </span>
+                        )}
+                        {isVideo && preview && (
+                          <div style={{
+                            position: "absolute",
+                            inset: 0,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "rgba(0,0,0,0.3)",
+                          }}>
+                            <div style={{
+                              width: "40px",
+                              height: "40px",
+                              borderRadius: "8px",
+                              background: "#ef4444",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "#fff",
+                              fontSize: "18px",
+                            }}>
+                              ▶
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* File info */}
+                      <div style={{
+                        padding: "8px",
+                        background: isDark ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0.08)",
+                      }}>
+                        <p style={{
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: "11px",
+                          fontWeight: 500,
+                          color: isDark ? "rgba(220,235,250,0.9)" : "#0a1a3e",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          marginBottom: "2px",
+                        }}>
+                          {file.name}
+                        </p>
+                        <p style={{
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: "10px",
+                          color: isDark ? "rgba(160,185,220,0.5)" : "rgba(40,70,130,0.5)",
+                        }}>
+                          {formatFileSize(file.size)}
+                        </p>
+                      </div>
+
+                      {/* Remove button */}
+                      <button
+                        onClick={() => handleRemoveFile(index)}
+                        style={{
+                          position: "absolute",
+                          top: 6,
+                          right: 6,
+                          width: 22,
+                          height: 22,
+                          borderRadius: "50%",
+                          background: "rgba(0,0,0,0.6)",
+                          backdropFilter: "blur(8px)",
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          transition: "all 0.15s",
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.background = "rgba(239,68,68,0.9)";
+                          e.currentTarget.style.transform = "scale(1.1)";
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.background = "rgba(0,0,0,0.6)";
+                          e.currentTarget.style.transform = "scale(1)";
+                        }}
+                      >
+                        <X style={{ width: 12, height: 12, color: "#fff" }} />
+                      </button>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Input box — large, centered, below text */}
         <motion.div
