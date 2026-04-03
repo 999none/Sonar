@@ -68,20 +68,57 @@ function GenerationPreview({ prompt, modelName = "ChatGPT", provider = "OpenAI",
       alignItems: "center",
       justifyContent: "center",
       padding: "40px",
-      background: colors.bg,
+      background: isDark 
+        ? "rgba(10,15,30,0.95)" 
+        : "linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #B0E7FF 100%)",
       backdropFilter: "blur(20px)",
+      position: "relative",
+      overflow: "hidden",
     }}>
+      
+      {/* Sky/Water elements for light mode */}
+      {!isDark && (
+        <>
+          {/* Sun */}
+          <div style={{
+            position: "absolute",
+            top: "15%",
+            right: "20%",
+            width: "120px",
+            height: "120px",
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(255,223,100,0.9) 0%, rgba(255,200,50,0.4) 70%, transparent 100%)",
+            zIndex: 0,
+          }} />
+          
+          {/* Water reflection */}
+          <div style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "50%",
+            background: "linear-gradient(to bottom, rgba(135,206,235,0.3) 0%, rgba(100,180,220,0.5) 100%)",
+            zIndex: 0,
+          }} />
+        </>
+      )}
+
       <div style={{
         width: "100%",
         maxWidth: "600px",
-        background: colors.cardBg,
+        background: isDark 
+          ? "rgba(20,30,50,0.6)" 
+          : "rgba(255,255,255,0.85)",
         backdropFilter: "blur(40px)",
-        border: colors.border,
+        border: isDark ? "rgba(255,255,255,0.08)" : "rgba(80,120,200,0.15)",
         borderRadius: "24px",
         padding: "40px",
         boxShadow: isDark 
           ? "0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)"
           : "0 20px 60px rgba(40,80,180,0.12), inset 0 1px 0 rgba(255,255,255,0.95)",
+        position: "relative",
+        zIndex: 1,
       }}>
         
         {/* Model logo + name */}
