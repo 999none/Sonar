@@ -124,10 +124,10 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
                 {/* Big S-1 / S-2 */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "4px" }}>
                   <span style={{
-                    fontSize: "44px",
-                    fontWeight: 800,
-                    fontFamily: "'Cabinet Grotesk', 'Manrope', sans-serif",
-                    letterSpacing: "-0.03em",
+                    fontSize: "48px",
+                    fontWeight: 900,
+                    fontFamily: "'Outfit', sans-serif",
+                    letterSpacing: "-0.04em",
                     lineHeight: 1,
                     background: mode === "S-2"
                       ? "linear-gradient(135deg, #a78bfa, #7c3aed)"
@@ -140,9 +140,9 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
                   </span>
                   <span style={{
                     fontSize: "10px",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     fontFamily: "'Manrope', sans-serif",
-                    letterSpacing: "0.05em",
+                    letterSpacing: "0.08em",
                     color: mode === "S-2"
                       ? (dk ? "rgba(167,139,250,0.7)" : "rgba(109,40,217,0.55)")
                       : (dk ? "rgba(6,182,212,0.7)" : "rgba(6,182,212,0.75)"),
@@ -154,16 +154,30 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
               </motion.div>
 
               {/* Model name + provider */}
-              <p className="font-bold text-xl mb-1"
-                style={{ color: dk ? "#fff" : "#0a1a3e", fontFamily: "'Cabinet Grotesk',sans-serif", letterSpacing: "-0.01em" }}>
+              <p style={{
+                fontFamily: "'Outfit', sans-serif",
+                fontWeight: 700,
+                fontSize: "22px",
+                letterSpacing: "-0.02em",
+                color: dk ? "#fff" : "#0a1a3e",
+                marginBottom: "3px",
+                lineHeight: 1.15,
+              }}>
                 {model.label}
               </p>
-              <p style={{ fontSize: "12px", color: dk ? "rgba(100,116,139,0.7)" : "rgba(40,70,130,0.5)", fontFamily: "'Manrope',sans-serif", marginBottom: 18 }}>
+              <p style={{
+                fontFamily: "'Manrope', sans-serif",
+                fontWeight: 500,
+                fontSize: "12px",
+                letterSpacing: "0.01em",
+                color: dk ? "rgba(100,116,139,0.7)" : "rgba(40,70,130,0.45)",
+                marginBottom: 20,
+              }}>
                 {model.provider === "openai" ? "OpenAI" : model.provider === "anthropic" ? "Anthropic" : "Google DeepMind"}
               </p>
 
               {/* Prompt pill */}
-              <div className="w-full px-4 py-2.5 rounded-xl"
+              <div className="w-full px-4 py-3 rounded-xl"
                 style={{
                   background: dk ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
                   border: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,140,220,0.12)",
@@ -171,8 +185,17 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
                   borderRadius: attachedFiles.length > 0 ? "12px 12px 0 0" : "12px",
                   borderBottom: attachedFiles.length > 0 ? "none" : undefined,
                 }}>
-                <p className="text-xs leading-relaxed line-clamp-2"
-                  style={{ color: dk ? "rgba(180,195,215,0.7)" : "rgba(30,60,120,0.6)", fontFamily: "'Manrope',sans-serif" }}>
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 400,
+                  fontSize: "13px",
+                  lineHeight: 1.6,
+                  color: dk ? "rgba(180,195,215,0.65)" : "rgba(30,60,120,0.55)",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}>
                   {prompt}
                 </p>
               </div>
@@ -256,20 +279,26 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
                           </div>
                           {/* File info */}
                           <div style={{
-                            padding: "5px 6px",
-                            background: dk ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.08)",
+                            padding: "5px 7px",
+                            background: dk ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.07)",
                           }}>
                             <p style={{
                               fontFamily: "'DM Sans', sans-serif",
-                              fontSize: "9px", fontWeight: 500,
+                              fontSize: "9.5px",
+                              fontWeight: 500,
                               color: dk ? "rgba(220,235,250,0.9)" : "#0a1a3e",
-                              whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
                               marginBottom: "1px",
+                              letterSpacing: "0.01em",
                             }}>{file.name}</p>
                             <p style={{
                               fontFamily: "'DM Sans', sans-serif",
-                              fontSize: "8px",
-                              color: dk ? "rgba(160,185,220,0.5)" : "rgba(40,70,130,0.5)",
+                              fontSize: "8.5px",
+                              fontWeight: 400,
+                              color: dk ? "rgba(160,185,220,0.45)" : "rgba(40,70,130,0.45)",
+                              letterSpacing: "0.01em",
                             }}>{formatFileSize(file.size)}</p>
                           </div>
                         </motion.div>
@@ -317,7 +346,9 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
 
                     <span style={{
                       fontSize: "13px",
-                      fontFamily: "'Manrope',sans-serif",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      fontWeight: isDone ? 500 : isActive ? 600 : 400,
+                      letterSpacing: "-0.01em",
                       color: isDone ? "#4ade80" : isActive ? (dk ? "#e2e8f0" : "#0a1a3e") : (dk ? "rgba(100,116,139,0.5)" : "rgba(40,70,130,0.35)"),
                       transition: "color 0.3s",
                     }}>
@@ -346,11 +377,15 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
             <div className="flex gap-3 px-6 pb-6">
               <button
                 onClick={onClose}
-                className="flex-1 py-3 rounded-xl text-sm font-medium transition-all"
+                className="flex-1 py-3 rounded-xl transition-all"
                 style={{
                   background: dk ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)",
                   border: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,140,220,0.15)",
-                  color: dk ? "#64748b" : "rgba(40,70,130,0.55)",
+                  color: dk ? "#64748b" : "rgba(40,70,130,0.5)",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontWeight: 600,
+                  fontSize: "13.5px",
+                  letterSpacing: "-0.01em",
                 }}
               >
                 Cancel
@@ -362,10 +397,14 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
                 transition={{ duration: 0.4 }}
                 whileHover={ready ? { scale: 1.02 } : {}}
                 whileTap={ready ? { scale: 0.98 } : {}}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold"
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl"
                 style={{
                   background: "linear-gradient(135deg, #06b6d4, #0ea5e9)",
                   color: "#000",
+                  fontFamily: "'Outfit', sans-serif",
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  letterSpacing: "-0.01em",
                   boxShadow: ready ? "0 0 20px rgba(6,182,212,0.35)" : "none",
                   cursor: ready ? "pointer" : "not-allowed",
                 }}
@@ -373,7 +412,12 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
                 {ready ? (
                   <> Generate <ArrowRight style={{ width: 14, height: 14 }} /> </>
                 ) : (
-                  <span style={{ color: "rgba(0,0,0,0.5)" }}>Preparing...</span>
+                  <span style={{
+                    color: "rgba(0,0,0,0.45)",
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 500,
+                    fontSize: "13px",
+                  }}>Preparing...</span>
                 )}
               </motion.button>
             </div>
