@@ -437,7 +437,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
 
   const handleSubmit = () => {
     if (!inputValue.trim()) return;
-    onStart(inputValue.trim(), selectedModel, selectedMode);
+    onStart(inputValue.trim(), selectedModel, selectedMode, attachedFiles);
   };
 
   const handleKeyDown = (e) => {
@@ -469,7 +469,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
     if (!user) { setShowLoginModal(true); return; }
     setIsFocused(true);
     setInputValue(template.prompt);
-    setTimeout(() => onStart(template.prompt, selectedModel, selectedMode), 300);
+    setTimeout(() => onStart(template.prompt, selectedModel, selectedMode, []), 300);
   };
 
   return (

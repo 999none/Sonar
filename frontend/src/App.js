@@ -48,12 +48,13 @@ function SonarApp() {
     setUser(null);
   };
 
-  const handleStart = (prompt, model, mode) => {
+  const handleStart = (prompt, model, mode, attachedFiles = []) => {
     setInitialTask(null);
     setInitialPrompt(prompt);
     setView("builder");
     window.__sonarInitModel = model || "gpt-4o";
     window.__sonarInitMode = mode || "S-1";
+    window.__sonarInitFiles = attachedFiles || [];
   };
 
   const handleSelectTaskFromHome = (task) => {

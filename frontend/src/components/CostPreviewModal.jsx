@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowRight, Check } from "lucide-react";
+import { X, ArrowRight, Check, Paperclip } from "lucide-react";
 import { MODELS } from "../data/mockData";
 import { ChatGPTIcon, ClaudeIcon, GeminiIcon } from "./AIIcons";
 
@@ -17,7 +17,25 @@ function ModelBigIcon({ provider, size = 72 }) {
   return <GeminiIcon size={size} />;
 }
 
-export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, selectedModel, isDark = false }) {
+function getFileIcon(file) {
+  if (!file || !file.type) return "📎";
+  if (file.type.startsWith("image/")) return "🖼";
+  if (file.type.startsWith("video/")) return "▶";
+  if (file.type.startsWith("audio/")) return "♪";
+  if (file.type.includes("pdf")) return "📄";
+  if (file.type.includes("zip") || file.type.includes("compressed")) return "📦";
+  if (file.type.includes("text") || (file.name && (file.name.endsWith(".js") || file.name.endsWith(".jsx") || file.name.endsWith(".ts")))) return "{ }";
+  return "📎";
+}
+
+function formatFileSize(bytes) {
+  if (!bytes) return "";
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+}
+
+export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, selectedModel, mode = "S-1", attachedFiles = [], isDark = false }) {
   const model = MODELS.find(m => m.id === selectedModel) || MODELS[0];
   const dk = isDark;
 
@@ -97,12 +115,46 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
                 style={{ color: dk ? "#fff" : "#0a1a3e", fontFamily: "'Cabinet Grotesk',sans-serif", letterSpacing: "-0.01em" }}>
                 {model.label}
               </p>
-              <p style={{ fontSize: "12px", color: dk ? "rgba(100,116,139,0.7)" : "rgba(40,70,130,0.5)", fontFamily: "'Manrope',sans-serif", marginBottom: 20 }}>
+              <p style={{ fontSize: "12px", color: dk ? "rgba(100,116,139,0.7)" : "rgba(40,70,130,0.5)", fontFamily: "'Manrope',sans-serif", marginBottom: 14 }}>
                 {model.provider === "openai" ? "OpenAI" : model.provider === "anthropic" ? "Anthropic" : "Google DeepMind"}
               </p>
 
+              {/* Agent Type Badge */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.12, duration: 0.25, type: "spring", bounce: 0.4 }}
+                style={{ marginBottom: 20 }}
+              >
+                <span style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "5px",
+                  padding: "3px 11px",
+                  borderRadius: "20px",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  fontFamily: "'Manrope',sans-serif",
+                  letterSpacing: "0.04em",
+                  background: mode === "S-2"
+                    ? (dk ? "rgba(139,92,246,0.18)" : "rgba(139,92,246,0.1)")
+                    : (dk ? "rgba(6,182,212,0.18)" : "rgba(6,182,212,0.1)"),
+                  border: mode === "S-2"
+                    ? "1px solid rgba(139,92,246,0.35)"
+                    : "1px solid rgba(6,182,212,0.3)",
+                  color: mode === "S-2" ? "#a78bfa" : "#06b6d4",
+                }}>
+                  <span style={{
+                    width: 6, height: 6, borderRadius: "50%",
+                    background: mode === "S-2" ? "#a78bfa" : "#06b6d4",
+                    display: "inline-block",
+                  }} />
+                  {mode === "S-2" ? "S-2 · Deep · Production-grade" : "S-1 · Fast · Prototype-ready"}
+                </span>
+              </motion.div>
+
               {/* Prompt pill */}
-              <div className="w-full px-4 py-2.5 rounded-xl mb-6"
+              <div className="w-full px-4 py-2.5 rounded-xl mb-3"
                 style={{
                   background: dk ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
                   border: dk ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(80,140,220,0.12)",
@@ -112,6 +164,75 @@ export default function CostPreviewModal({ isOpen, onClose, onConfirm, prompt, s
                   {prompt}
                 </p>
               </div>
+
+              {/* Attached Files */}
+              {attachedFiles.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.18, duration: 0.22 }}
+                  className="w-full mb-5"
+                >
+                  <p style={{
+                    fontSize: "10px",
+                    fontFamily: "'Manrope',sans-serif",
+                    fontWeight: 600,
+                    letterSpacing: "0.06em",
+                    color: dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.4)",
+                    marginBottom: "7px",
+                    textTransform: "uppercase",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                  }}>
+                    <Paperclip style={{ width: 10, height: 10 }} />
+                    {attachedFiles.length} fichier{attachedFiles.length > 1 ? "s" : ""} joint{attachedFiles.length > 1 ? "s" : ""}
+                  </p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                    {attachedFiles.map((file, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0.88 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.2 + idx * 0.04, duration: 0.2 }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          padding: "4px 9px",
+                          borderRadius: "8px",
+                          background: dk ? "rgba(255,255,255,0.05)" : "rgba(14,165,233,0.07)",
+                          border: dk ? "1px solid rgba(255,255,255,0.09)" : "1px solid rgba(14,165,233,0.2)",
+                          maxWidth: "160px",
+                        }}
+                      >
+                        <span style={{ fontSize: "11px" }}>{getFileIcon(file)}</span>
+                        <div style={{ overflow: "hidden" }}>
+                          <p style={{
+                            fontSize: "10px",
+                            fontFamily: "'Manrope',sans-serif",
+                            fontWeight: 600,
+                            color: dk ? "rgba(200,215,235,0.85)" : "rgba(20,50,110,0.75)",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "110px",
+                          }}>
+                            {file.name}
+                          </p>
+                          <p style={{
+                            fontSize: "9px",
+                            fontFamily: "'Manrope',sans-serif",
+                            color: dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.4)",
+                          }}>
+                            {formatFileSize(file.size)}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             {/* Loading steps */}

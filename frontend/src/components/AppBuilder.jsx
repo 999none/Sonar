@@ -39,6 +39,7 @@ function saveHistory(tasks) {
 export default function AppBuilder({ initialPrompt, initialTask, onReset, externalTasks, onTasksChange, isDark = false, user }) {
   const [selectedModel] = useState(window.__sonarInitModel || "gpt-4o");
   const [mode] = useState(window.__sonarInitMode || "S-1");
+  const [initFiles] = useState(window.__sonarInitFiles || []);
   const [messages, setMessages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -300,6 +301,7 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
         prompt={pendingPrompt}
         selectedModel={selectedModel}
         mode={mode}
+        attachedFiles={initFiles}
         isDark={isDark}
       />
 
