@@ -100,7 +100,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement real authentication for Sonar AI app builder - Phase 1: Backend auth with JWT + Frontend auth integration"
+user_problem_statement: "Sonar AI App Builder - Phase 2: Projects persistent in MongoDB + Auth bug fix verification"
 
 backend:
   - task: "POST /api/auth/register - User registration"
@@ -139,21 +139,84 @@ backend:
           agent: "testing"
           comment: "All scenarios passed: valid token success, invalid token 401, missing token 403"
 
+  - task: "POST /api/projects - Create project"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implementing project CRUD endpoints. POST creates a new project linked to authenticated user."
+
+  - task: "GET /api/projects - List user projects"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Lists all projects for the authenticated user, sorted by updated_at desc."
+
+  - task: "GET /api/projects/:id - Get single project"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Returns a single project by ID, verifies user ownership."
+
+  - task: "PATCH /api/projects/:id - Update project"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Updates project fields (name, code, status, messages). Verifies user ownership."
+
+  - task: "DELETE /api/projects/:id - Delete project"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Deletes project by ID, verifies user ownership."
+
 frontend:
   - task: "AuthContext - global auth state management"
     implemented: true
-    working: false
+    working: true
     file: "frontend/src/contexts/AuthContext.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created AuthContext with register, login, logout, session restore from JWT. Used in App.js wrapper."
         - working: false
           agent: "testing"
-          comment: "CRITICAL BUG: Error handling in register() and login() functions reads response body twice. Lines 51-52 and 65-66 call res.json() before checking res.ok, causing 'body stream already read' error. Users see technical error instead of proper messages like 'Email already registered' or 'Invalid email or password'. Backend correctly returns 409/401 with proper error messages, but frontend can't display them. FIX: Check res.ok FIRST, then parse error JSON separately."
+          comment: "CRITICAL BUG: Error handling in register() and login() functions reads response body twice."
+        - working: true
+          agent: "main"
+          comment: "Bug was already fixed by migrating from fetch to axios. Axios throws errors on non-2xx responses, and catch block correctly uses err.response?.data?.detail. No code change needed - the migration to axios resolved the double-read issue."
 
   - task: "AuthPage - real API calls for register/login"
     implemented: true
@@ -163,12 +226,9 @@ frontend:
     priority: "high"
     needs_retesting: false
     status_history:
-        - working: "NA"
-          agent: "main"
-          comment: "Updated AuthPage to use useAuth() for register/login. Added error display, loading state. Design preserved."
         - working: true
           agent: "testing"
-          comment: "AuthPage UI working correctly. All form fields, tabs, and error display functioning. Successfully integrates with AuthContext. Error messages are displayed (though showing wrong message due to AuthContext bug)."
+          comment: "AuthPage UI working correctly."
 
   - task: "App.js - AuthProvider wrapper and session restore"
     implemented: true
@@ -178,28 +238,37 @@ frontend:
     priority: "high"
     needs_retesting: false
     status_history:
-        - working: "NA"
-          agent: "main"
-          comment: "Wrapped app in AuthProvider, replaced manual user state with useAuth(), added loading screen, removed handleLogin/handleLogout."
         - working: true
           agent: "testing"
-          comment: "App.js working correctly. AuthProvider wrapper functioning, session restore working, loading screen displays during auth check, navigation between views working properly."
+          comment: "App.js working correctly."
+
+  - task: "Frontend Projects API integration - AppBuilder + LandingPage"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Replacing localStorage tasks with API calls. AppBuilder saves/loads projects from MongoDB via API. LandingPage shows user's real projects."
 
 metadata:
   created_by: "main_agent"
-  version: "1.0"
-  test_sequence: 3
+  version: "2.0"
+  test_sequence: 4
   run_ui: true
 
 test_plan:
   current_focus:
-    - "AuthContext - global auth state management"
+    - "Backend project CRUD endpoints"
+    - "AuthContext error handling verification"
+    - "Frontend projects API integration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     - agent: "main"
-      message: "Phase 1 frontend auth implemented. Please test the full auth flow in browser: 1) Go to landing page, click Sign in. 2) Register a new user with name/email/password. 3) Verify user is logged in (avatar visible in nav). 4) Refresh the page - verify session persists. 5) Try login with wrong password - verify error message. 6) Try register with duplicate email - verify error. The app URL is https://6365f16a-9c13-4c38-88d3-e4deb9c2ac9a.preview.emergentagent.com"
-    - agent: "testing"
-      message: "Completed full authentication flow testing. RESULTS: ✅ All core auth flows working (register, login, logout, session persistence). ✅ Backend auth endpoints working correctly (proper error codes and messages). ❌ CRITICAL BUG in AuthContext.jsx error handling - response body read twice causing wrong error messages to display. Users see 'Failed to execute json on Response: body stream already read' instead of 'Email already registered' or 'Invalid email or password'. Fix required in lines 45-56 and 59-71 of AuthContext.jsx."
+      message: "Phase 2 implementation: Added project CRUD backend endpoints and frontend integration. Also verified that auth error handling works correctly with axios (the fetch bug was already fixed). Please test: 1) All 5 project CRUD endpoints (POST, GET list, GET by id, PATCH, DELETE) with auth. 2) Verify auth error messages display correctly (register with duplicate email, login with wrong password). 3) Frontend project loading from API."

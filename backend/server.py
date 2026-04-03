@@ -82,6 +82,35 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
+class ProjectCreate(BaseModel):
+    name: str = "untitled-app"
+    prompt: str
+    type: str = "custom"  # todo, dashboard, ecommerce, custom
+    model: str = "gpt-4o"
+    mode: str = "S-1"
+
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = None
+    status: Optional[str] = None
+    code: Optional[str] = None
+    messages: Optional[list] = None
+    prompt: Optional[str] = None
+
+class ProjectResponse(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    user_id: str
+    name: str
+    prompt: str
+    type: str
+    status: str
+    code: str
+    messages: list
+    model: str
+    mode: str
+    created_at: str  # ISO string
+    updated_at: str  # ISO string
+
 # JWT Utility Functions
 def create_token(user_id: str) -> str:
     """Create a JWT token for the given user ID."""
@@ -254,6 +283,120 @@ async def get_status_checks():
             check['timestamp'] = datetime.fromisoformat(check['timestamp'])
     
     return status_checks
+
+# Project CRUD Endpoints
+@api_router.post("/projects", response_model=ProjectResponse)
+async def create_project(project_data: ProjectCreate, current_user: User = Depends(get_current_user)):
+    """Create a new project."""
+    # Generate UUID and timestamps
+    project_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc).isoformat()
+    
+    # Create project document
+    project_doc = {
+        "id": project_id,
+        "user_id": current_user.id,
+        "name": project_data.name,
+        "prompt": project_data.prompt,
+        "type": project_data.type,
+        "model": project_data.model,
+        "mode": project_data.mode,
+        "status": "created",
+        "code": "",
+        "messages": [],
+        "created_at": now,
+        "updated_at": now
+    }
+    
+    # Insert into database
+    await db.projects.insert_one(project_doc)
+    
+    # Return response
+    return ProjectResponse(**project_doc)
+
+@api_router.get("/projects", response_model=List[ProjectResponse])
+async def get_user_projects(current_user: User = Depends(get_current_user)):
+    """Get all projects for the current user."""
+    # Find projects by user_id, sorted by updated_at descending
+    projects = await db.projects.find(
+        {"user_id": current_user.id}, 
+        {"_id": 0}
+    ).sort("updated_at", -1).to_list(1000)
+    
+    return [ProjectResponse(**project) for project in projects]
+
+@api_router.get("/projects/{project_id}", response_model=ProjectResponse)
+async def get_project(project_id: str, current_user: User = Depends(get_current_user)):
+    """Get a single project by ID."""
+    # Find by id AND user_id (ownership check)
+    project_doc = await db.projects.find_one(
+        {"id": project_id, "user_id": current_user.id}, 
+        {"_id": 0}
+    )
+    
+    if not project_doc:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    return ProjectResponse(**project_doc)
+
+@api_router.patch("/projects/{project_id}", response_model=ProjectResponse)
+async def update_project(
+    project_id: str, 
+    project_update: ProjectUpdate, 
+    current_user: User = Depends(get_current_user)
+):
+    """Update a project."""
+    # Find by id AND user_id (ownership check)
+    existing_project = await db.projects.find_one(
+        {"id": project_id, "user_id": current_user.id}, 
+        {"_id": 0}
+    )
+    
+    if not existing_project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Build update document with only non-None fields
+    update_doc = {}
+    if project_update.name is not None:
+        update_doc["name"] = project_update.name
+    if project_update.status is not None:
+        update_doc["status"] = project_update.status
+    if project_update.code is not None:
+        update_doc["code"] = project_update.code
+    if project_update.messages is not None:
+        update_doc["messages"] = project_update.messages
+    if project_update.prompt is not None:
+        update_doc["prompt"] = project_update.prompt
+    
+    # Always update updated_at
+    update_doc["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    # Update in database
+    await db.projects.update_one(
+        {"id": project_id, "user_id": current_user.id},
+        {"$set": update_doc}
+    )
+    
+    # Return updated project
+    updated_project = await db.projects.find_one(
+        {"id": project_id, "user_id": current_user.id}, 
+        {"_id": 0}
+    )
+    
+    return ProjectResponse(**updated_project)
+
+@api_router.delete("/projects/{project_id}")
+async def delete_project(project_id: str, current_user: User = Depends(get_current_user)):
+    """Delete a project."""
+    # Find and delete by id AND user_id (ownership check)
+    result = await db.projects.delete_one(
+        {"id": project_id, "user_id": current_user.id}
+    )
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    return {"deleted": True}
 
 # Include the router in the main app
 app.include_router(api_router)
