@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Github } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
 
 function GoogleIcon() {
   return (
@@ -117,6 +118,9 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { register, login } = useAuth();
   const t = T[isDark ? "dark" : "light"];
 
   const inputStyle = {
@@ -137,17 +141,27 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
     caretColor: "#38bdf8",
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const userData = { name: name || email.split("@")[0], email };
-    if (onLogin) onLogin(userData);
-    onBack();
+    setError("");
+    setIsLoading(true);
+    try {
+      if (tab === "signup") {
+        await register(name || email.split("@")[0], email, password);
+      } else {
+        await login(email, password);
+      }
+      onBack();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSocial = (provider) => {
-    const userData = { name: provider + " User", email: `user@${provider.toLowerCase()}.com` };
-    if (onLogin) onLogin(userData);
-    onBack();
+    // For now, social auth will show an alert
+    alert(`${provider} authentication coming soon!`);
   };
 
   return (
@@ -379,9 +393,21 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
             />
           </div>
 
+          {error && (
+            <p data-testid="auth-error" style={{
+              color: "#f87171", fontSize: "13px", fontFamily: "'DM Sans', sans-serif",
+              textAlign: "center", marginBottom: 12, padding: "8px 12px",
+              background: "rgba(248,113,113,0.1)", borderRadius: "8px",
+              border: "1px solid rgba(248,113,113,0.2)"
+            }}>
+              {error}
+            </p>
+          )}
+
           <button
             data-testid="auth-submit"
             type="submit"
+            disabled={isLoading}
             style={{
               width: "100%",
               padding: "14px 0",
@@ -392,21 +418,26 @@ export default function AuthPage({ onBack, onLogin, isDark = true }) {
               fontWeight: 700,
               fontSize: "15px",
               border: "none",
-              cursor: "pointer",
+              cursor: isLoading ? "not-allowed" : "pointer",
               boxShadow: "0 4px 24px rgba(14,165,233,0.4), 0 0 0 1px rgba(56,189,248,0.2)",
               transition: "opacity 0.15s, box-shadow 0.15s",
               marginBottom: 18,
+              opacity: isLoading ? 0.7 : 1,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = "0.9";
-              e.currentTarget.style.boxShadow = "0 8px 32px rgba(14,165,233,0.5), 0 0 0 1px rgba(56,189,248,0.3)";
+              if (!isLoading) {
+                e.currentTarget.style.opacity = "0.9";
+                e.currentTarget.style.boxShadow = "0 8px 32px rgba(14,165,233,0.5), 0 0 0 1px rgba(56,189,248,0.3)";
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = "1";
-              e.currentTarget.style.boxShadow = "0 4px 24px rgba(14,165,233,0.4), 0 0 0 1px rgba(56,189,248,0.2)";
+              if (!isLoading) {
+                e.currentTarget.style.opacity = "1";
+                e.currentTarget.style.boxShadow = "0 4px 24px rgba(14,165,233,0.4), 0 0 0 1px rgba(56,189,248,0.2)";
+              }
             }}
           >
-            {tab === "signup" ? "Create account" : "Sign in"}
+            {isLoading ? "Please wait..." : (tab === "signup" ? "Create account" : "Sign in")}
           </button>
         </form>
 

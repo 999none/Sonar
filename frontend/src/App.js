@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import LandingPage from "./components/LandingPage";
 import AppBuilder from "./components/AppBuilder";
 import AuthPage from "./components/AuthPage";
@@ -19,7 +20,7 @@ function SonarApp() {
   const [view, setView] = useState("landing");
   const [initialPrompt, setInitialPrompt] = useState("");
   const [initialTask, setInitialTask] = useState(null);
-  const [user, setUser] = useState(null);
+  const { user, logout, loading } = useAuth();
   const [isDark, setIsDark] = useState(() => {
     try { return localStorage.getItem("sonar-theme") === "dark"; } catch { return false; }
   });
@@ -39,14 +40,6 @@ function SonarApp() {
       return DEMO_TASKS;
     } catch { return DEMO_TASKS; }
   });
-
-  const handleLogin = (userData) => {
-    setUser(userData);
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-  };
 
   const handleStart = (prompt, model, mode, attachedFiles = []) => {
     setInitialTask(null);
