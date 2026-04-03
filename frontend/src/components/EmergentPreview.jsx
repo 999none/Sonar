@@ -742,11 +742,58 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-hidden relative">
+      <div className="flex-1 overflow-hidden relative" style={{
+        background: !isDark && (isGenerating || !previewReady) 
+          ? "linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #B0E7FF 100%)" 
+          : "transparent"
+      }}>
+        
+        {/* Sky/Water overlay for light mode loading ONLY */}
+        {!isDark && (isGenerating || !previewReady) && (
+          <>
+            {/* Sun */}
+            <div style={{
+              position: "absolute",
+              top: "15%",
+              right: "20%",
+              width: "120px",
+              height: "120px",
+              borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(255,223,100,0.9) 0%, rgba(255,200,50,0.4) 70%, transparent 100%)",
+              zIndex: 0,
+            }} />
+            
+            {/* Water reflection */}
+            <div style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: "50%",
+              background: "linear-gradient(to bottom, rgba(135,206,235,0.3) 0%, rgba(100,180,220,0.5) 100%)",
+              zIndex: 0,
+            }} />
+          </>
+        )}
+
         <AnimatePresence mode="wait">
           {isGenerating || !previewReady ? (
-            <motion.div key="spinning" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-              <SpinningUpState projectName={projectName} isDark={isDark} />
+            <motion.div 
+              key="generation-preview" 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }} 
+              className="h-full relative" 
+              style={{ zIndex: 1 }}
+            >
+              <GenerationPreview 
+                prompt="Build a beautiful todo app with priority levels, due dates, and categories"
+                modelName="Sonar"
+                provider="Emergent AI"
+                onGenerate={() => {}}
+                onCancel={() => {}}
+                isDark={isDark}
+              />
             </motion.div>
           ) : PreviewComp ? (
             <motion.div key={`${projectType}-${refreshKey}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
