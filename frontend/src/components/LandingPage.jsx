@@ -338,6 +338,7 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
     return localStorage.getItem("sonar-profile-photo") || null;
   });
   const [showGitHubModal, setShowGitHubModal] = useState(false);
+  const [isRepoConnected, setIsRepoConnected] = useState(false);
   const T = THEMES[isDark ? "dark" : "light"];
 
   const handleProfilePhotoChange = (photoUrl) => {
@@ -1003,29 +1004,50 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                 <button
                   data-testid="landing-btn-github"
                   onClick={() => setShowGitHubModal(true)}
-                  className="flex items-center gap-1 rounded-full transition-all"
+                  className="flex items-center gap-1 rounded-full transition-all relative"
                   title="Github"
                   style={{
                     height: 32,
                     padding: "0 10px",
                     fontSize: "11px",
-                    color: isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)",
-                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)",
-                    border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)",
+                    color: isRepoConnected ? "#10b981" : (isDark ? "rgba(180,200,230,0.8)" : "rgba(30,60,120,0.75)"),
+                    background: isRepoConnected ? "rgba(16,185,129,0.15)" : (isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)"),
+                    border: isRepoConnected ? "1px solid rgba(16,185,129,0.3)" : (isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(255,255,255,0.5)"),
                     backdropFilter: "blur(8px)",
                     cursor: "pointer",
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.75)";
-                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.18)" : "rgba(100,160,240,0.35)";
+                    if (isRepoConnected) {
+                      e.currentTarget.style.background = "rgba(16,185,129,0.25)";
+                      e.currentTarget.style.borderColor = "rgba(16,185,129,0.4)";
+                    } else {
+                      e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.75)";
+                      e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.18)" : "rgba(100,160,240,0.35)";
+                    }
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)";
-                    e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
+                    if (isRepoConnected) {
+                      e.currentTarget.style.background = "rgba(16,185,129,0.15)";
+                      e.currentTarget.style.borderColor = "rgba(16,185,129,0.3)";
+                    } else {
+                      e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)";
+                      e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.5)";
+                    }
                   }}
                 >
                   <Github style={{ width: 14, height: 14 }} />
                   <ChevronDown style={{ width: 10, height: 10 }} />
+                  {isRepoConnected && (
+                    <span style={{
+                      position: "absolute",
+                      top: -3, right: -3,
+                      width: 10, height: 10,
+                      borderRadius: "50%",
+                      background: "#10b981",
+                      border: "2px solid " + (isDark ? "#060c14" : "#f0f9ff"),
+                      boxShadow: "0 0 8px rgba(16, 185, 129, 0.5)",
+                    }} />
+                  )}
                 </button>
 
                 <span style={{ color: T.text3, fontSize: "12px" }}>·</span>

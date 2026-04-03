@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Github, Lock, Globe, ChevronDown, Check, ChevronUp, Plus } from "lucide-react";
 
-export default function GitHubModal({ open, onClose, isDark = true }) {
+export default function GitHubModal({ open, onClose, isDark = true, onRepoSelected }) {
   const [activeTab, setActiveTab] = useState("private"); // "private" or "public"
   const [selectedRepo, setSelectedRepo] = useState("");
   const [selectedBranch, setSelectedBranch] = useState("");
@@ -437,6 +437,14 @@ export default function GitHubModal({ open, onClose, isDark = true }) {
                           onChange={(e) => {
                             setRepoInputValue(e.target.value);
                             setSelectedRepo("");
+                            // Si l'utilisateur efface l'input, retirer le badge
+                            if (!e.target.value && onRepoSelected) onRepoSelected(false);
+                          }}
+                          onBlur={(e) => {
+                            // Si un lien valide est collé, activer le badge
+                            if (e.target.value.includes('github.com') && onRepoSelected) {
+                              onRepoSelected(true);
+                            }
                           }}
                           style={{
                             flex: 1,
@@ -499,7 +507,9 @@ export default function GitHubModal({ open, onClose, isDark = true }) {
                                 onClick={() => { 
                                   setSelectedRepo(repo.name); 
                                   setRepoInputValue("");
-                                  setShowRepoDropdown(false); 
+                                  setShowRepoDropdown(false);
+                                  // Notifier le parent qu'un repo a été sélectionné
+                                  if (onRepoSelected) onRepoSelected(true);
                                 }}
                                 style={{
                                   width: "100%",
