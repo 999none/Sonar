@@ -91,7 +91,6 @@ export default function GitHubModal({ open, onClose, isDark = true }) {
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1201,
-            pointerEvents: "none",
           }}>
             <motion.div
               initial={{ opacity: 0, scale: 0.96, y: 20 }}
