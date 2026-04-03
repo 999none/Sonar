@@ -905,21 +905,3 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
     </div>
   );
 }
-ight={32} style={{ objectFit:"contain", opacity:0.5 }} />
-                </div>
-                <p style={{ fontSize:13, color:"rgba(100,120,150,0.6)", fontFamily:"'Manrope',sans-serif" }}>Start building to see the preview</p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Coder Modal */}
-        <AnimatePresence>
-          {showCoderModal && (
-            <CoderModal onClose={handleCloseCoder} projectName={projectName} isDark={isDark} />
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-}
