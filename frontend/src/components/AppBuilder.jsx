@@ -73,11 +73,14 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
         });
         taskId = project.id;
         const newTask = projectToTask(project);
-        setTasks(prev => {
-          const updated = [newTask, ...prev.filter(t => t.id !== taskId)];
-          onTasksChange?.(updated);
-          return updated;
-        });
+        setTasks(prev => [newTask, ...prev.filter(t => t.id !== taskId)]);
+        // Notify parent after state update
+        setTimeout(() => {
+          setTasks(current => {
+            onTasksChange?.(current);
+            return current;
+          });
+        }, 0);
         setActiveTaskId(taskId);
         return taskId;
       } catch (err) {
@@ -88,11 +91,13 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
 
     // Fallback for unauthenticated users
     const newTask = { id: taskId, projectType: type, projectName: name, prompt, timestamp: Date.now() };
-    setTasks(prev => {
-      const updated = [newTask, ...prev.filter(t => t.id !== taskId)];
-      onTasksChange?.(updated);
-      return updated;
-    });
+    setTasks(prev => [newTask, ...prev.filter(t => t.id !== taskId)]);
+    setTimeout(() => {
+      setTasks(current => {
+        onTasksChange?.(current);
+        return current;
+      });
+    }, 0);
     setActiveTaskId(taskId);
     return taskId;
   };
@@ -264,15 +269,30 @@ export default function AppBuilder({ initialPrompt, initialTask, onReset, extern
   };
 
   const handleCloseTask = async (taskId) => {
+    let shouldReset = false;
+    let nextTask = null;
+    
     setTasks(prev => {
       const updated = prev.filter(t => t.id !== taskId);
-      onTasksChange?.(updated);
       if (taskId === activeTaskId) {
-        if (updated.length > 0) handleSelectTask(updated[0]);
-        else handleReset();
+        if (updated.length > 0) {
+          nextTask = updated[0];
+        } else {
+          shouldReset = true;
+        }
       }
       return updated;
     });
+    
+    // Handle navigation after state update
+    setTimeout(() => {
+      setTasks(current => {
+        onTasksChange?.(current);
+        return current;
+      });
+      if (nextTask) handleSelectTask(nextTask);
+      if (shouldReset) handleReset();
+    }, 0);
 
     // Delete from API if authenticated and not a local task
     if (user && token && !taskId.startsWith("task-") && !taskId.startsWith("demo-")) {
