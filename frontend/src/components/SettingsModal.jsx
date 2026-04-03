@@ -205,30 +205,38 @@ export default function SettingsModal({ open, onClose, user, isDark, onToggleThe
           />
 
           {/* Modal */}
-          <motion.div
-            key="settings-modal"
-            data-testid="settings-modal"
-            initial={{ opacity: 0, scale: 0.96, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 20 }}
-            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+          <div
             style={{
               position: "fixed",
-              top: "50%", left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "90%", maxWidth: "920px",
-              height: "85vh", maxHeight: "680px",
-              background: t.modalBg,
-              backdropFilter: "blur(60px)",
-              WebkitBackdropFilter: "blur(60px)",
-              border: t.modalBorder,
-              borderRadius: "24px",
-              boxShadow: t.modalShadow,
-              zIndex: 1101,
-              overflow: "hidden",
+              top: 0, left: 0, right: 0, bottom: 0,
               display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1101,
+              pointerEvents: "none",
             }}
           >
+            <motion.div
+              key="settings-modal"
+              data-testid="settings-modal"
+              initial={{ opacity: 0, scale: 0.96, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 20 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                width: "90%", maxWidth: "920px",
+                height: "85vh", maxHeight: "680px",
+                background: t.modalBg,
+                backdropFilter: "blur(60px)",
+                WebkitBackdropFilter: "blur(60px)",
+                border: t.modalBorder,
+                borderRadius: "24px",
+                boxShadow: t.modalShadow,
+                overflow: "hidden",
+                display: "flex",
+                pointerEvents: "all",
+              }}
+            >
             {/* Sidebar */}
             <div
               style={{
@@ -662,7 +670,8 @@ export default function SettingsModal({ open, onClose, user, isDark, onToggleThe
 
               </div>
             </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
