@@ -445,8 +445,9 @@ function GreenPulseLoading({ projectName }) {
         style={{
           color: "rgba(16,185,129,0.8)",
           fontSize: "14px",
-          fontFamily: "'Manrope',sans-serif",
-          fontWeight: 500,
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontWeight: 600,
+          letterSpacing: "-0.01em",
           marginTop: 40,
         }}
       >
@@ -473,7 +474,7 @@ function SpinningUpState({ projectName }) {
         </motion.div>
 
         <div className="text-center">
-          <p style={{ color: "rgba(180,200,220,0.7)", fontSize: "13px", fontFamily: "'Manrope',sans-serif", marginBottom: 4 }}>
+          <p style={{ color: "rgba(180,200,220,0.7)", fontSize: "13px", fontFamily: "'DM Sans', sans-serif", fontWeight: 400, letterSpacing: "0.01em", marginBottom: 4 }}>
             One-click deploy with custom domains
           </p>
         </div>
@@ -488,8 +489,9 @@ function SpinningUpState({ projectName }) {
             border: "1px solid rgba(6,182,212,0.35)",
             color: "#06b6d4",
             fontSize: "13px",
-            fontFamily: "'Manrope',sans-serif",
-            fontWeight: 500,
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontWeight: 600,
+            letterSpacing: "-0.01em",
           }}
         >
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}

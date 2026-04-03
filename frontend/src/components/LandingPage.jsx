@@ -165,8 +165,19 @@ function TaskCard({ task, onSelect, onClose, T = THEMES.dark }) {
       }}
     >
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${color}, transparent)`, opacity: hovered ? 1 : 0.5, transition: "opacity 0.2s" }} />
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 6 }}>
-        <p style={{ fontSize: "13px", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, color: T.text1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "78%" }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 5 }}>
+        <p style={{
+          fontSize: "13.5px",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontWeight: 700,
+          letterSpacing: "-0.02em",
+          color: T.text1,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          maxWidth: "78%",
+          lineHeight: 1.2,
+        }}>
           {task.projectName}
         </p>
         <button
@@ -177,12 +188,39 @@ function TaskCard({ task, onSelect, onClose, T = THEMES.dark }) {
           <X style={{ width: 10, height: 10 }} />
         </button>
       </div>
-      <p style={{ fontSize: "11px", color: T.labelColor, fontFamily: "'DM Sans',sans-serif", lineHeight: 1.55, marginBottom: 10, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+      <p style={{
+        fontSize: "11.5px",
+        color: T.labelColor,
+        fontFamily: "'DM Sans', sans-serif",
+        fontWeight: 400,
+        lineHeight: 1.6,
+        marginBottom: 10,
+        display: "-webkit-box",
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+        letterSpacing: "0.005em",
+      }}>
         {task.prompt}
       </p>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ fontSize: "10px", color, background: `${color}18`, padding: "2px 8px", borderRadius: 99, fontFamily: "'DM Sans',sans-serif", fontWeight: 500 }}>{label}</span>
-        <span style={{ fontSize: "10px", color: T.labelColor, fontFamily: "'DM Sans',sans-serif" }}>{relativeTime(task.timestamp)}</span>
+        <span style={{
+          fontSize: "10px",
+          color,
+          background: `${color}18`,
+          padding: "2px 8px",
+          borderRadius: 99,
+          fontFamily: "'Manrope', sans-serif",
+          fontWeight: 600,
+          letterSpacing: "0.02em",
+        }}>{label}</span>
+        <span style={{
+          fontSize: "10px",
+          color: T.labelColor,
+          fontFamily: "'DM Sans', sans-serif",
+          fontWeight: 400,
+          letterSpacing: "0.01em",
+        }}>{relativeTime(task.timestamp)}</span>
       </div>
     </motion.div>
   );
@@ -1266,7 +1304,14 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           >
             <div className="flex items-center gap-2 mb-3">
               <Clock style={{ width: 9, height: 9, color: T.labelColor }} />
-              <span style={{ fontSize: "10px", color: T.labelColor, fontFamily: "'DM Sans',sans-serif", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.09em" }}>
+              <span style={{
+                fontSize: "10px",
+                color: T.labelColor,
+                fontFamily: "'Manrope', sans-serif",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.1em",
+              }}>
                 Projets récents
               </span>
             </div>

@@ -29,8 +29,9 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
       ? (dk ? "#e2e8f0" : "#0a1a3e")
       : (dk ? "rgba(100,116,139,0.6)" : "rgba(40,70,130,0.5)"),
     fontSize: "12px",
-    fontFamily: "'Manrope', sans-serif",
-    fontWeight: 500,
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    fontWeight: active ? 600 : 500,
+    letterSpacing: "-0.01em",
     cursor: "pointer",
     transition: "all 0.15s",
   });
@@ -56,7 +57,7 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
         onMouseLeave={e => e.currentTarget.style.color = dk ? "rgba(180,195,215,0.7)" : "rgba(30,60,120,0.6)"}
       >
         <LayoutGrid style={{ width: 14, height: 14 }} />
-        <span style={{ fontSize: "13px", fontFamily: "'Manrope', sans-serif", fontWeight: 500 }}>Home</span>
+        <span style={{ fontSize: "13px", fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600, letterSpacing: "-0.01em" }}>Home</span>
       </button>
 
       {/* Center — absolute positioned for true centering */}
@@ -71,7 +72,13 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
             pointerEvents: "none",
           }}
         >
-          <span style={{ fontSize: "13px", color: dk ? "rgba(180,195,215,0.75)" : "#1e3264", fontFamily: "'Space Grotesk', 'Manrope', sans-serif", fontWeight: 600 }}>
+          <span style={{
+            fontSize: "13.5px",
+            color: dk ? "rgba(200,215,235,0.85)" : "#1e3264",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontWeight: 700,
+            letterSpacing: "-0.02em",
+          }}>
             {projectName}
           </span>
           {isGenerating && (
@@ -81,7 +88,7 @@ export default function TopBar({ isGenerating, onDeploy, onShare, onHome, projec
               className="flex items-center gap-1"
             >
               <Zap style={{ width: 11, height: 11, color: "#4ade80" }} />
-              <span style={{ fontSize: "11px", color: "rgba(74,222,128,0.7)", fontFamily: "'Manrope',sans-serif" }}>
+              <span style={{ fontSize: "11px", color: "rgba(74,222,128,0.7)", fontFamily: "'DM Sans', sans-serif", fontWeight: 500, letterSpacing: "0.01em" }}>
                 generating
               </span>
             </motion.div>
