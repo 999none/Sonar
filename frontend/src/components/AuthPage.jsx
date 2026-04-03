@@ -113,7 +113,7 @@ const T = {
   },
 };
 
-export default function AuthPage({ onBack, onLogin, isDark = true }) {
+export default function AuthPage({ onBack, isDark = true }) {
   const [tab, setTab] = useState("signup");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

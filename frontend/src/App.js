@@ -68,8 +68,32 @@ function SonarApp() {
     setView("landing");
   };
 
+  // Show loading screen while restoring auth session
+  if (loading) {
+    return (
+      <div style={{
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: isDark ? "#060c14" : "linear-gradient(135deg, #7cc0e6 0%, #a8d4ef 100%)",
+      }}>
+        <span style={{
+          fontFamily: "'Outfit', sans-serif",
+          fontWeight: 900,
+          fontSize: "2rem",
+          letterSpacing: "-0.05em",
+          color: isDark ? "#fff" : "#0a2a5e",
+          opacity: 0.6,
+        }}>
+          sonar
+        </span>
+      </div>
+    );
+  }
+
   if (view === "auth") {
-    return <AuthPage onBack={() => setView("landing")} onLogin={handleLogin} isDark={isDark} />;
+    return <AuthPage onBack={() => setView("landing")} isDark={isDark} />;
   }
 
   if (view === "builder") {
@@ -94,8 +118,7 @@ function SonarApp() {
       onCloseTask={handleCloseTaskFromHome}
       onShowAuth={() => setView("auth")}
       user={user}
-      onLogin={handleLogin}
-      onLogout={handleLogout}
+      onLogout={logout}
       isDark={isDark}
       onToggleTheme={handleToggleTheme}
     />
@@ -104,11 +127,13 @@ function SonarApp() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/*" element={<SonarApp />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/*" element={<SonarApp />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
