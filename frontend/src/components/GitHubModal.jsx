@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Github, Lock, Globe, ChevronDown, Check } from "lucide-react";
+import { X, Github, Lock, Globe, ChevronDown, Check, ChevronUp, Plus } from "lucide-react";
 
 export default function GitHubModal({ open, onClose, isDark = true }) {
   const [activeTab, setActiveTab] = useState("private"); // "private" or "public"
@@ -8,10 +8,12 @@ export default function GitHubModal({ open, onClose, isDark = true }) {
   const [selectedBranch, setSelectedBranch] = useState("");
   const [showRepoDropdown, setShowRepoDropdown] = useState(false);
   const [showBranchDropdown, setShowBranchDropdown] = useState(false);
+  const [isGithubConnected, setIsGithubConnected] = useState(true); // Simule connexion GitHub
+  const [orgExpanded, setOrgExpanded] = useState(false);
 
   // Mock data - À remplacer par de vraies données GitHub plus tard
   const connectedOrgs = [
-    { id: 1, name: "999none", connected: true }
+    { id: 1, name: "networkchannel", role: "Collaborator", connected: true }
   ];
 
   const repos = [
@@ -224,57 +226,175 @@ export default function GitHubModal({ open, onClose, isDark = true }) {
                     </p>
                   </div>
 
-                  {connectedOrgs.map(org => (
-                    <div
-                      key={org.id}
-                      style={{
-                        padding: "14px 16px",
-                        borderRadius: "12px",
-                        background: colors.orgBg,
-                        border: colors.orgBorder,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <span style={{
+                  {!isGithubConnected ? (
+                    <div style={{
+                      padding: "20px",
+                      borderRadius: "12px",
+                      background: colors.orgBg,
+                      border: colors.orgBorder,
+                      textAlign: "center",
+                    }}>
+                      <p style={{
                         fontFamily: "'DM Sans', sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 500,
+                        fontSize: "13px",
                         color: colors.orgText,
+                        marginBottom: 16,
                       }}>
-                        {org.name}
-                      </span>
+                        Connectez-vous à Github pour obtenir l'accès direct à vos repo
+                      </p>
+                      <button
+                        onClick={() => setIsGithubConnected(true)}
+                        style={{
+                          padding: "10px 20px",
+                          borderRadius: "10px",
+                          border: "none",
+                          background: "linear-gradient(90deg, #38bdf8, #0ea5e9)",
+                          color: "#000",
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: "13px",
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 8,
+                        }}
+                      >
+                        <Github style={{ width: 14, height: 14 }} />
+                        Se connecter à GitHub
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      {connectedOrgs.map(org => (
+                        <div key={org.id} style={{ marginBottom: 12 }}>
+                          <div
+                            onClick={() => setOrgExpanded(v => !v)}
+                            style={{
+                              padding: "14px 16px",
+                              borderRadius: "12px",
+                              background: colors.orgBg,
+                              border: colors.orgBorder,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <span style={{
+                              fontFamily: "'DM Sans', sans-serif",
+                              fontSize: "14px",
+                              fontWeight: 500,
+                              color: colors.orgText,
+                            }}>
+                              {org.name}
+                            </span>
 
-                      {org.connected && (
-                        <div style={{
+                            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                              {org.connected && (
+                                <div style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 6,
+                                  padding: "4px 12px",
+                                  borderRadius: "8px",
+                                  background: colors.connectedBadgeBg,
+                                  border: colors.connectedBadgeBorder,
+                                }}>
+                                  <div style={{
+                                    width: 6,
+                                    height: 6,
+                                    borderRadius: "50%",
+                                    background: colors.connectedBadgeText,
+                                  }} />
+                                  <span style={{
+                                    fontFamily: "'DM Sans', sans-serif",
+                                    fontSize: "11px",
+                                    fontWeight: 600,
+                                    color: colors.connectedBadgeText,
+                                  }}>
+                                    Connected
+                                  </span>
+                                </div>
+                              )}
+                              <ChevronUp style={{
+                                width: 16,
+                                height: 16,
+                                color: colors.sectionTitle,
+                                transform: orgExpanded ? "rotate(0deg)" : "rotate(180deg)",
+                                transition: "transform 0.2s",
+                              }} />
+                            </div>
+                          </div>
+
+                          <AnimatePresence>
+                            {orgExpanded && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                style={{
+                                  marginTop: 8,
+                                  padding: "12px 16px",
+                                  borderRadius: "12px",
+                                  background: dk ? "rgba(14,165,233,0.08)" : "rgba(14,165,233,0.06)",
+                                  border: dk ? "1px solid rgba(14,165,233,0.2)" : "1px solid rgba(14,165,233,0.15)",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <div>
+                                  <p style={{
+                                    fontFamily: "'DM Sans', sans-serif",
+                                    fontSize: "13px",
+                                    fontWeight: 600,
+                                    color: "#38bdf8",
+                                    marginBottom: 2,
+                                  }}>
+                                    {org.name}
+                                  </p>
+                                  <p style={{
+                                    fontFamily: "'DM Sans', sans-serif",
+                                    fontSize: "11px",
+                                    color: dk ? "rgba(140,160,200,0.6)" : "rgba(40,70,130,0.6)",
+                                  }}>
+                                    {org.role}
+                                  </p>
+                                </div>
+                                <Check style={{ width: 16, height: 16, color: "#38bdf8" }} />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ))}
+
+                      {/* Bouton ajouter organisation */}
+                      <button
+                        style={{
+                          width: "100%",
+                          padding: "12px 16px",
+                          borderRadius: "12px",
+                          border: colors.orgBorder,
+                          background: "transparent",
                           display: "flex",
                           alignItems: "center",
-                          gap: 6,
-                          padding: "4px 12px",
-                          borderRadius: "8px",
-                          background: colors.connectedBadgeBg,
-                          border: colors.connectedBadgeBorder,
-                        }}>
-                          <div style={{
-                            width: 6,
-                            height: 6,
-                            borderRadius: "50%",
-                            background: colors.connectedBadgeText,
-                          }} />
-                          <span style={{
-                            fontFamily: "'DM Sans', sans-serif",
-                            fontSize: "11px",
-                            fontWeight: 600,
-                            color: colors.connectedBadgeText,
-                          }}>
-                            Connected
-                          </span>
-                          <Check style={{ width: 12, height: 12, color: colors.connectedBadgeText }} />
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                          gap: 8,
+                          cursor: "pointer",
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          color: "#10b981",
+                          transition: "all 0.15s",
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = colors.orgBg}
+                        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                      >
+                        <Plus style={{ width: 14, height: 14 }} />
+                        Ajouter de nouvelles organisations GitHub
+                      </button>
+                    </>
+                  )}
                 </div>
 
                 {/* Sélecteurs */}

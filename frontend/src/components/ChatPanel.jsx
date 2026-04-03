@@ -22,23 +22,30 @@ function SonarAvatar({ size = 24 }) {
 /* ── User message ── */
 function UserMsg({ content, isNew, isDark }) {
   return (
-    <motion.div initial={isNew ? { opacity: 0, y: 8 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22 }} className="mb-5">
-      <div className="text-sm leading-relaxed px-4 py-3 rounded-2xl"
-        style={{
-          background: isDark ? "rgba(22,101,78,0.5)" : "rgba(255,255,255,0.5)",
-          backdropFilter: isDark ? "none" : "blur(12px)",
-          WebkitBackdropFilter: isDark ? "none" : "blur(12px)",
-          border: isDark ? "1px solid rgba(34,197,94,0.13)" : "1px solid rgba(255,255,255,0.6)",
-          boxShadow: isDark ? "none" : "0 2px 12px rgba(20,80,160,0.06), inset 0 1px 0 rgba(255,255,255,0.7)",
-          color: isDark ? "#dff5ea" : "#0a2a4e",
-          fontFamily: "'Manrope',sans-serif",
-          lineHeight: 1.65,
-        }}>
-        {content}
+    <motion.div 
+      initial={isNew ? { opacity: 0, y: 8 } : false} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.22 }} 
+      className="mb-5 flex justify-end"
+    >
+      <div style={{ maxWidth: "75%", width: "fit-content" }}>
+        <div className="text-sm leading-relaxed px-4 py-3 rounded-2xl"
+          style={{
+            background: isDark ? "rgba(22,101,78,0.5)" : "rgba(255,255,255,0.5)",
+            backdropFilter: isDark ? "none" : "blur(12px)",
+            WebkitBackdropFilter: isDark ? "none" : "blur(12px)",
+            border: isDark ? "1px solid rgba(34,197,94,0.13)" : "1px solid rgba(255,255,255,0.6)",
+            boxShadow: isDark ? "none" : "0 2px 12px rgba(20,80,160,0.06), inset 0 1px 0 rgba(255,255,255,0.7)",
+            color: isDark ? "#dff5ea" : "#0a2a4e",
+            fontFamily: "'Manrope',sans-serif",
+            lineHeight: 1.65,
+          }}>
+          {content}
+        </div>
+        <p className="text-right mt-1 pr-1" style={{ fontSize: "11px", color: isDark ? "rgba(80,110,90,0.55)" : "rgba(40,80,140,0.4)", fontFamily: "'Manrope',sans-serif" }}>
+          {formatTime()}
+        </p>
       </div>
-      <p className="text-right mt-1 pr-1" style={{ fontSize: "11px", color: isDark ? "rgba(80,110,90,0.55)" : "rgba(40,80,140,0.4)", fontFamily: "'Manrope',sans-serif" }}>
-        {formatTime()}
-      </p>
     </motion.div>
   );
 }

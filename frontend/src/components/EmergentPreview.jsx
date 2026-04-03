@@ -39,7 +39,69 @@ function MatrixBg() {
   );
 }
 
-// ── Spinning up loading state ──
+// ── Green pulse loading state (nouveau design) ──
+function GreenPulseLoading({ projectName }) {
+  return (
+    <div className="flex flex-col items-center justify-center h-full relative">
+      {/* Background radial gradient */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          background: "radial-gradient(circle at center, rgba(16,185,129,0.08) 0%, transparent 70%)",
+        }}
+      />
+      
+      {/* Central green dot with glow */}
+      <div className="relative z-10">
+        <motion.div
+          animate={{
+            boxShadow: [
+              "0 0 40px rgba(16,185,129,0.4), 0 0 80px rgba(16,185,129,0.2)",
+              "0 0 60px rgba(16,185,129,0.6), 0 0 120px rgba(16,185,129,0.3)",
+              "0 0 40px rgba(16,185,129,0.4), 0 0 80px rgba(16,185,129,0.2)",
+            ],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="w-24 h-24 rounded-full"
+          style={{
+            background: "radial-gradient(circle, #10b981 0%, #059669 100%)",
+          }}
+        />
+        
+        {/* Outer pulse ring */}
+        <motion.div
+          animate={{
+            scale: [1, 1.8, 1],
+            opacity: [0.4, 0, 0.4],
+          }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+          className="absolute inset-0 rounded-full"
+          style={{
+            border: "2px solid #10b981",
+          }}
+        />
+      </div>
+      
+      {/* Status text */}
+      <motion.p
+        animate={{ opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 1.5, repeat: Infinity }}
+        style={{
+          color: "rgba(16,185,129,0.8)",
+          fontSize: "14px",
+          fontFamily: "'Manrope',sans-serif",
+          fontWeight: 500,
+          marginTop: 40,
+        }}
+      >
+        Building {projectName}...
+      </motion.p>
+    </div>
+  );
+}
+
+// ── Spinning up loading state (ancien design - conservé pour compatibilité) ──
 function SpinningUpState({ projectName }) {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-6">
@@ -458,7 +520,7 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
         <AnimatePresence mode="wait">
           {isGenerating || !previewReady ? (
             <motion.div key="spinning" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-              <SpinningUpState projectName={projectName} />
+              <GreenPulseLoading projectName={projectName} />
             </motion.div>
           ) : PreviewComp ? (
             <motion.div key={`${projectType}-${refreshKey}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
