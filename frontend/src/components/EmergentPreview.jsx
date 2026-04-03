@@ -40,7 +40,7 @@ function MatrixBg() {
 }
 
 // ── Generation Preview (avant génération) ──
-function GenerationPreview({ prompt, modelName = "ChatGPT", provider = "OpenAI", onGenerate, onCancel, isDark = true }) {
+function GenerationPreview({ prompt, modelName = "ChatGPT", provider = "OpenAI", mode = "S-1", attachedFiles = [], onGenerate, onCancel, isDark = true }) {
   const [loadingSteps, setLoadingSteps] = useState([
     { id: 1, text: "Loading cloud environment", done: true },
     { id: 2, text: "Allocating resources", done: true },
@@ -172,7 +172,7 @@ function GenerationPreview({ prompt, modelName = "ChatGPT", provider = "OpenAI",
           borderRadius: "16px",
           background: colors.promptBg,
           border: colors.promptBorder,
-          marginBottom: 32,
+          marginBottom: attachedFiles.length > 0 ? 16 : 32,
         }}>
           <p style={{
             fontFamily: "'DM Sans', sans-serif",
@@ -183,6 +183,132 @@ function GenerationPreview({ prompt, modelName = "ChatGPT", provider = "OpenAI",
             {prompt || "Build a todo app with priorit..."}
           </p>
         </div>
+
+        {/* Fichiers attachés */}
+        {attachedFiles.length > 0 && (
+          <div style={{
+            display: "flex",
+            gap: 10,
+            flexWrap: "wrap",
+            marginBottom: 32,
+          }}>
+            {attachedFiles.map((file, index) => {
+              const isImage = file.type?.startsWith('image/');
+              const isVideo = file.type?.startsWith('video/');
+              const preview = isImage ? URL.createObjectURL(file) : null;
+              
+              // Fonction pour obtenir l'icône selon le type de fichier
+              const getFileIcon = (file) => {
+                if (isVideo) return '▶';
+                if (file.type?.startsWith('audio/')) return '♪';
+                if (file.type?.includes('pdf')) return '📄';
+                if (file.type?.includes('zip') || file.type?.includes('compressed')) return '📦';
+                if (file.type?.includes('text') || file.name?.endsWith('.js') || file.name?.endsWith('.jsx')) return '{}';
+                return '📎';
+              };
+              
+              const formatFileSize = (bytes) => {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+              };
+              
+              return (
+                <div
+                  key={index}
+                  style={{
+                    position: "relative",
+                    width: "90px",
+                    background: isDark ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.06)",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                    border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(80,120,200,0.18)",
+                  }}
+                >
+                  {/* Preview thumbnail */}
+                  <div style={{
+                    width: "100%",
+                    height: "90px",
+                    background: preview 
+                      ? `url(${preview}) center/cover` 
+                      : (isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)"),
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                  }}>
+                    {!preview && (
+                      <span style={{
+                        fontSize: isVideo ? "28px" : "24px",
+                        color: isVideo ? "#ef4444" : (isDark ? "rgba(200,220,245,0.6)" : "rgba(40,70,130,0.5)"),
+                        background: isVideo ? "rgba(239,68,68,0.15)" : (isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"),
+                        width: isVideo ? "42px" : "auto",
+                        height: isVideo ? "42px" : "auto",
+                        borderRadius: isVideo ? "10px" : "0",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: isVideo ? "0" : "6px",
+                      }}>
+                        {getFileIcon(file)}
+                      </span>
+                    )}
+                    {isVideo && preview && (
+                      <div style={{
+                        position: "absolute",
+                        inset: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "rgba(0,0,0,0.3)",
+                      }}>
+                        <div style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "6px",
+                          background: "#ef4444",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#fff",
+                          fontSize: "14px",
+                        }}>
+                          ▶
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* File info */}
+                  <div style={{
+                    padding: "6px 7px",
+                    background: isDark ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.08)",
+                  }}>
+                    <p style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "10px",
+                      fontWeight: 500,
+                      color: isDark ? "rgba(220,235,250,0.9)" : "#0a1a3e",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      marginBottom: "1px",
+                    }}>
+                      {file.name}
+                    </p>
+                    <p style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "9px",
+                      color: isDark ? "rgba(160,185,220,0.5)" : "rgba(40,70,130,0.5)",
+                    }}>
+                      {formatFileSize(file.size)}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Loading steps */}
         <div style={{ marginBottom: 32 }}>
@@ -762,6 +888,24 @@ export default function EmergentPreview({ projectType, isGenerating, previewRead
               <div className="relative z-10 flex flex-col items-center gap-4 text-center">
                 <div style={{ width:60, height:60, borderRadius:"50%", background:"rgba(6,182,212,0.08)", border:"1px solid rgba(6,182,212,0.15)", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   <img src={SONAR_ICON} alt="" width={32} height={32} style={{ objectFit:"contain", opacity:0.5 }} />
+                </div>
+                <p style={{ fontSize:13, color:"rgba(100,120,150,0.6)", fontFamily:"'Manrope',sans-serif" }}>Start building to see the preview</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Coder Modal */}
+        <AnimatePresence>
+          {showCoderModal && (
+            <CoderModal onClose={handleCloseCoder} projectName={projectName} isDark={isDark} />
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+ight={32} style={{ objectFit:"contain", opacity:0.5 }} />
                 </div>
                 <p style={{ fontSize:13, color:"rgba(100,120,150,0.6)", fontFamily:"'Manrope',sans-serif" }}>Start building to see the preview</p>
               </div>
