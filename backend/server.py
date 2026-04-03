@@ -1,5 +1,6 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -13,6 +14,9 @@ from datetime import datetime, timezone, timedelta
 import jwt
 from passlib.context import CryptContext
 import re
+from emergentintegrations.llm.chat import LlmChat, UserMessage
+import asyncio
+import json
 
 
 ROOT_DIR = Path(__file__).parent
@@ -34,11 +38,89 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# Model mapping for LLM providers
+MODEL_MAP = {
+    "gpt-4o": {"provider": "openai", "model": "gpt-4o"},
+    "claude-sonnet": {"provider": "anthropic", "model": "claude-sonnet-4-20250514"},
+    "gemini-pro": {"provider": "gemini", "model": "gemini-2.0-flash"},
+}
+
 # Create the main app without a prefix
 app = FastAPI()
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
+
+# System prompts for different modes
+S1_GENERATE_PROMPT = """You are a stable, methodical React developer (S-1 mode).
+
+Your approach:
+1. Read and understand the full request before coding
+2. Plan your implementation mentally first
+3. Write clean, reliable code
+4. Review what you wrote once before finishing
+5. Fix any issues you spot
+6. Return stable, working code
+
+Priority: STABILITY over speed.
+Verify your output is correct before returning it.
+
+Generate a complete React component for the following request.
+Use Tailwind CSS for styling. Return ONLY the raw JSX/React code.
+Do NOT include markdown code fences. Do NOT include any explanation.
+The code must be a single default export React component.
+Include all necessary imports (useState, useEffect, etc.) at the top."""
+
+S2_GENERATE_PROMPT = """You are a tenacious, deep-thinking React developer (S-2 mode).
+
+Your approach:
+1. Deeply analyze all requirements and edge cases
+2. Think about what could go wrong before writing
+3. Implement thoroughly — no shortcuts
+4. Review your code critically
+5. Fix every issue you find, even minor ones
+6. Test edge cases mentally: empty states, errors, loading, mobile
+7. Refine until you are genuinely satisfied
+8. If something seems off, fix it — don't leave it
+
+Priority: DEPTH + TENACITY.
+Do not stop until the result is genuinely good.
+Go beyond what was asked if it makes the app better.
+
+Generate a complete, production-grade React component for the following request.
+Use Tailwind CSS for styling. Return ONLY the raw JSX/React code.
+Do NOT include markdown code fences. Do NOT include any explanation.
+The code must be a single default export React component.
+Include all necessary imports (useState, useEffect, etc.) at the top.
+No shortcuts. No placeholder content. Make it production-ready."""
+
+S1_CHAT_PROMPT = """You are modifying an existing React component (S-1 mode).
+Current code:
+{current_code}
+
+Approach:
+- Understand the current code before modifying
+- Make the requested change cleanly
+- Ensure nothing else breaks
+- Return the complete modified code
+
+Return ONLY the complete modified raw JSX/React code.
+Do NOT include markdown code fences. Do NOT include any explanation."""
+
+S2_CHAT_PROMPT = """You are improving an existing React component (S-2 mode).
+Current code:
+{current_code}
+
+Approach:
+- Deeply understand the architecture before touching it
+- Apply the change + improve anything related
+- Check for regressions
+- If you notice other issues while working, fix them
+- Return a better version of the full component
+
+Return ONLY the complete modified raw JSX/React code.
+Do NOT include markdown code fences. Do NOT include any explanation.
+Make it genuinely better."""
 
 
 # Define Models
@@ -110,6 +192,19 @@ class ProjectResponse(BaseModel):
     mode: str
     created_at: str  # ISO string
     updated_at: str  # ISO string
+
+class GenerateRequest(BaseModel):
+    prompt: str
+    model: str = "gpt-4o"
+    mode: str = "S-1"  # "S-1" or "S-2"
+    project_id: Optional[str] = None
+
+class ChatRequest(BaseModel):
+    message: str
+    current_code: str = ""
+    model: str = "gpt-4o"
+    mode: str = "S-1"
+    project_id: Optional[str] = None
 
 # JWT Utility Functions
 def create_token(user_id: str) -> str:
@@ -397,6 +492,171 @@ async def delete_project(project_id: str, current_user: User = Depends(get_curre
         raise HTTPException(status_code=404, detail="Project not found")
     
     return {"deleted": True}
+
+@api_router.post("/generate")
+async def generate_code(request: GenerateRequest, req: Request):
+    """Generate React component code using LLM."""
+    # Try to get auth (optional)
+    user = None
+    auth_header = req.headers.get("authorization", "")
+    if auth_header.startswith("Bearer "):
+        try:
+            token = auth_header.split(" ")[1]
+            payload = verify_token(token)
+            user_id = payload.get("user_id")
+            user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
+            if user_doc:
+                user = user_doc
+        except:
+            pass
+    
+    async def event_stream():
+        try:
+            # Get system prompt based on mode
+            system_prompt = S1_GENERATE_PROMPT if request.mode == "S-1" else S2_GENERATE_PROMPT
+            
+            # Get model config
+            model_config = MODEL_MAP.get(request.model, MODEL_MAP["gpt-4o"])
+            
+            # Get LLM key
+            llm_key = os.environ.get("EMERGENT_LLM_KEY", "")
+            
+            # Create chat instance
+            session_id = str(uuid.uuid4())
+            chat = LlmChat(api_key=llm_key, session_id=session_id, system_message=system_prompt)
+            chat = chat.with_model(model_config["provider"], model_config["model"])
+            
+            # Send message
+            response = await chat.send_message(UserMessage(text=request.prompt))
+            
+            # Clean response - remove markdown code fences
+            code = response.strip()
+            if code.startswith("```"):
+                lines = code.split("\n")
+                # Remove first line (```jsx or similar)
+                lines = lines[1:]
+                # Remove last line if it's ```
+                if lines and lines[-1].strip() == "```":
+                    lines = lines[:-1]
+                code = "\n".join(lines)
+            
+            # Stream code in chunks
+            chunk_size = 50
+            for i in range(0, len(code), chunk_size):
+                chunk = code[i:i+chunk_size]
+                yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
+                await asyncio.sleep(0.02)  # Small delay for smooth streaming
+            
+            # Send final event with full code
+            yield f"data: {json.dumps({'type': 'done', 'full_code': code})}\n\n"
+            
+            # Update project if authenticated
+            if user and request.project_id:
+                await db.projects.update_one(
+                    {"id": request.project_id, "user_id": user["id"]},
+                    {"$set": {
+                        "code": code,
+                        "status": "complete",
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+        except Exception as e:
+            logger.error(f"Generate error: {str(e)}")
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+    
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        }
+    )
+
+@api_router.post("/chat")
+async def chat_with_code(request: ChatRequest, req: Request):
+    """Chat with existing code to modify it using LLM."""
+    # Try to get auth (optional)
+    user = None
+    auth_header = req.headers.get("authorization", "")
+    if auth_header.startswith("Bearer "):
+        try:
+            token = auth_header.split(" ")[1]
+            payload = verify_token(token)
+            user_id = payload.get("user_id")
+            user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
+            if user_doc:
+                user = user_doc
+        except:
+            pass
+    
+    async def event_stream():
+        try:
+            # Get system prompt based on mode with current code injected
+            if request.mode == "S-1":
+                system_prompt = S1_CHAT_PROMPT.format(current_code=request.current_code)
+            else:
+                system_prompt = S2_CHAT_PROMPT.format(current_code=request.current_code)
+            
+            # Get model config
+            model_config = MODEL_MAP.get(request.model, MODEL_MAP["gpt-4o"])
+            
+            # Get LLM key
+            llm_key = os.environ.get("EMERGENT_LLM_KEY", "")
+            
+            # Create chat instance
+            session_id = str(uuid.uuid4())
+            chat = LlmChat(api_key=llm_key, session_id=session_id, system_message=system_prompt)
+            chat = chat.with_model(model_config["provider"], model_config["model"])
+            
+            # Send message
+            response = await chat.send_message(UserMessage(text=request.message))
+            
+            # Clean response - remove markdown code fences
+            code = response.strip()
+            if code.startswith("```"):
+                lines = code.split("\n")
+                # Remove first line (```jsx or similar)
+                lines = lines[1:]
+                # Remove last line if it's ```
+                if lines and lines[-1].strip() == "```":
+                    lines = lines[:-1]
+                code = "\n".join(lines)
+            
+            # Stream code in chunks
+            chunk_size = 50
+            for i in range(0, len(code), chunk_size):
+                chunk = code[i:i+chunk_size]
+                yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
+                await asyncio.sleep(0.02)  # Small delay for smooth streaming
+            
+            # Send final event with full code
+            yield f"data: {json.dumps({'type': 'done', 'full_code': code})}\n\n"
+            
+            # Update project if authenticated
+            if user and request.project_id:
+                await db.projects.update_one(
+                    {"id": request.project_id, "user_id": user["id"]},
+                    {"$set": {
+                        "code": code,
+                        "status": "complete",
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+        except Exception as e:
+            logger.error(f"Chat error: {str(e)}")
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+    
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        }
+    )
 
 # Include the router in the main app
 app.include_router(api_router)
