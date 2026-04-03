@@ -715,18 +715,20 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
               animate={{ opacity: 1, y: 0, height: "auto" }}
               exit={{ opacity: 0, y: -10, height: 0 }}
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full px-6 mt-4"
-              style={{ maxWidth: "680px" }}
+              className="w-full px-6"
+              style={{ maxWidth: "680px", marginTop: "48px" }}
             >
               <div style={{
                 display: "flex",
-                gap: "12px",
+                gap: "10px",
                 flexWrap: "wrap",
-                padding: "16px",
-                background: isDark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.6)",
-                backdropFilter: "blur(20px)",
-                border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(255,255,255,0.5)",
-                borderRadius: "16px",
+                padding: "14px 16px",
+                background: isDark ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.65)",
+                backdropFilter: "blur(28px)",
+                WebkitBackdropFilter: "blur(28px)",
+                border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : T.inputBorderNormal}`,
+                borderBottom: "none",
+                borderRadius: "20px 20px 0 0",
               }}>
                 {attachedFiles.map((file, index) => {
                   const preview = getFilePreview(file);
@@ -741,20 +743,20 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                       transition={{ duration: 0.2 }}
                       style={{
                         position: "relative",
-                        width: "120px",
-                        background: isDark ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.05)",
-                        borderRadius: "12px",
+                        width: "90px",
+                        background: isDark ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.06)",
+                        borderRadius: "10px",
                         overflow: "hidden",
-                        border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(80,120,200,0.15)",
+                        border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(80,120,200,0.18)",
                       }}
                     >
                       {/* Preview thumbnail */}
                       <div style={{
                         width: "100%",
-                        height: "120px",
+                        height: "90px",
                         background: preview 
                           ? `url(${preview}) center/cover` 
-                          : (isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.08)"),
+                          : (isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)"),
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -762,16 +764,16 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                       }}>
                         {!preview && (
                           <span style={{
-                            fontSize: isVideo ? "32px" : "28px",
+                            fontSize: isVideo ? "28px" : "24px",
                             color: isVideo ? "#ef4444" : (isDark ? "rgba(200,220,245,0.6)" : "rgba(40,70,130,0.5)"),
                             background: isVideo ? "rgba(239,68,68,0.15)" : (isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"),
-                            width: isVideo ? "50px" : "auto",
-                            height: isVideo ? "50px" : "auto",
-                            borderRadius: isVideo ? "12px" : "0",
+                            width: isVideo ? "42px" : "auto",
+                            height: isVideo ? "42px" : "auto",
+                            borderRadius: isVideo ? "10px" : "0",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            padding: isVideo ? "0" : "8px",
+                            padding: isVideo ? "0" : "6px",
                           }}>
                             {getFileIcon(file)}
                           </span>
@@ -786,15 +788,15 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                             background: "rgba(0,0,0,0.3)",
                           }}>
                             <div style={{
-                              width: "40px",
-                              height: "40px",
-                              borderRadius: "8px",
+                              width: "32px",
+                              height: "32px",
+                              borderRadius: "6px",
                               background: "#ef4444",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
                               color: "#fff",
-                              fontSize: "18px",
+                              fontSize: "14px",
                             }}>
                               ▶
                             </div>
@@ -804,24 +806,24 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                       
                       {/* File info */}
                       <div style={{
-                        padding: "8px",
-                        background: isDark ? "rgba(0,0,0,0.4)" : "rgba(0,0,0,0.08)",
+                        padding: "6px 7px",
+                        background: isDark ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.08)",
                       }}>
                         <p style={{
                           fontFamily: "'DM Sans', sans-serif",
-                          fontSize: "11px",
+                          fontSize: "10px",
                           fontWeight: 500,
                           color: isDark ? "rgba(220,235,250,0.9)" : "#0a1a3e",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
-                          marginBottom: "2px",
+                          marginBottom: "1px",
                         }}>
                           {file.name}
                         </p>
                         <p style={{
                           fontFamily: "'DM Sans', sans-serif",
-                          fontSize: "10px",
+                          fontSize: "9px",
                           color: isDark ? "rgba(160,185,220,0.5)" : "rgba(40,70,130,0.5)",
                         }}>
                           {formatFileSize(file.size)}
@@ -833,14 +835,14 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                         onClick={() => handleRemoveFile(index)}
                         style={{
                           position: "absolute",
-                          top: 6,
-                          right: 6,
-                          width: 22,
-                          height: 22,
+                          top: 4,
+                          right: 4,
+                          width: 20,
+                          height: 20,
                           borderRadius: "50%",
-                          background: "rgba(0,0,0,0.6)",
+                          background: "rgba(0,0,0,0.65)",
                           backdropFilter: "blur(8px)",
-                          border: "1px solid rgba(255,255,255,0.2)",
+                          border: "1px solid rgba(255,255,255,0.25)",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -848,15 +850,15 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
                           transition: "all 0.15s",
                         }}
                         onMouseEnter={e => {
-                          e.currentTarget.style.background = "rgba(239,68,68,0.9)";
+                          e.currentTarget.style.background = "rgba(239,68,68,0.95)";
                           e.currentTarget.style.transform = "scale(1.1)";
                         }}
                         onMouseLeave={e => {
-                          e.currentTarget.style.background = "rgba(0,0,0,0.6)";
+                          e.currentTarget.style.background = "rgba(0,0,0,0.65)";
                           e.currentTarget.style.transform = "scale(1)";
                         }}
                       >
-                        <X style={{ width: 12, height: 12, color: "#fff" }} />
+                        <X style={{ width: 11, height: 11, color: "#fff" }} />
                       </button>
                     </motion.div>
                   );
@@ -871,8 +873,8 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full px-6 mt-12"
-          style={{ maxWidth: "680px" }}
+          className="w-full px-6"
+          style={{ maxWidth: "680px", marginTop: attachedFiles.length > 0 ? "0" : "48px" }}
         >
           <div
             className="relative transition-all duration-500"
@@ -881,7 +883,8 @@ export default function LandingPage({ onStart, tasks = [], onSelectTask, onClose
               backdropFilter: "blur(28px)",
               WebkitBackdropFilter: "blur(28px)",
               border: `1px solid ${isFocused ? T.inputBorderFocus : T.inputBorderNormal}`,
-              borderRadius: "20px",
+              borderRadius: attachedFiles.length > 0 ? "0 0 20px 20px" : "20px",
+              borderTop: attachedFiles.length > 0 ? `1px solid ${isFocused ? T.inputBorderFocus : T.inputBorderNormal}` : `1px solid ${isFocused ? T.inputBorderFocus : T.inputBorderNormal}`,
               boxShadow: isFocused ? T.inputShadowFocus : T.inputShadowNormal,
             }}
           >
